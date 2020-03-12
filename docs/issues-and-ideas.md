@@ -7,4 +7,4 @@ pkg"add DocumenterTools"
 using DocumenterTools
 DocumenterTools.genkeys(user="PetrKryslUCSD", repo="git@github.com:PetrKryslUCSD/MeshCore.jl.git")
 
-and follow the instructions to install the keys:
+and follow the instructions to install the keys.
