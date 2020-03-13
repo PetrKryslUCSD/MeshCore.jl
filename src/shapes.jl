@@ -160,6 +160,12 @@ function boundary(shapes::ShapeCollection{S, N, T}) where {S, N, T}
     return skeleton(shapes; boundaryonly = true)
 end
 
+"""
+    IncRel
+
+Used for dispatch of access to incidence-relations.
+All fields are private.
+"""
 struct IncRel
 	_from::Int64
 	_to::Int64
