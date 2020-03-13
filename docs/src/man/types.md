@@ -32,5 +32,5 @@ ShapeCollection
 ## Incidence relations
 
 ```@docs
-VertexToShape
+IncRel
 ```

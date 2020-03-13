@@ -33,9 +33,10 @@ facetconnectivity
 ## Topology operations
 
 ```@docs
-VertexToShape(vertices, shapes::ShapeCollection{S, N, T}) where {S, N, T}
 skeleton
 boundary
+increl
+increllist
 ```
 
 ## Index
