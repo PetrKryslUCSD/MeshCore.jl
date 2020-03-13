@@ -67,8 +67,20 @@ relation ``0 \rightarrow 0`` (Logg 2008) this relation is one-to-one, not
 one-to-many.
 
 Note that the `skeleton` method constructs a derived mesh: the incidence relations
-are therefore defined for related, but separate meshes. 
+are therefore defined for related, but separate meshes.
+
+### Incidence relations
 
 The relations in the first row of the table (``0 \rightarrow d``) are lists of
-shapes incident on individual vertices. These are computed by constructing
-the `VertexToShape` data.
+shapes incident on individual vertices. These are computed on demand by the
+function `increl`. The individual incidence relations can be accessed by
+dispatch on the `IncRel` data. For instance, the relation ``0→2`` can be
+computed for 2-manifold shapes as
+```
+ir = increl(shapes, 0, manifdim(shapes))
+```
+Here `manifdim(shapes)` is 2. The incidence list of two-dimensional shapes
+connected to node 13 can be retrieved as
+```
+increllist(ir, 13)
+```
