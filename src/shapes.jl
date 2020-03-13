@@ -1,137 +1,8 @@
 
-"""
-    AbstractShapeDesc
-
-Abstract shape descriptor (simplex, or cuboid, of various manifold dimension)
-
-The definitions of concrete types below define a set of shape descriptors,
-covering the usual element shapes: point, line segment, quadrilateral,
-hexahedron, and a similar hierarchy for the simplex elements: point, line
-segment, triangle, tetrahedron.
-
-The concrete types of the shape descriptor will provide access to
-`manifdim` = manifold dimension of the shape (0, 1, 2, or 3),
-`nnodes` = number of nodes (vertices) of the shape,
-`facetdesc` = shape descriptor of the shapes on the boundary of this shape,
-`nfacets` = number of shapes on the boundary of this shape,
-`facets` = definitions of the shapes on the boundary of this shape in terms
-    of local connectivity
-"""
-abstract type AbstractShapeDesc
-end
-
-"""
-    NoSuchShapeDesc
-
-Base description: no shape is of this description.
-"""
-struct NoSuchShapeDesc <: AbstractShapeDesc
-end
-
-"""
-    P1ShapeDesc{BS}
-
-Shape description of a point shape. `BS` is the type of the facet (boundary
-shape).
-"""
-struct P1ShapeDesc{BS} <: AbstractShapeDesc
-    manifdim::Int64
-    nnodes::Int64
-    facetdesc::BS
-    nfacets::Int64
-    facets::SMatrix{1, 0, Int64, 0}
-end
-
-const P1 = P1ShapeDesc(0, 1, NoSuchShapeDesc(), 0, SMatrix{1, 0}(Int64[]))
-
-"""
-    L2ShapeDesc{BS}
-
-Shape description of a line segment shape. `BS` is the type of the facet (boundary
-shape).
-"""
-struct L2ShapeDesc{BS} <: AbstractShapeDesc
-    manifdim::Int64
-    nnodes::Int64
-    facetdesc::BS
-    nfacets::Int64
-    facets::SMatrix{2, 1, Int64, 2}
-end
-
-const L2 = L2ShapeDesc(1, 2, P1, 2, SMatrix{2, 1}([1; 2]))
-
-"""
-    Q4ShapeDesc{BS}
-
-Shape description of a quadrilateral shape. `BS` is the type of the facet (boundary
-shape).
-"""
-struct Q4ShapeDesc{BS} <: AbstractShapeDesc
-    manifdim::Int64
-    nnodes::Int64
-    facetdesc::BS
-    nfacets::Int64
-    facets::SMatrix{4, 2, Int64, 8}
-end
-
-const Q4 = Q4ShapeDesc(2, 4, L2, 4, SMatrix{4, 2}([1 2; 2 3; 3 4; 4 1]))
-
-"""
-    H8ShapeDesc{BS}
-
-Shape description of a hexahedral shape. `BS` is the type of the facet (boundary
-shape).
-"""
-struct H8ShapeDesc{BS} <: AbstractShapeDesc
-    manifdim::Int64
-    nnodes::Int64
-    facetdesc::BS
-    nfacets::Int64
-    facets::SMatrix{6, 4, Int64, 24}
-end
-
-const H8 = H8ShapeDesc(3, 8, Q4, 6, SMatrix{6, 4}(
-[1 4 3 2;
-1 2 6 5;
-2 3 7 6;
-3 4 8 7;
-4 1 5 8;
-6 7 8 5]))
-
-"""
-    T3ShapeDesc{BS}
-
-Shape description of a triangular shape. `BS` is the type of the facet (boundary
-shape).
-"""
-struct T3ShapeDesc{BS} <: AbstractShapeDesc
-    manifdim::Int64
-    nnodes::Int64
-    facetdesc::BS
-    nfacets::Int64
-    facets::SMatrix{3, 2, Int64, 6}
-end
-
-const T3 = T3ShapeDesc(2, 3, L2, 3, SMatrix{3, 2}(
-[1 2; 2 3; 3 1]))
-
-"""
-    T4ShapeDesc{BS}
-
-Shape description of a tetrahedral shape. `BS` is the type of the facet (boundary
-shape).
-"""
-struct T4ShapeDesc{BS} <: AbstractShapeDesc
-    manifdim::Int64
-    nnodes::Int64
-    facetdesc::BS
-    nfacets::Int64
-    facets::SMatrix{4, 3, Int64, 12}
-end
-
-const T4 = T4ShapeDesc(3, 4, T3, 4, SMatrix{4, 3}([1 3 2; 1 2 4; 2 3 4; 1 4 3]))
-
-const SHAPE_DESC = Dict("P1"=>P1, "L2"=>L2, "T3"=>T3, "T4"=>T4, "Q4"=>Q4, "H8"=>H8)
+# struct VertexToShape{S, N, T}
+# 	shapes::ShapeCollection{S, N, T}
+# 	v::Vector{Vector{Int64}}
+# end
 
 """
     ShapeCollection{S <: AbstractShapeDesc, N, T}
@@ -148,6 +19,8 @@ struct ShapeCollection{S <: AbstractShapeDesc, N, T}
     shapedesc::S
     # Connectivity: incidence relation Shape -> Vertex
     connectivity::Vector{SVector{N, T}}
+    # Incidence relations, such as 0 -> d
+    increldict
 end
 
 """
@@ -157,7 +30,7 @@ Convenience constructor from a matrix. One shape per row.
 """
 function ShapeCollection(shapedesc::S, C::Array{T, 2}) where {S <: AbstractShapeDesc, T}
     cc = [SVector{shapedesc.nnodes}(C[idx, :]) for idx in 1:size(C, 1)]
-    return ShapeCollection(shapedesc, cc)
+    return ShapeCollection(shapedesc, cc, Dict())
 end
 
 """
@@ -239,4 +112,109 @@ Retrieve connectivity of one shape from the collection.
 """
 function facetconnectivity(shapes::ShapeCollection{S, N, T}, i::I, j::I) where {S, N, T, I}
     return shapes.connectivity[i][shapes.shapedesc.facets[j, :]]
+end
+
+"""
+    skeleton(shapes::ShapeCollection{S, N, T}; options...) where {S, N, T}
+
+Compute the skeleton of the shape collection.
+
+It consists of facets (shapes of manifold dimension one less than the manifold
+dimension of the shapes themselves).
+
+# Options
+- `boundaryonly`: include in the skeleton only shapes on the boundary
+    of the input collection, `true` or `false` (default).
+"""
+function skeleton(shapes::ShapeCollection{S, N, T}; options...) where {S, N, T}
+    boundaryonly = false
+    if :boundaryonly in keys(options)
+        boundaryonly = options[:boundaryonly];
+    end
+    hfc = hyperfacecontainer()
+    for i in 1:nshapes(shapes)
+        for j in 1:nfacets(shapes)
+            fc = facetconnectivity(shapes, i, j)
+            addhyperface!(hfc, fc)
+        end
+    end
+    c = SVector{facetdesc(shapes).nnodes, Int64}[]
+    for hfa in values(hfc)
+        for hf in hfa
+            if (boundaryonly && hf.nref != 2) || (!boundaryonly)
+                push!(c, SVector{facetdesc(shapes).nnodes}(hf.oc))
+            end
+        end
+    end
+    return ShapeCollection(facetdesc(shapes), c, Dict())
+end
+
+"""
+    boundary(shapes::ShapeCollection{S, N, T}) where {S, N, T}
+
+Compute the shape collection for the boundary of the collection on input.
+
+This is a convenience version of the `skeleton` function.
+"""
+function boundary(shapes::ShapeCollection{S, N, T}) where {S, N, T}
+    return skeleton(shapes; boundaryonly = true)
+end
+
+struct IncRel
+	_from::Int64
+	_to::Int64
+    _v::Vector{Vector{Int64}}
+end
+
+
+function _v2s(shapes::ShapeCollection{S, N, T}) where {S, N, T}
+	# Compute the incidence relation `0 -> d` for `d`-dimensional shapes.
+	#
+	# This only makes sense for `d > 0`. For `d=1` we get for each vertex the list of
+	# edges connected to the vertex, and analogously faces and cells for `d=2` and
+	# `d=3`.
+	nvmax = 0
+    for j in 1:nshapes(shapes)
+        nvmax = max(nvmax, maximum(connectivity(shapes, j)))
+    end
+    v = Vector{Int64}[];
+	sizehint!(v, nvmax)
+    for i in 1:nvmax
+        push!(v, Int64[])  # initially empty arrays
+    end
+    for j in 1:nshapes(shapes)
+		c = connectivity(shapes, j)
+        for i in c
+            push!(v[i], j)
+        end
+    end
+    return IncRel(0, manifdim(shapes), v)
+end
+
+"""
+    increl(shapes::ShapeCollection{S, N, T}, from::Int64, to::Int64) where {S, N, T}
+
+Retrieve incidence relations of type `from -> to`.
+"""
+function increl(shapes::ShapeCollection{S, N, T}, from::Int64, to::Int64) where {S, N, T}
+	relation = "$(from) -> $(to)"
+	if !(relation in keys(shapes.increldict))
+		if relation == "0 -> $(to)"
+			shapes.increldict[relation] = _v2s(shapes)
+		end
+	end
+	ir = shapes.increldict[relation]
+	return ir
+end
+
+"""
+    increllist(ir::IncRel, j::Int64)
+
+Retrieve list of shapes incident on entity `j`.
+"""
+function increllist(ir::IncRel, j::Int64)
+	if j <= length(ir._v)
+		return ir._v[j]
+	end
+	return Int64[]
 end

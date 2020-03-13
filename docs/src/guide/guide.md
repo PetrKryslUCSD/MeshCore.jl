@@ -4,7 +4,7 @@
 
 Let us begin with a simple example of the use of the library:
 
-Example:
+## Example
 First import the mesh from a file and check that the correct number of entities
 were imported.
 ```

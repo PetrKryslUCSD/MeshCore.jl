@@ -34,7 +34,7 @@ function test()
     shapedesc = Q4
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
     cc = [SVector{shapedesc.nnodes}(c[idx]) for idx in 1:length(c)]
-    shapes = ShapeCollection(shapedesc, cc)
+    shapes = ShapeCollection(shapedesc, cc, Dict())
     @test connectivity(shapes, 3)[3] == 7
     @test connectivity(shapes, SVector{2}([2, 4]))[1][4] == 9
     @test manifdim(shapes) == 2
@@ -57,7 +57,7 @@ function test()
     shapedesc = Q4
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
     cc = [SVector{shapedesc.nnodes}(c[idx]) for idx in 1:length(c)]
-    shapes = ShapeCollection(shapedesc, cc)
+    shapes = ShapeCollection(shapedesc, cc, Dict())
     @test connectivity(shapes, 3)[3] == 7
     @test connectivity(shapes, SVector{2}([2, 4]))[1][4] == 9
     @test manifdim(shapes) == 2
@@ -80,7 +80,7 @@ function test()
         end
     end
     @test length(c) == 17
-    skel1shapes = ShapeCollection(facetdesc(shapes), c)
+    skel1shapes = ShapeCollection(facetdesc(shapes), c, Dict())
     @test nshapes(skel1shapes) == 17
     true
 end
@@ -97,7 +97,7 @@ function test()
     shapedesc = Q4
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
     cc = [SVector{shapedesc.nnodes}(c[idx]) for idx in 1:length(c)]
-    shapes = ShapeCollection(shapedesc, cc)
+    shapes = ShapeCollection(shapedesc, cc, Dict())
     @test connectivity(shapes, 3)[3] == 7
     @test connectivity(shapes, SVector{2}([2, 4]))[1][4] == 9
     @test manifdim(shapes) == 2
@@ -125,7 +125,7 @@ function test()
     v =  Vertices(xyz)
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
     cc = [SVector{shapedesc.nnodes}(c[idx]) for idx in 1:length(c)]
-    shapes = ShapeCollection(shapedesc, cc)
+    shapes = ShapeCollection(shapedesc, cc, Dict())
     @test connectivity(shapes, 3)[3] == 7
     @test connectivity(shapes, SVector{2}([2, 4]))[1][4] == 9
     @test manifdim(shapes) == 2
@@ -143,3 +143,26 @@ end
 end
 using .mmesh6
 mmesh6.test()
+
+module mtopoop1
+using StaticArrays
+using MeshCore: L2, Q4, ShapeCollection, connectivity, manifdim, nnodes, nfacets, facetdesc, nshapes
+using MeshCore: Vertices, increl, increllist
+using Test
+function test()
+    xyz = [0.0 0.0; 633.3 0.0; 1266.6 0.0; 1900.0 0.0; 0.0 400.0; 633.3 400.0; 1266.6 400.0; 1900.0 400.0; 0.0 800.0; 633.3 800.0; 1266.6 800.0; 1900.0 800.0]
+    vertices =  Vertices(xyz)
+    c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
+    cc = [SVector{Q4.nnodes}(c[idx]) for idx in 1:length(c)]
+    shapes = ShapeCollection(Q4, cc, Dict())
+    ir = increl(shapes, 0, manifdim(shapes))
+    shouldget = Array{Int64,1}[[1], [1, 3], [3, 5], [5], [1, 2], [1, 2, 3, 4], [3, 4, 5, 6], [5, 6], [2], [2, 4], [4, 6], [6]]
+    for j in 1:length(shouldget)
+        @test increllist(ir, j) == shouldget[j]
+    end
+    @test increllist(ir, 1000) == Int64[]
+    true
+end
+end
+using .mtopoop1
+mtopoop1.test()

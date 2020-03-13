@@ -1,3 +1,10 @@
+"""
+    AbstractVertices
+
+Abstract type to represent a collection of vertices.
+"""
+abstract type AbstractVertices
+end
 
 """
     Vertices{N, T}
@@ -7,7 +14,7 @@ Vertices of the mesh.
 - N = number of coordinates, equal to the number of space dimensions,
 - T = type of the individual coordinates (concrete subtype of `AbstractFloat`).
 """
-struct Vertices{N, T<:AbstractFloat}
+struct Vertices{N, T<:AbstractFloat} <: AbstractVertices
     coordinates::Vector{SVector{N, T}}
 end
 
