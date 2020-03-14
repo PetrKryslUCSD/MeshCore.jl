@@ -20,8 +20,25 @@ The concrete types of the shape descriptor will provide access to
 abstract type AbstractShapeDesc{MD, NV, NF, FD}
 end
 
+"""
+    manifdim(sd::AbstractShapeDesc{MD, NV, NF, FD}) where {MD, NV, NF, FD}
+
+What is the manifold dimension of this shape?
+"""
 manifdim(sd::AbstractShapeDesc{MD, NV, NF, FD}) where {MD, NV, NF, FD} = MD
+
+"""
+    nvertices(sd::AbstractShapeDesc{MD, NV, NF, FD}) where {MD, NV, NF, FD}
+
+How many vertices does the shape connect?
+"""
 nvertices(sd::AbstractShapeDesc{MD, NV, NF, FD}) where {MD, NV, NF, FD} = NV
+
+"""
+    nfacets(sd::AbstractShapeDesc{MD, NV, NF, FD}) where {MD, NV, NF, FD}
+
+How many facets bound the shape?
+"""
 nfacets(sd::AbstractShapeDesc{MD, NV, NF, FD}) where {MD, NV, NF, FD} = NF
 
 """
@@ -35,8 +52,9 @@ end
 """
     P1ShapeDesc{BS}
 
-Shape descriptor of a point shape. `BS` is the descriptor of the facet (boundary
-shape).
+Shape descriptor of a point shape. `MD` is the manifold dimension, `NV` is the
+number of connected vertices, `NF` is the number of boundary facets, `FD` is the
+descriptor of the facet (boundary shape).
 """
 struct P1ShapeDesc{MD, NV, NF, FD} <: AbstractShapeDesc{MD, NV, NF, FD}
     facetdesc::FD
@@ -47,8 +65,9 @@ const P1 = P1ShapeDesc{0, 1, 0, NoSuchShapeDesc}(NoSuchShapeDesc{0, 0, 0, NoSuch
 """
     L2ShapeDesc{BS}
 
-Shape descriptor of a line segment shape. `BS` is the descriptor of the facet (boundary
-shape).
+Shape descriptor of a line segment shape. `MD` is the manifold dimension, `NV`
+is the number of connected vertices, `NF` is the number of boundary facets, `FD`
+is the descriptor of the facet (boundary shape).
 """
 struct L2ShapeDesc{MD, NV, NF, FD} <: AbstractShapeDesc{MD, NV, NF, FD}
     facetdesc::FD
@@ -59,8 +78,9 @@ const L2 = L2ShapeDesc{1, 2, 2, P1ShapeDesc}(P1, SMatrix{2, 1}([1; 2]))
 """
     Q4ShapeDesc{BS}
 
-Shape descriptor of a quadrilateral shape. `BS` is the descriptor of the facet (boundary
-shape).
+Shape descriptor of a quadrilateral shape. `MD` is the manifold dimension, `NV`
+is the number of connected vertices, `NF` is the number of boundary facets, `FD`
+is the descriptor of the facet (boundary shape).
 """
 struct Q4ShapeDesc{MD, NV, NF, FD} <: AbstractShapeDesc{MD, NV, NF, FD}
     facetdesc::FD
@@ -71,8 +91,9 @@ const Q4 = Q4ShapeDesc{2, 4, 4, L2ShapeDesc}(L2, SMatrix{4, 2}([1 2; 2 3; 3 4; 4
 """
     H8ShapeDesc{BS}
 
-Shape descriptor of a hexahedral shape. `BS` is the descriptor of the facet (boundary
-shape).
+Shape descriptor of a hexahedral shape. `MD` is the manifold dimension, `NV` is
+the number of connected vertices, `NF` is the number of boundary facets, `FD` is
+the descriptor of the facet (boundary shape).
 """
 struct H8ShapeDesc{MD, NV, NF, FD} <: AbstractShapeDesc{MD, NV, NF, FD}
     facetdesc::FD
@@ -89,8 +110,9 @@ const H8 = H8ShapeDesc{3, 8, 6, Q4ShapeDesc}(Q4, SMatrix{6, 4}(
 """
     T3ShapeDesc{BS}
 
-Shape descriptor of a triangular shape. `BS` is the descriptor of the facet (boundary
-shape).
+Shape descriptor of a triangular shape. `MD` is the manifold dimension, `NV` is
+the number of connected vertices, `NF` is the number of boundary facets, `FD` is
+the descriptor of the facet (boundary shape).
 """
 struct T3ShapeDesc{MD, NV, NF, FD} <: AbstractShapeDesc{MD, NV, NF, FD}
     facetdesc::FD
@@ -102,8 +124,9 @@ const T3 = T3ShapeDesc{2, 3, 3, L2ShapeDesc}(L2, SMatrix{3, 2}(
 """
     T4ShapeDesc{BS}
 
-Shape descriptor of a tetrahedral shape. `BS` is the descriptor of the facet (boundary
-shape).
+Shape descriptor of a tetrahedral shape. `MD` is the manifold dimension, `NV` is
+the number of connected vertices, `NF` is the number of boundary facets, `FD` is
+the descriptor of the facet (boundary shape).
 """
 struct T4ShapeDesc{MD, NV, NF, FD} <: AbstractShapeDesc{MD, NV, NF, FD}
     facetdesc::FD
