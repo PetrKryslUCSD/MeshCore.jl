@@ -50,7 +50,7 @@ struct NoSuchShapeDesc{MD, NV, NF, FD} <: AbstractShapeDesc{MD, NV, NF, FD}
 end
 
 """
-    P1ShapeDesc{BS}
+    P1ShapeDesc{MD, NV, NF, FD}
 
 Shape descriptor of a point shape. `MD` is the manifold dimension, `NV` is the
 number of connected vertices, `NF` is the number of boundary facets, `FD` is the
@@ -63,7 +63,7 @@ end
 const P1 = P1ShapeDesc{0, 1, 0, NoSuchShapeDesc}(NoSuchShapeDesc{0, 0, 0, NoSuchShapeDesc}(), SMatrix{1, 0}(Int64[]))
 
 """
-    L2ShapeDesc{BS}
+    L2ShapeDesc{MD, NV, NF, FD}
 
 Shape descriptor of a line segment shape. `MD` is the manifold dimension, `NV`
 is the number of connected vertices, `NF` is the number of boundary facets, `FD`
@@ -76,7 +76,7 @@ end
 const L2 = L2ShapeDesc{1, 2, 2, P1ShapeDesc}(P1, SMatrix{2, 1}([1; 2]))
 
 """
-    Q4ShapeDesc{BS}
+    Q4ShapeDesc{MD, NV, NF, FD}
 
 Shape descriptor of a quadrilateral shape. `MD` is the manifold dimension, `NV`
 is the number of connected vertices, `NF` is the number of boundary facets, `FD`
@@ -89,7 +89,7 @@ end
 const Q4 = Q4ShapeDesc{2, 4, 4, L2ShapeDesc}(L2, SMatrix{4, 2}([1 2; 2 3; 3 4; 4 1]))
 
 """
-    H8ShapeDesc{BS}
+    H8ShapeDesc{MD, NV, NF, FD}
 
 Shape descriptor of a hexahedral shape. `MD` is the manifold dimension, `NV` is
 the number of connected vertices, `NF` is the number of boundary facets, `FD` is
@@ -108,7 +108,7 @@ const H8 = H8ShapeDesc{3, 8, 6, Q4ShapeDesc}(Q4, SMatrix{6, 4}(
 6 7 8 5]))
 
 """
-    T3ShapeDesc{BS}
+    T3ShapeDesc{MD, NV, NF, FD}
 
 Shape descriptor of a triangular shape. `MD` is the manifold dimension, `NV` is
 the number of connected vertices, `NF` is the number of boundary facets, `FD` is
@@ -122,7 +122,7 @@ const T3 = T3ShapeDesc{2, 3, 3, L2ShapeDesc}(L2, SMatrix{3, 2}(
 [1 2; 2 3; 3 1]))
 
 """
-    T4ShapeDesc{BS}
+    T4ShapeDesc{MD, NV, NF, FD}
 
 Shape descriptor of a tetrahedral shape. `MD` is the manifold dimension, `NV` is
 the number of connected vertices, `NF` is the number of boundary facets, `FD` is
