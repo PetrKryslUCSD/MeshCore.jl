@@ -29,7 +29,7 @@ end
 Convenience constructor from a matrix. One shape per row.
 """
 function ShapeCollection(shapedesc::S, C::Array{T, 2}) where {S <: AbstractShapeDesc, T}
-    cc = [SVector{shapedesc.nnodes}(C[idx, :]) for idx in 1:size(C, 1)]
+    cc = [SVector{nvertices(shapedesc)}(C[idx, :]) for idx in 1:size(C, 1)]
     return ShapeCollection(shapedesc, cc, Dict())
 end
 
@@ -75,14 +75,14 @@ nshapes(shapes::ShapeCollection{S, N, T}) where {S, N, T} = length(shapes.connec
 
 Retrieve the manifold dimension of the collection.
 """
-manifdim(shapes::ShapeCollection{S, N, T}) where {S, N, T} = shapes.shapedesc.manifdim
+manifdim(shapes::ShapeCollection{S, N, T}) where {S, N, T} = manifdim(shapes.shapedesc)
 
 """
-    nnodes(shapes::ShapeCollection{S, N, T}) where {S, N, T}
+    nvertices(shapes::ShapeCollection{S, N, T}) where {S, N, T}
 
-Retrieve the number of nodes per shape.
+Retrieve the number of vertices per shape.
 """
-nnodes(shapes::ShapeCollection{S, N, T}) where {S, N, T} = shapes.shapedesc.nnodes
+nvertices(shapes::ShapeCollection{S, N, T}) where {S, N, T} = nvertices(shapes.shapedesc)
 
 """
     facetdesc(shapes::ShapeCollection{S, N, T}) where {S, N, T}
@@ -96,7 +96,7 @@ facetdesc(shapes::ShapeCollection{S, N, T}) where {S, N, T} = shapes.shapedesc.f
 
 Retrieve the number of boundary facets per shape.
 """
-nfacets(shapes::ShapeCollection{S, N, T}) where {S, N, T} = shapes.shapedesc.nfacets
+nfacets(shapes::ShapeCollection{S, N, T}) where {S, N, T} = nfacets(shapes.shapedesc)
 
 """
     facets(shapes::ShapeCollection{S, N, T}) where {S, N, T}
@@ -138,11 +138,11 @@ function skeleton(shapes::ShapeCollection{S, N, T}; options...) where {S, N, T}
             addhyperface!(hfc, fc)
         end
     end
-    c = SVector{facetdesc(shapes).nnodes, Int64}[]
+    c = SVector{nvertices(facetdesc(shapes)), Int64}[]
     for hfa in values(hfc)
         for hf in hfa
             if (boundaryonly && hf.nref != 2) || (!boundaryonly)
-                push!(c, SVector{facetdesc(shapes).nnodes}(hf.oc))
+                push!(c, SVector{nvertices(facetdesc(shapes))}(hf.oc))
             end
         end
     end

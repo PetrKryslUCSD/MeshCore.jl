@@ -1,9 +1,9 @@
 module mmesh1
-using MeshCore: P1, L2
+using MeshCore: P1, L2, manifdim, nfacets
 using Test
 function test()
-    @test P1.manifdim == 0
-    @test L2.nfacets == 2
+    @test manifdim(P1) == 0
+    @test nfacets(L2) == 2
     true
 end
 end
@@ -28,17 +28,17 @@ mmesh2.test()
 
 module mmesh3
 using StaticArrays
-using MeshCore: L2, Q4, ShapeCollection, connectivity, manifdim, nnodes, nfacets, facetdesc, nshapes
+using MeshCore: L2, Q4, ShapeCollection, connectivity, manifdim, nvertices, nfacets, facetdesc, nshapes
 using Test
 function test()
     shapedesc = Q4
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
-    cc = [SVector{shapedesc.nnodes}(c[idx]) for idx in 1:length(c)]
+    cc = [SVector{nvertices(shapedesc)}(c[idx]) for idx in 1:length(c)]
     shapes = ShapeCollection(shapedesc, cc, Dict())
     @test connectivity(shapes, 3)[3] == 7
     @test connectivity(shapes, SVector{2}([2, 4]))[1][4] == 9
     @test manifdim(shapes) == 2
-    @test nnodes(shapes) == 4
+    @test nvertices(shapes) == 4
     @test facetdesc(shapes) == L2
     @test nfacets(shapes) == 4
     @test nshapes(shapes) == 6
@@ -50,18 +50,18 @@ mmesh3.test()
 
 module mmesh4
 using StaticArrays
-using MeshCore: L2, Q4, ShapeCollection, connectivity, manifdim, nnodes, nfacets, facetdesc, nshapes, facetconnectivity
+using MeshCore: L2, Q4, ShapeCollection, connectivity, manifdim, nvertices, nfacets, facetdesc, nshapes, facetconnectivity
 using MeshCore: hyperfacecontainer, addhyperface!
 using Test
 function test()
     shapedesc = Q4
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
-    cc = [SVector{shapedesc.nnodes}(c[idx]) for idx in 1:length(c)]
+    cc = [SVector{nvertices(shapedesc)}(c[idx]) for idx in 1:length(c)]
     shapes = ShapeCollection(shapedesc, cc, Dict())
     @test connectivity(shapes, 3)[3] == 7
     @test connectivity(shapes, SVector{2}([2, 4]))[1][4] == 9
     @test manifdim(shapes) == 2
-    @test nnodes(shapes) == 4
+    @test nvertices(shapes) == 4
     @test facetdesc(shapes) == L2
     @test nfacets(shapes) == 4
 
@@ -73,10 +73,10 @@ function test()
         end
     end
 
-    c = SVector{facetdesc(shapes).nnodes, Int64}[]
+    c = SVector{nvertices(facetdesc(shapes)), Int64}[]
     for a in values(hfc)
         for h in a
-            push!(c, SVector{facetdesc(shapes).nnodes}(h.oc))
+            push!(c, SVector{nvertices(facetdesc(shapes))}(h.oc))
         end
     end
     @test length(c) == 17
@@ -90,18 +90,18 @@ mmesh4.test()
 
 module mmesh5
 using StaticArrays
-using MeshCore: L2, Q4, ShapeCollection, connectivity, manifdim, nnodes, nfacets, facetdesc, nshapes, facetconnectivity
+using MeshCore: L2, Q4, ShapeCollection, connectivity, manifdim, nvertices, nfacets, facetdesc, nshapes, facetconnectivity
 using MeshCore: skeleton
 using Test
 function test()
     shapedesc = Q4
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
-    cc = [SVector{shapedesc.nnodes}(c[idx]) for idx in 1:length(c)]
+    cc = [SVector{nvertices(shapedesc)}(c[idx]) for idx in 1:length(c)]
     shapes = ShapeCollection(shapedesc, cc, Dict())
     @test connectivity(shapes, 3)[3] == 7
     @test connectivity(shapes, SVector{2}([2, 4]))[1][4] == 9
     @test manifdim(shapes) == 2
-    @test nnodes(shapes) == 4
+    @test nvertices(shapes) == 4
     @test facetdesc(shapes) == L2
     @test nfacets(shapes) == 4
 
@@ -116,7 +116,7 @@ mmesh5.test()
 module mmesh6
 using StaticArrays
 using MeshCore: Vertices, coordinates
-using MeshCore: L2, Q4, ShapeCollection, connectivity, manifdim, nnodes, nfacets, facetdesc, nshapes, facetconnectivity
+using MeshCore: L2, Q4, ShapeCollection, connectivity, manifdim, nvertices, nfacets, facetdesc, nshapes, facetconnectivity
 using MeshCore: skeleton
 using Test
 function test()
@@ -124,12 +124,12 @@ function test()
     xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
     v =  Vertices(xyz)
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
-    cc = [SVector{shapedesc.nnodes}(c[idx]) for idx in 1:length(c)]
+    cc = [SVector{nvertices(shapedesc)}(c[idx]) for idx in 1:length(c)]
     shapes = ShapeCollection(shapedesc, cc, Dict())
     @test connectivity(shapes, 3)[3] == 7
     @test connectivity(shapes, SVector{2}([2, 4]))[1][4] == 9
     @test manifdim(shapes) == 2
-    @test nnodes(shapes) == 4
+    @test nvertices(shapes) == 4
     @test facetdesc(shapes) == L2
     @test nfacets(shapes) == 4
 
@@ -146,14 +146,14 @@ mmesh6.test()
 
 module mtopoop1
 using StaticArrays
-using MeshCore: L2, Q4, ShapeCollection, connectivity, manifdim, nnodes, nfacets, facetdesc, nshapes
+using MeshCore: L2, Q4, ShapeCollection, connectivity, manifdim, nvertices, nfacets, facetdesc, nshapes
 using MeshCore: Vertices, increl, increllist
 using Test
 function test()
     xyz = [0.0 0.0; 633.3 0.0; 1266.6 0.0; 1900.0 0.0; 0.0 400.0; 633.3 400.0; 1266.6 400.0; 1900.0 400.0; 0.0 800.0; 633.3 800.0; 1266.6 800.0; 1900.0 800.0]
     vertices =  Vertices(xyz)
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
-    cc = [SVector{Q4.nnodes}(c[idx]) for idx in 1:length(c)]
+    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
     shapes = ShapeCollection(Q4, cc, Dict())
     ir = increl(shapes, 0, manifdim(shapes))
     shouldget = Array{Int64,1}[[1], [1, 3], [3, 5], [5], [1, 2], [1, 2, 3, 4], [3, 4, 5, 6], [5, 6], [2], [2, 4], [4, 6], [6]]
