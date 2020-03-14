@@ -9,4 +9,8 @@ DocumenterTools.genkeys(user="PetrKryslUCSD", repo="git@github.com:PetrKryslUCSD
 
 and follow the instructions to install the keys.
 
-- Vertices is not a topological data structure: pure geometry. Therefore it might make sense to separate topology from geometry in the source files.
+- Vertices is not a topological data structure: pure geometry. Therefore
+it might make sense to separate topology from geometry in the source files.
+
+- Computing the incidence relations may require derived skeleton meshes.
+Perhaps these should be computed and cached my `skeleton`?
