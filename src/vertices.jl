@@ -11,8 +11,8 @@ end
 
 Vertices of the mesh.
 
-- N = number of coordinates, equal to the number of space dimensions,
-- T = type of the individual coordinates (concrete subtype of `AbstractFloat`).
+- `N` = number of coordinates, equal to the number of space dimensions,
+- `T` = type of the individual coordinates (concrete subtype of `AbstractFloat`).
 """
 struct Vertices{N, T<:AbstractFloat} <: AbstractVertices
     coordinates::Vector{SVector{N, T}}

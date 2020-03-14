@@ -22,7 +22,7 @@ shapedesc
 connectivity
 nshapes
 manifdim
-nnodes
+nvertices
 facetdesc
 nfacets
 facets

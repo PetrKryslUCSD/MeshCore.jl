@@ -112,7 +112,8 @@ end
 
 Compute the skeleton of the shape collection.
 
-It consists of facets (shapes of manifold dimension one less than the manifold
+This computes a new shape collection from an existing shape collection. It
+consists of facets (shapes of manifold dimension one less than the manifold
 dimension of the shapes themselves).
 
 # Options
