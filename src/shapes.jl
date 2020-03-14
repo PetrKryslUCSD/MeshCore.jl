@@ -1,26 +1,19 @@
 
-# struct VertexToShape{S, N, T}
-# 	shapes::ShapeCollection{S, N, T}
-# 	v::Vector{Vector{Int64}}
-# end
-
 """
     ShapeCollection{S <: AbstractShapeDesc, N, T}
 
 This is the type of a homogeneous collection of finite element shapes.
 
-- S = shape descriptor:
-- `N` = number of vertices incident on the shape (i. e. by which the shape is
-    defined)
-- `T` = type of the vertex numbers (some concrete type of `Integer`).
+- S = shape descriptor: subtype of AbstractShapeDesc{MD, NV, NF, FD}
+- `IT` = type of the vertex numbers (some concrete type of `Integer`).
 """
-struct ShapeCollection{S <: AbstractShapeDesc, N, T}
+struct ShapeCollection{IT, S <: AbstractShapeDesc{MD, NV, NF, FD} where {MD, NV, NF, FD}, NV}
     # Shape descriptor
     shapedesc::S
     # Connectivity: incidence relation Shape -> Vertex
-    connectivity::Vector{SVector{N, T}}
+    connectivity::Vector{SVector{NV, IT}}
     # Incidence relations, such as 0 -> d
-    increldict
+    increldict::Dict
 end
 
 """
@@ -28,33 +21,33 @@ end
 
 Convenience constructor from a matrix. One shape per row.
 """
-function ShapeCollection(shapedesc::S, C::Array{T, 2}) where {S <: AbstractShapeDesc, T}
+function ShapeCollection(shapedesc::S, C::Array{IT, 2}) where {S <: AbstractShapeDesc, IT}
     cc = [SVector{nvertices(shapedesc)}(C[idx, :]) for idx in 1:size(C, 1)]
     return ShapeCollection(shapedesc, cc, Dict())
 end
 
 """
-    shapedesc(shapes::ShapeCollection{S, N, T}) where {S, N, T}
+    shapedesc(shapes::ShapeCollection)
 
 Retrieve the shape descriptor.
 """
-shapedesc(shapes::ShapeCollection{S, N, T}) where {S, N, T} = shapes.shapedesc
+shapedesc(shapes::ShapeCollection) = shapes.shapedesc
 
 """
-    connectivity(shapes::ShapeCollection{S, N, T}, i::I) where {S, N, T, I}
+    connectivity(shapes::ShapeCollection, i::I) where {I}
 
 Retrieve connectivity of one shape from the collection.
 """
-connectivity(shapes::ShapeCollection{S, N, T}, i::I) where {S, N, T, I} = shapes.connectivity[i]
+connectivity(shapes::ShapeCollection, i::I) where {I} = shapes.connectivity[i]
 
 """
-    connectivity(shapes::ShapeCollection{S, N, T}, I::SVector) where {S, N, T}
+    connectivity(shapes::ShapeCollection, I::SVector)
 
 Retrieve connectivity of multiple shapes from the collection.
 
 Static arrays are used to help the compiler avoid memory allocation.
 """
-@generated function connectivity(shapes::ShapeCollection{S, N, T}, I::SVector) where {S, N, T}
+@generated function connectivity(shapes::ShapeCollection, I::SVector)
     nidx = length(I)
     expr = :(())
     for i in 1:nidx
@@ -64,58 +57,58 @@ Static arrays are used to help the compiler avoid memory allocation.
 end
 
 """
-    nshapes(shapes::ShapeCollection{S, N, T}) where {S, N, T}
+    nshapes(shapes::ShapeCollection)
 
 Number of shapes in the collection.
 """
-nshapes(shapes::ShapeCollection{S, N, T}) where {S, N, T} = length(shapes.connectivity)
+nshapes(shapes::ShapeCollection) = length(shapes.connectivity)
 
 """
-    manifdim(shapes::ShapeCollection{S, N, T}) where {S, N, T}
+    manifdim(shapes::ShapeCollection)
 
 Retrieve the manifold dimension of the collection.
 """
-manifdim(shapes::ShapeCollection{S, N, T}) where {S, N, T} = manifdim(shapes.shapedesc)
+manifdim(shapes::ShapeCollection) = manifdim(shapes.shapedesc)
 
 """
-    nvertices(shapes::ShapeCollection{S, N, T}) where {S, N, T}
+    nvertices(shapes::ShapeCollection)
 
 Retrieve the number of vertices per shape.
 """
-nvertices(shapes::ShapeCollection{S, N, T}) where {S, N, T} = nvertices(shapes.shapedesc)
+nvertices(shapes::ShapeCollection) = nvertices(shapes.shapedesc)
 
 """
-    facetdesc(shapes::ShapeCollection{S, N, T}) where {S, N, T}
+    facetdesc(shapes::ShapeCollection)
 
 Retrieve the shape type of the boundary facet.
 """
-facetdesc(shapes::ShapeCollection{S, N, T}) where {S, N, T} = shapes.shapedesc.facetdesc
+facetdesc(shapes::ShapeCollection) = shapes.shapedesc.facetdesc
 
 """
-    nfacets(shapes::ShapeCollection{S, N, T}) where {S, N, T}
+    nfacets(shapes::ShapeCollection)
 
 Retrieve the number of boundary facets per shape.
 """
-nfacets(shapes::ShapeCollection{S, N, T}) where {S, N, T} = nfacets(shapes.shapedesc)
+nfacets(shapes::ShapeCollection) = nfacets(shapes.shapedesc)
 
 """
-    facets(shapes::ShapeCollection{S, N, T}) where {S, N, T}
+    facets(shapes::ShapeCollection)
 
 Retrieve the connectivity of the facets.
 """
-facets(shapes::ShapeCollection{S, N, T}) where {S, N, T} = shapes.shapedesc.facets
+facets(shapes::ShapeCollection) = shapes.shapedesc.facets
 
 """
-    connectivity(shapes::ShapeCollection{S, N, T}, i::I) where {S, N, T, I}
+    connectivity(shapes::ShapeCollection, i::I) where {I}
 
 Retrieve connectivity of one shape from the collection.
 """
-function facetconnectivity(shapes::ShapeCollection{S, N, T}, i::I, j::I) where {S, N, T, I}
+function facetconnectivity(shapes::ShapeCollection, i::I, j::I) where {I}
     return shapes.connectivity[i][shapes.shapedesc.facets[j, :]]
 end
 
 """
-    skeleton(shapes::ShapeCollection{S, N, T}; options...) where {S, N, T}
+    skeleton(shapes::ShapeCollection; options...)
 
 Compute the skeleton of the shape collection.
 
@@ -126,7 +119,7 @@ dimension of the shapes themselves).
 - `boundaryonly`: include in the skeleton only shapes on the boundary
     of the input collection, `true` or `false` (default).
 """
-function skeleton(shapes::ShapeCollection{S, N, T}; options...) where {S, N, T}
+function skeleton(shapes::ShapeCollection; options...)
     boundaryonly = false
     if :boundaryonly in keys(options)
         boundaryonly = options[:boundaryonly];
@@ -150,13 +143,13 @@ function skeleton(shapes::ShapeCollection{S, N, T}; options...) where {S, N, T}
 end
 
 """
-    boundary(shapes::ShapeCollection{S, N, T}) where {S, N, T}
+    boundary(shapes::ShapeCollection)
 
 Compute the shape collection for the boundary of the collection on input.
 
 This is a convenience version of the `skeleton` function.
 """
-function boundary(shapes::ShapeCollection{S, N, T}) where {S, N, T}
+function boundary(shapes::ShapeCollection)
     return skeleton(shapes; boundaryonly = true)
 end
 
@@ -173,7 +166,7 @@ struct IncRel
 end
 
 
-function _v2s(shapes::ShapeCollection{S, N, T}) where {S, N, T}
+function _v2s(shapes::ShapeCollection)
 	# Compute the incidence relation `0 -> d` for `d`-dimensional shapes.
 	#
 	# This only makes sense for `d > 0`. For `d=1` we get for each vertex the list of
@@ -198,11 +191,11 @@ function _v2s(shapes::ShapeCollection{S, N, T}) where {S, N, T}
 end
 
 """
-    increl(shapes::ShapeCollection{S, N, T}, from::Int64, to::Int64) where {S, N, T}
+    increl(shapes::ShapeCollection, from::Int64, to::Int64)
 
 Retrieve incidence relations of type `from -> to`.
 """
-function increl(shapes::ShapeCollection{S, N, T}, from::Int64, to::Int64) where {S, N, T}
+function increl(shapes::ShapeCollection, from::Int64, to::Int64)
 	relation = "$(from) -> $(to)"
 	if !(relation in keys(shapes.increldict))
 		if relation == "0 -> $(to)"

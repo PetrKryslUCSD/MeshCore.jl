@@ -29,7 +29,6 @@ facets
 facetconnectivity
 ```
 
-
 ## Topology operations
 
 ```@docs
