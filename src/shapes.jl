@@ -12,8 +12,6 @@ struct ShapeCollection{IT, S <: AbstractShapeDesc{MD, NV, NF, FD} where {MD, NV,
     shapedesc::S
     # Connectivity: incidence relation Shape -> Vertex
     connectivity::Vector{SVector{NV, IT}}
-    # Incidence relations, such as 0 -> d
-    increldict::Dict
 end
 
 """
@@ -23,7 +21,7 @@ Convenience constructor from a matrix. One shape per row.
 """
 function ShapeCollection(shapedesc::S, C::Array{IT, 2}) where {S <: AbstractShapeDesc, IT}
     cc = [SVector{nvertices(shapedesc)}(C[idx, :]) for idx in 1:size(C, 1)]
-    return ShapeCollection(shapedesc, cc, Dict())
+    return ShapeCollection(shapedesc, cc)
 end
 
 """
@@ -140,7 +138,7 @@ function skeleton(shapes::ShapeCollection; options...)
             end
         end
     end
-    return ShapeCollection(facetdesc(shapes), c, Dict())
+    return ShapeCollection(facetdesc(shapes), c)
 end
 
 """
@@ -160,59 +158,64 @@ end
 Used for dispatch of access to incidence-relations.
 All fields are private.
 """
-struct IncRel
+struct IncRel0tomd
 	_from::Int64
 	_to::Int64
     _v::Vector{Vector{Int64}}
 end
 
 
-function _v2s(shapes::ShapeCollection)
-	# Compute the incidence relation `0 -> d` for `d`-dimensional shapes.
-	#
-	# This only makes sense for `d > 0`. For `d=1` we get for each vertex the list of
-	# edges connected to the vertex, and analogously faces and cells for `d=2` and
-	# `d=3`.
+
+"""
+    increl_0tomd(shapes::ShapeCollection)
+
+Compute the incidence relation `0 -> d` for `d`-dimensional shapes.
+
+This only makes sense for `d > 0`. For `d=1` we get for each vertex the list of
+edges connected to the vertex, and analogously faces and cells for `d=2` and
+`d=3`.
+"""
+function increl_0tomd(shapes::ShapeCollection)
 	nvmax = 0
     for j in 1:nshapes(shapes)
         nvmax = max(nvmax, maximum(connectivity(shapes, j)))
     end
-    v = Vector{Int64}[];
-	sizehint!(v, nvmax)
+    _v = Vector{Int64}[];
+	sizehint!(_v, nvmax)
     for i in 1:nvmax
-        push!(v, Int64[])  # initially empty arrays
+        push!(_v, Int64[])  # initially empty arrays
     end
     for j in 1:nshapes(shapes)
 		c = connectivity(shapes, j)
         for i in c
-            push!(v[i], j)
+            push!(_v[i], j)
         end
     end
-    return IncRel(0, manifdim(shapes), v)
+    return IncRel0tomd(0, manifdim(shapes), _v)
 end
 
-"""
-    increl(shapes::ShapeCollection, from::Int64, to::Int64)
+# """
+#     increl(shapes::ShapeCollection, from::Int64, to::Int64)
 
-Retrieve incidence relations of type `from -> to`.
-"""
-function increl(shapes::ShapeCollection, from::Int64, to::Int64)
-	relation = "$(from) -> $(to)"
-	if !(relation in keys(shapes.increldict))
-		if relation == "0 -> $(to)"
-			shapes.increldict[relation] = _v2s(shapes)
-		end
-	end
-	ir = shapes.increldict[relation]
-	return ir
-end
+# Retrieve incidence relations of type `from -> to`.
+# """
+# function increl(shapes::ShapeCollection, from::Int64, to::Int64)
+# 	relation = "$(from) -> $(to)"
+# 	if !(relation in keys(shapes.increldict))
+# 		if relation == "0 -> $(to)"
+# 			shapes.increldict[relation] = _v2s(shapes)
+# 		end
+# 	end
+# 	ir = shapes.increldict[relation]
+# 	return ir
+# end
 
 """
-    increllist(ir::IncRel, j::Int64)
+    shapelist(ir::IncRel0tomd, j::Int64)
 
-Retrieve list of shapes incident on entity `j`.
+Retrieve list of shapes incident on vertex `j` of the incidence relation `0 -> d`.
 """
-function increllist(ir::IncRel, j::Int64)
+function shapelist(ir::IncRel0tomd, j::Int64)
 	if j <= length(ir._v)
 		return ir._v[j]
 	end

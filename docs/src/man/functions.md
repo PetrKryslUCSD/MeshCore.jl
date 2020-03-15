@@ -23,6 +23,7 @@ connectivity
 nshapes
 manifdim
 nvertices
+n1storderv
 facetdesc
 nfacets
 facets
@@ -34,8 +35,8 @@ facetconnectivity
 ```@docs
 skeleton
 boundary
-increl
-increllist
+increl_0tomd
+shapelist
 ```
 
 ## Index
