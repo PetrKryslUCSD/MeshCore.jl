@@ -35,10 +35,10 @@ facetconnectivity
 ```@docs
 skeleton
 boundary
-increl_0tomd
-shapelist(ir::IncRel0tomd, j::Int64)
-increl_bound
-shapelist(ir::IncRelbound, j::Int64)
+increl_vertextoshape
+(ir::IncRelVertexToShape)(j::Int64) 
+increl_bounding
+(ir::IncRelBounding)(j::Int64)
 ```
 
 ## Index

@@ -147,7 +147,7 @@ mmesh6.test()
 module mtopoop1
 using StaticArrays
 using MeshCore: L2, Q4, ShapeCollection, connectivity, manifdim, nvertices, nfacets, facetdesc, nshapes
-using MeshCore: Vertices, increl_0tomd, shapelist
+using MeshCore: Vertices, increl_vertextoshape
 using Test
 function test()
     xyz = [0.0 0.0; 633.3 0.0; 1266.6 0.0; 1900.0 0.0; 0.0 400.0; 633.3 400.0; 1266.6 400.0; 1900.0 400.0; 0.0 800.0; 633.3 800.0; 1266.6 800.0; 1900.0 800.0]
@@ -155,12 +155,12 @@ function test()
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
     cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
     shapes = ShapeCollection(Q4, cc)
-    ir = increl_0tomd(shapes)
+    ir = increl_vertextoshape(shapes)
     shouldget = Array{Int64,1}[[1], [1, 3], [3, 5], [5], [1, 2], [1, 2, 3, 4], [3, 4, 5, 6], [5, 6], [2], [2, 4], [4, 6], [6]]
     for j in 1:length(shouldget)
-        @test shapelist(ir, j) == shouldget[j]
+        @test ir(j) == shouldget[j]
     end
-    @test shapelist(ir, 1000) == Int64[]
+    @test ir(1000) == Int64[]
     true
 end
 end
@@ -170,7 +170,7 @@ mtopoop1.test()
 module mtopoop2
 using StaticArrays
 using MeshCore: L2, Q4, ShapeCollection, connectivity, manifdim, nvertices, nfacets, facetdesc, nshapes
-using MeshCore: Vertices, increl_bound, shapelist, skeleton
+using MeshCore: Vertices, increl_bounding, skeleton
 using Test
 function test()
     xyz = [0.0 0.0; 633.3 0.0; 1266.6 0.0; 1900.0 0.0; 0.0 400.0; 633.3 400.0; 1266.6 400.0; 1900.0 400.0; 0.0 800.0; 633.3 800.0; 1266.6 800.0; 1900.0 800.0]
@@ -180,12 +180,12 @@ function test()
     shapes = ShapeCollection(Q4, cc)
     edgeshapes = skeleton(shapes)
     @test nshapes(edgeshapes) == 17
-    ir = increl_bound(shapes, edgeshapes)
+    ir = increl_bounding(shapes, edgeshapes)
     shouldget = Array{Int64,1}[[16, 1, 14, 17], [-14, 9, 6, 15], [2, 12, 10, -1], [-10, 4, 7, -9], [13, 11, 5, -12], [-5, 8, 3, -4]]
     for j in 1:length(shouldget)
-        @test shapelist(ir, j) == shouldget[j]
+        @test ir(j) == shouldget[j]
     end
-    @test shapelist(ir, 1000) == Int64[]
+    @test ir(1000) == Int64[]
     true
 end
 end

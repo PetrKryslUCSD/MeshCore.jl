@@ -153,19 +153,31 @@ function boundary(shapes::ShapeCollection)
 end
 
 """
-    IncRel0tomd
+    IncRelVertexToShape
 
 Used for dispatch of access to `0 -> d` incidence-relations.
 All fields are private.
 """
-struct IncRel0tomd
+struct IncRelVertexToShape
 	_from::Int64
 	_to::Int64
     _v::Vector{Vector{Int64}}
 end
 
 """
-    increl_0tomd(shapes::ShapeCollection)
+    (::IncRelVertexToShape)(j::Int64) = begin
+
+Retrieve list of shapes incident on vertex `j` of the incidence relation `0 -> d`.
+"""
+(ir::IncRelVertexToShape)(j::Int64) = begin
+	if j <= length(ir._v)
+		return ir._v[j]
+	end
+	return Int64[]
+end
+
+"""
+    increl_vertextoshape(shapes::ShapeCollection)
 
 Compute the incidence relation `0 -> d` for `d`-dimensional shapes.
 
@@ -173,7 +185,7 @@ This only makes sense for `d > 0`. For `d=1` we get for each vertex the list of
 edges connected to the vertex, and analogously faces and cells for `d=2` and
 `d=3`.
 """
-function increl_0tomd(shapes::ShapeCollection)
+function increl_vertextoshape(shapes::ShapeCollection)
 	nvmax = 0
     for j in 1:nshapes(shapes)
         nvmax = max(nvmax, maximum(connectivity(shapes, j)))
@@ -189,35 +201,37 @@ function increl_0tomd(shapes::ShapeCollection)
             push!(_v[i], j)
         end
     end
-    return IncRel0tomd(0, manifdim(shapes), _v)
+    return IncRelVertexToShape(0, manifdim(shapes), _v)
 end
 
 """
-    shapelist(ir::IncRel0tomd, j::Int64)
-
-Retrieve list of shapes incident on vertex `j` of the incidence relation `0 -> d`.
-"""
-function shapelist(ir::IncRel0tomd, j::Int64)
-	if j <= length(ir._v)
-		return ir._v[j]
-	end
-	return Int64[]
-end
-
-"""
-    IncRelbound
+    IncRelBounding
 
 Used for dispatch of access to `d -> d-1` incidence-relations, that is from a
 shape to its bounding shapes (i. e. facets as members of a global mesh).
 All fields are private.
 """
-struct IncRelbound
+struct IncRelBounding
 	_md::Int64 # manifold dimension of the shapes
 	_f::Vector{Vector{Int64}} # director of lists of facets
 end
 
 """
-    increl_bound(shapes::ShapeCollection, facetshapes::ShapeCollection)
+    (::IncRelBounding)(j::Int64)
+
+Retrieve list of facet shapes incident on shape `j`.
+
+These define the incidence relation `d -> d-1`.
+"""
+(ir::IncRelBounding)(j::Int64)  = begin
+	if j <= length(ir._f)
+		return ir._f[j]
+	end
+	return Int64[]
+end
+
+"""
+    increl_bounding(shapes::ShapeCollection, facetshapes::ShapeCollection)
 
 Compute the incidence relation `d -> d-1` for `d`-dimensional shapes.
 
@@ -231,7 +245,7 @@ in the sense in which it is defined by the shape as oriented with an outer
 normal; negative otherwise. The sense is defined by the numbering of the
 1st-order vertices of the facet shape.
 """
-function increl_bound(shapes::ShapeCollection, facetshapes::ShapeCollection)
+function increl_bounding(shapes::ShapeCollection, facetshapes::ShapeCollection)
 	function facesense(fc, oc) # is the facet used in the positive or in the negative sense?
 		for i in 1:length(fc)-1
 			if fc == oc
@@ -264,19 +278,5 @@ function increl_bound(shapes::ShapeCollection, facetshapes::ShapeCollection)
 			_f[i][j] = sgn * hf.store
 		end
     end
-    return IncRelbound(manifdim(shapes), _f)
-end
-
-"""
-    shapelist(ir::IncRelbound, j::Int64)
-
-Retrieve list of facet shapes incident on shape `j`.
-
-These define the incidence relation `d -> d-1`.
-"""
-function shapelist(ir::IncRelbound, j::Int64)
-	if j <= length(ir._f)
-		return ir._f[j]
-	end
-	return Int64[]
+    return IncRelBounding(manifdim(shapes), _f)
 end
