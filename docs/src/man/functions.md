@@ -36,9 +36,9 @@ facetconnectivity
 skeleton
 boundary
 increl_vertextoshape
-(ir::IncRelVertexToShape)(j::Int64) 
-increl_bounding
-(ir::IncRelBounding)(j::Int64)
+(ir::IncRelVertexToShape)(j::Int64)
+increl_boundedby
+(ir::IncRelBoundedBy)(j::Int64)
 ```
 
 ## Index

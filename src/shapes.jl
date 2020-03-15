@@ -205,25 +205,25 @@ function increl_vertextoshape(shapes::ShapeCollection)
 end
 
 """
-    IncRelBounding
+    IncRelBoundedBy
 
 Used for dispatch of access to `d -> d-1` incidence-relations, that is from a
 shape to its bounding shapes (i. e. facets as members of a global mesh).
 All fields are private.
 """
-struct IncRelBounding
+struct IncRelBoundedBy
 	_md::Int64 # manifold dimension of the shapes
 	_f::Vector{Vector{Int64}} # director of lists of facets
 end
 
 """
-    (::IncRelBounding)(j::Int64)
+    (::IncRelBoundedBy)(j::Int64)
 
 Retrieve list of facet shapes incident on shape `j`.
 
 These define the incidence relation `d -> d-1`.
 """
-(ir::IncRelBounding)(j::Int64)  = begin
+(ir::IncRelBoundedBy)(j::Int64)  = begin
 	if j <= length(ir._f)
 		return ir._f[j]
 	end
@@ -231,7 +231,7 @@ These define the incidence relation `d -> d-1`.
 end
 
 """
-    increl_bounding(shapes::ShapeCollection, facetshapes::ShapeCollection)
+    increl_boundedby(shapes::ShapeCollection, facetshapes::ShapeCollection)
 
 Compute the incidence relation `d -> d-1` for `d`-dimensional shapes.
 
@@ -245,7 +245,7 @@ in the sense in which it is defined by the shape as oriented with an outer
 normal; negative otherwise. The sense is defined by the numbering of the
 1st-order vertices of the facet shape.
 """
-function increl_bounding(shapes::ShapeCollection, facetshapes::ShapeCollection)
+function increl_boundedby(shapes::ShapeCollection, facetshapes::ShapeCollection)
 	function facesense(fc, oc) # is the facet used in the positive or in the negative sense?
 		for i in 1:length(fc)-1
 			if fc == oc
@@ -278,5 +278,5 @@ function increl_bounding(shapes::ShapeCollection, facetshapes::ShapeCollection)
 			_f[i][j] = sgn * hf.store
 		end
     end
-    return IncRelBounding(manifdim(shapes), _f)
+    return IncRelBoundedBy(manifdim(shapes), _f)
 end

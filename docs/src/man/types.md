@@ -32,5 +32,6 @@ ShapeCollection
 ## Incidence relations
 
 ```@docs
-IncRel
+IncRelVertexToShape
+IncRelBoundedBy
 ```
