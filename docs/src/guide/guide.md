@@ -75,33 +75,26 @@ are therefore defined for related, but separate meshes.
 
 The relations in the first row of the table (``0 \rightarrow d``) are lists of
 shapes incident on individual vertices. These are computed on demand by the
-function `increl_0tomd`. The individual incidence relations can be accessed by
-dispatch on the `IncRel0tomd` data. For instance, the relation ``0 \rightarrow 2`` can be
+function `increl_vertextoshape`. The individual incidence relations can be accessed by
+dispatch on the `IncRelVertexToShape` data. For instance, the relation ``0 \rightarrow 2`` can be
 computed for 2-manifold shapes as
 ```
-ir = increl_0tomd(shapes)
+ir = increl_vertextoshape(shapes)
 ```
 Here `manifdim(shapes)` is 2. The incidence list of two-dimensional shapes
-connected to node 13 can be retrieved as
-```
-shapelist(ir, 13)
-```
+connected to node 13 can be retrieved as `ir(13)`.
 
 #### Incidence relations ``d \rightarrow d-1``
 
 The relations below the diagonal of the table (``d \rightarrow d-1``) are lists
-of facet shapes incident on individual shapes (bounding). These are computed on
-demand by the function `increl_bound`. The individual incidence relations can be
-accessed by dispatch on the `IncRelbound` data. For instance, the relation ``2
+of facet shapes incident on individual shapes (bounding these shapes). The lists are computed on
+demand by the function `increl_boundedby`. The individual incidence relations can be
+accessed by dispatch on the `IncRelBoundedBy` data. For instance, the relation ``2
 \rightarrow 1`` can be computed for 2-manifold shapes as
 ```
 shapes = ShapeCollection(Q4, cc)
-edgeshapes = skeleton(shapes)
-ir = increl_bound(shapes, edgeshapes)
+ir = increl_boundedby(shapes, skeleton(shapes))
 ```
-Here `manifdim(shapes)` is 2, and `manifdim(edgeshapes)` is 1. The incidence
+Here `manifdim(shapes)` is 2, and `manifdim(skeleton(shapes))` is 1. The incidence
 list of 1-dimensional shapes (edges) bounding the quadrilateral  3 can be
-retrieved as
-```
-shapelist(ir, 3)
-```
+retrieved as `ir(3)`.
