@@ -192,22 +192,6 @@ function increl_0tomd(shapes::ShapeCollection)
     return IncRel0tomd(0, manifdim(shapes), _v)
 end
 
-# """
-#     increl(shapes::ShapeCollection, from::Int64, to::Int64)
-
-# Retrieve incidence relations of type `from -> to`.
-# """
-# function increl(shapes::ShapeCollection, from::Int64, to::Int64)
-# 	relation = "$(from) -> $(to)"
-# 	if !(relation in keys(shapes.increldict))
-# 		if relation == "0 -> $(to)"
-# 			shapes.increldict[relation] = _v2s(shapes)
-# 		end
-# 	end
-# 	ir = shapes.increldict[relation]
-# 	return ir
-# end
-
 """
     shapelist(ir::IncRel0tomd, j::Int64)
 
