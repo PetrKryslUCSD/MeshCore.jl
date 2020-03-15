@@ -29,7 +29,7 @@ function addhyperface!(container, hyperface, store = 0)
     return container
 end
 
-function havehyperface!(container, hyperface)
+function gethyperface(container, hyperface)
     anchor = min(hyperface...)
     bc = BitSet(hyperface);
     C = get(container, anchor, HyperFace[]);

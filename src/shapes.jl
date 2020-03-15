@@ -153,9 +153,9 @@ function boundary(shapes::ShapeCollection)
 end
 
 """
-    IncRel
+    IncRel0tomd
 
-Used for dispatch of access to incidence-relations.
+Used for dispatch of access to `0 -> d` incidence-relations.
 All fields are private.
 """
 struct IncRel0tomd
@@ -163,8 +163,6 @@ struct IncRel0tomd
 	_to::Int64
     _v::Vector{Vector{Int64}}
 end
-
-
 
 """
     increl_0tomd(shapes::ShapeCollection)
@@ -218,6 +216,83 @@ Retrieve list of shapes incident on vertex `j` of the incidence relation `0 -> d
 function shapelist(ir::IncRel0tomd, j::Int64)
 	if j <= length(ir._v)
 		return ir._v[j]
+	end
+	return Int64[]
+end
+
+"""
+    IncRelbound
+
+Used for dispatch of access to `d -> d-1` incidence-relations, that is from a
+shape to its bounding shapes (i. e. facets as members of a global mesh).
+All fields are private.
+"""
+struct IncRelbound
+	_md::Int64 # manifold dimension of the shapes
+	_f::Vector{Vector{Int64}} # director of lists of facets
+end
+
+"""
+    increl_bound(shapes::ShapeCollection, facetshapes::ShapeCollection)
+
+Compute the incidence relation `d -> d-1` for `d`-dimensional shapes.
+
+In other words, this is the incidence between shapes and the shapes that bound
+these shapes (facets). For tetrahedra as the shapes, the incidence relation
+lists the numbers of the faces that bound each individual tetrahedron.
+
+!!! Note
+The numbers of the facets are signed: positive when the facet bounds the shape
+in the sense in which it is defined by the shape as oriented with an outer
+normal; negative otherwise. The sense is defined by the numbering of the
+1st-order vertices of the facet shape.
+"""
+function increl_bound(shapes::ShapeCollection, facetshapes::ShapeCollection)
+	function facesense(fc, oc) # is the facet used in the positive or in the negative sense?
+		for i in 1:length(fc)-1
+			if fc == oc
+				return +1 # facet used in the positive sense
+			end
+			fc = circshift(fc, 1) # try a circular shift
+		end
+		return -1 # facet used in the positive sense
+	end
+	@assert manifdim(shapes) == manifdim(facetshapes)+1
+	hfc = hyperfacecontainer()
+    for i in 1:nshapes(facetshapes)
+		fc = connectivity(facetshapes, i)
+        addhyperface!(hfc, fc, i) # store the facet number with the hyper face
+    end
+	nsmax = nshapes(shapes)
+    _f = Vector{Int64}[];
+	sizehint!(_f, nsmax)
+    for i in 1:nsmax
+        push!(_f, fill(0, nfacets(shapes)))  # initially empty arrays
+    end
+	for i in 1:nshapes(shapes)
+		for j in 1:nfacets(shapes)
+			fc = facetconnectivity(shapes, i, j)
+			hf = gethyperface(hfc, fc)
+			if hf == EMPTYHYPERFACE
+				@error "Hyper face not found? $(fc)"
+			end
+			sgn = facesense(fc[1:n1storderv(facetshapes.shapedesc)], hf.oc)
+			_f[i][j] = sgn * hf.store
+		end
+    end
+    return IncRelbound(manifdim(shapes), _f)
+end
+
+"""
+    shapelist(ir::IncRelbound, j::Int64)
+
+Retrieve list of facet shapes incident on shape `j`.
+
+These define the incidence relation `d -> d-1`.
+"""
+function shapelist(ir::IncRelbound, j::Int64)
+	if j <= length(ir._f)
+		return ir._f[j]
 	end
 	return Int64[]
 end

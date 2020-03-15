@@ -45,8 +45,8 @@ defined for meshes derived from the first mesh.
 |:--------|:--------|:--------|:--------|:--------|
 | 0     | 0 -> 0 | 0 -> 1 | 0 -> 2 | 0 -> 3 |
 | 1     | 1 -> 0 | x | x | x |
-| 2     | 2 -> 0 | x | x | x |
-| 3     | 3 -> 0 | x | x | x |
+| 2     | 2 -> 0 | 2 -> 1 | x | x |
+| 3     | 3 -> 0 | x | 3 -> 2 | x |
 
 ### Connectivity
 
@@ -71,16 +71,37 @@ are therefore defined for related, but separate meshes.
 
 ### Incidence relations
 
+#### Incidence relations ``0 \rightarrow d``
+
 The relations in the first row of the table (``0 \rightarrow d``) are lists of
 shapes incident on individual vertices. These are computed on demand by the
-function `increl`. The individual incidence relations can be accessed by
-dispatch on the `IncRel` data. For instance, the relation ``0→2`` can be
+function `increl_0tomd`. The individual incidence relations can be accessed by
+dispatch on the `IncRel0tomd` data. For instance, the relation ``0 \rightarrow 2`` can be
 computed for 2-manifold shapes as
 ```
-ir = increl(shapes, 0, manifdim(shapes))
+ir = increl_0tomd(shapes)
 ```
 Here `manifdim(shapes)` is 2. The incidence list of two-dimensional shapes
 connected to node 13 can be retrieved as
 ```
-increllist(ir, 13)
+shapelist(ir, 13)
+```
+
+#### Incidence relations ``d \rightarrow d-1``
+
+The relations below the diagonal of the table (``d \rightarrow d-1``) are lists
+of facet shapes incident on individual shapes (bounding). These are computed on
+demand by the function `increl_bound`. The individual incidence relations can be
+accessed by dispatch on the `IncRelbound` data. For instance, the relation ``2
+\rightarrow 1`` can be computed for 2-manifold shapes as
+```
+shapes = ShapeCollection(Q4, cc)
+edgeshapes = skeleton(shapes)
+ir = increl_bound(shapes, edgeshapes)
+```
+Here `manifdim(shapes)` is 2, and `manifdim(edgeshapes)` is 1. The incidence
+list of 1-dimensional shapes (edges) bounding the quadrilateral  3 can be
+retrieved as
+```
+shapelist(ir, 3)
 ```

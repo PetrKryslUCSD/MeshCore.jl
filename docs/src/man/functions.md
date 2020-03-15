@@ -36,7 +36,9 @@ facetconnectivity
 skeleton
 boundary
 increl_0tomd
-shapelist
+shapelist(ir::IncRel0tomd, j::Int64)
+increl_bound
+shapelist(ir::IncRelbound, j::Int64)
 ```
 
 ## Index
