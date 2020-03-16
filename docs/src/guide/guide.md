@@ -2,9 +2,14 @@
 
 # Guide
 
-Let us begin with a simple example of the use of the library:
+## Glossary
+
+- Facet: shape bounding another shape. A shape is bounded by facets.
+- Edget: shape one manifold dimension lower than the facet. For instance a tetrahedron is bounded by facets, which in turn are bounded by edges. These edges are the "edgets" of the tetrahedron.
 
 ## Example
+
+Let us begin with a simple example of the use of the library:
 First import the mesh from a file and check that the correct number of entities
 were imported.
 ```
@@ -19,7 +24,7 @@ the vertices (in this particular skeleton they correspond one-to-one).
 bshapes = skeleton(skeleton(skeleton(shapes)))
 @test (nvertices(vertices), nshapes(bshapes)) == (376, 376)
 ```
-Export the mesh for visualization.
+Export the mesh for visualization (requires the use of the `MeshPorter` package).
 ```
 vtkwrite("trunc_cyl_shell_0-boundary-skeleton", vertices, bshapes)
 ```
