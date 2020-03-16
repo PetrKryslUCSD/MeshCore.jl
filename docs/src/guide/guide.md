@@ -87,13 +87,30 @@ connected to node 13 can be retrieved as `ir(13)`.
 #### Incidence relations ``d \rightarrow d-1``
 
 The relations below the diagonal of the table (``d \rightarrow d-1``) are lists
-of facet shapes incident on individual shapes (bounding these shapes). The lists are computed on
-demand by the function `increl_boundedby`. The individual incidence relations can be
-accessed by dispatch on the `IncRelBoundedBy` data. For instance, the relation ``2
-\rightarrow 1`` can be computed for 2-manifold shapes as
+of facet shapes incident on individual shapes: the shapes are bounded by the
+facets in the list. The result of this operation is a shape collection with the
+incidence relation computed by the function `boundedby`. The individual
+incidence relations can be accessed by dispatch on the incidence-relation data.
+For instance, the relation ``2 \rightarrow 1`` can be computed for 2-manifold
+shapes as
 ```
 shapes = ShapeCollection(Q4, cc)
-ir = increl_boundedby(shapes, skeleton(shapes))
+shapes1 = boundedby(shapes, skeleton(shapes))
+```
+Here `manifdim(shapes)` is 2, and `manifdim(skeleton(shapes))` is 1. The incidence
+list of 1-dimensional shapes (edges) bounding the quadrilateral  3 can be
+retrieved as `shapes1.increl(3)`.
+
+#### Incidence relations ``d-1 \rightarrow d``
+
+The relations above the diagonal  of the table (``d-1 \rightarrow d``) are lists
+of  shapes incident on individual facet shapes: the facet shapes bound the shapes. The lists are computed on
+demand by the function `increl_bounding`. The individual incidence relations can be
+accessed by dispatch on the `IncRelBounding` data. For instance, the relation ``1
+\rightarrow 2`` can be computed for 2-manifold shapes as
+```
+shapes = ShapeCollection(Q4, cc)
+ir = increl_bounding(shapes, skeleton(shapes))
 ```
 Here `manifdim(shapes)` is 2, and `manifdim(skeleton(shapes))` is 1. The incidence
 list of 1-dimensional shapes (edges) bounding the quadrilateral  3 can be
