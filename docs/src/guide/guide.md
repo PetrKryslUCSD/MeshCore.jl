@@ -2,12 +2,31 @@
 
 # Guide
 
-## Glossary
+Contents:
+- [Glossary](#Glossary)
+- [Example](#Example)
+- [Basic objects](#BasicObjects)
 
+## <a name="Glossary"></a>Glossary
+
+- Shape: topological shape of any manifold dimension, 0 for vertices, 1 for
+  edges, 2 for faces, and 3 for cells.
 - Facet: shape bounding another shape. A shape is bounded by facets.
-- Edget: shape one manifold dimension lower than the facet. For instance a tetrahedron is bounded by facets, which in turn are bounded by edges. These edges are the "edgets" of the tetrahedron.
+- Edget: shape one manifold dimension lower than the facet. For instance
+  a tetrahedron is bounded by facets, which in turn are bounded by edges.
+  These edges are the "edgets" of the tetrahedron.
+- Shape collection: set of shapes. Each shape is defined with reference
+  to other shapes through an incidence relation.
+- Incidence relation: Map from one shape to another shape. For instance,
+  three-dimensional finite elements are defined by the
+  incidence relation ``3 \rightarrow 0``, i. e. for each tetrahedron
+  the four vertices are listed. Some incidence relations link a shape to
+  a fixed number of other shapes, other incidence relations are of variable arity.
+- Connectivity: The connectivity is the incidence
+  relation linking the shape (``d``-dimensional manifold, where ``d \ge 0``) to
+  the set of vertices, ``d \rightarrow 0``.
 
-## Example
+## <a name="Example"></a>Example
 
 Let us begin with a simple example of the use of the library:
 First import the mesh from a file and check that the correct number of entities
@@ -29,14 +48,44 @@ Export the mesh for visualization (requires the use of the `MeshPorter` package)
 vtkwrite("trunc_cyl_shell_0-boundary-skeleton", vertices, bshapes)
 ```
 
-## Basic objects
+## <a name="BasicObjects"></a>Basic objects
 
 The objects with which the library works are the vertices and the shape
 collections. The vertices are points in space, and the shape collections are
-homogeneous collections of  shapes such as the usual points (0-dimensional
+homogeneous collections of  shapes such as the usual vertices (0-dimensional
 manifolds), line segments (1-dimensional manifolds), triangles and
 quadrilaterals (2-dimensional manifolds), tetrahedra and hexahedra
 (3-dimensional manifolds).
+
+### Connectivity
+
+The shapes are defined by the *connectivity*. The connectivity is the incidence
+relation linking the shape (``d``-dimensional manifold, where ``d \ge 0``) to
+the set of vertices.  The number of vertices connected by the shapes is a fixed
+number, for instance 8 for linear hexahedra.
+
+The collection of ``d``-dimensional shapes is thus defined by the connectivity
+``d \rightarrow 0``. The starting point for the processing of  the mesh is
+typically a two-dimensional or three-dimensional mesh. Let us say we start with
+a three dimensional mesh, so the basic data structure consists of the incidence
+relation ``3 \rightarrow 0``. The incidence relation ``2 \rightarrow 0`` can be
+derived by application of the method `skeleton`. Repeated application of the
+`skeleton` method will yield the relation ``1 \rightarrow 0``, and finally ``0
+\rightarrow 0``. Note that at difference to other definitions of the incidence
+relation ``0 \rightarrow 0`` (Logg 2008) this relation is one-to-one, not
+one-to-many.
+
+The table below shows the incidence relations (connectivity) that are the basic
+information for generated or imported meshes. For instance a surface mesh
+composed of triangles will start from the incidence relation ``2 \rightarrow
+0``. No other incidence relation from the table will exist at that point.
+
+| Manif. dim.      |   0   |   1   |   2   |  3   |
+|:--------|:--------|:--------|:--------|:--------|
+| 0     | 0 -> 0 | x | x | x |
+| 1     | 1 -> 0 | x | x | x |
+| 2     | 2 -> 0 | x | x | x |
+| 3     | 3 -> 0 | x | x | x |
 
 ### Topological relations
 
