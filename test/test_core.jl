@@ -112,6 +112,8 @@ function test()
     @test nvertices(shapes) == 4
     @test facetdesc(shapes) == L2
     @test nfacets(shapes) == 4
+    @test connectivity(shapes, SVector{3}([3, 5, 6])) == StaticArrays.SArray{Tuple{4},Int64,1,4}[[2,
+3, 7, 6], [3, 4, 8, 7], [7, 8, 12, 11]]
 
     skel1shapes = skeleton(shapes)
     @test nshapes(skel1shapes) == 17
