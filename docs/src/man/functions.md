@@ -24,21 +24,39 @@ nshapes
 manifdim
 nvertices
 n1storderv
+nshifts
 facetdesc
 nfacets
 facets
-facetconnectivity
+edgetconnectivity
+edgetdesc
+nedgets
+edgets
+edgetconnectivity
 ```
 
-## Topology operations
+## Incidence relations
+
+```@docs
+nrelations
+nentities
+(ir::IncRelFixed)(j::IT, k::IT) where {IT} = ir._v[j][k]
+(ir::IncRelFixed)(j::IT) where {IT} = ir._v[j]
+```
+
+## Relations below the diagonal
 
 ```@docs
 skeleton
 boundary
-increl_vertextoshape
-(ir::IncRelVertexToShape)(j::Int64)
-increl_boundedby
-(ir::IncRelBoundedBy)(j::Int64)
+boundedby
+boundedby2
+```
+
+## Relations above the diagonal
+
+```@docs
+increl_transpose
 ```
 
 ## Index

@@ -6,7 +6,7 @@ Contents:
 - [Glossary](@ref)
 - [Example](@ref)
 - [Basic objects](@ref)
-- [Incidence relations](@ref)
+- [Derived Incidence Relations](@ref)
 
 ## Glossary
 
@@ -32,7 +32,7 @@ Contents:
   be one and the same.  
 - Initial mesh: The entry point into the library. The first mesh that was defined.
 - Derived mesh: Mesh derived from another mesh through an incidence relation
-- calculation.
+  calculation.
 
 ## Example
 
@@ -95,7 +95,11 @@ composed of triangles will start from the incidence relation ``2 \rightarrow
 | 2     | 2 -> 0 |------ | ------ | ------ |
 | 3     | 3 -> 0 |------ | ------ | ------ |
 
-## Incidence relations
+The relation ``0 \rightarrow 0`` is trivial: Vertex is incident upon itself.
+Hence it may not be worthwhile  to actually create a shape collection for this
+relation. It is included for completeness only, really.
+
+## Derived Incidence Relations
 
 The incidence relations computable with the library are summarized in the
 table below. They include the initial incidence relation  in the first column of
