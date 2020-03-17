@@ -122,6 +122,7 @@ function test()
     xyz = Float64[0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
     v =  Vertices(xyz)
     @test nvertices(v) == 12
+    @test nspacedims(v) == 2
     @test coordinatetype(v) == Float64
     @test coordinates(v, 2) == [633.3333333333334, 0.0]
     coord = coordinates(v, SVector{2}([2, 3]))
@@ -245,46 +246,6 @@ end
 using .mtopoop3
 mtopoop3.test()
 
-# module mtopoop4
-# using StaticArrays
-# using MeshCore: L2, Q4, ShapeCollection, connectivity, manifdim, nvertices, nedgets, nshapes
-# using MeshCore: Vertices, boundedby2, skeleton
-# using MeshCore: IncRelFixed, Vertices, increl_transpose
-# using Test
-# function test()
-#     xyz = [0.0 0.0; 633.3 0.0; 1266.6 0.0; 1900.0 0.0; 0.0 400.0; 633.3 400.0; 1266.6 400.0; 1900.0 400.0; 0.0 800.0; 633.3 800.0; 1266.6 800.0; 1900.0 800.0]
-#     vertices =  Vertices(xyz)
-#     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
-#     cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
-#     shapes = ShapeCollection(Q4, IncRelFixed(cc))
-#     @show edgetshapes = skeleton(skeleton(shapes))
-#     @test nshapes(edgetshapes) == 12
-#     bb2shapes = boundedby2(shapes, edgetshapes)
-#     @show bb2shapes.increl
-#     shouldget = Array{Int64,1}[[16, 1, 14, 17], [-14, 9, 6, 15], [2, 12, 10, -1], [-10, 4, 7, -9], [13, 11, 5, -12], [-5, 8, 3, -4]]
-#     allmatch = true
-#     for j in 1:length(shouldget)
-#         for k in 1:length(shouldget[j])
-#             allmatch = allmatch && (bbshapes.increl(j, k) == shouldget[j][k])
-#         end
-#     end
-#     @test allmatch
-#     # Now test the transposed incidence relation
-#     tincrel = increl_transpose(bbshapes.increl)
-#     shouldget = Array{Int64,1}[[1, 3], [3], [6], [4, 6], [5, 6], [2], [4], [6], [2, 4], [3, 4], [5], [3, 5], [5], [1, 2], [2], [1], [1]]
-#     allmatch = true
-#     for j in 1:length(shouldget)
-#         for k in 1:length(shouldget[j])
-#             allmatch = allmatch && (tincrel(j, k) == shouldget[j][k])
-#         end
-#     end
-#     @test allmatch
-#     true
-# end
-# end
-# using .mtopoop4
-# mtopoop4.test()
-
 module mtopoop4
 using StaticArrays
 using MeshCore: L2, Q4, P1, ShapeCollection, connectivity, manifdim, nvertices, nedgets, nshapes
@@ -329,12 +290,13 @@ include("samplet4.jl")
 module mt4topo1
 using StaticArrays
 using MeshCore: ShapeCollection, connectivity, manifdim, nvertices, nedgets, nshapes
-using MeshCore: Vertices, boundedby2, skeleton
+using MeshCore: Vertices, boundedby2, skeleton, boundedby, nshifts, _sense
 using MeshCore: IncRelFixed, Vertices, increl_transpose, nrelations, nentities
 using ..samplet4: mesh
 using Test
 function test()
     vertices, shapes = mesh()
+
     # Test the incidence relations 3 -> 0 & 0 -> 3
     tincrel = increl_transpose(shapes.increl)
     allmatch = true
@@ -345,6 +307,7 @@ function test()
         end # k
     end # j
     @test allmatch
+
     # Test the incidence relations 2 -> 0 & 0 -> 2
     faces = skeleton(shapes)
     tincrel = increl_transpose(faces.increl)
@@ -356,6 +319,7 @@ function test()
         end # k
     end # j
     @test allmatch
+
     # Test the incidence relations 1 -> 0 & 0 -> 1
     edges = skeleton(faces)
     tincrel = increl_transpose(edges.increl)
@@ -368,6 +332,56 @@ function test()
     end # j
     @test allmatch
 
+    # Test the incidence relations 3 -> 2 & 2 -> 3
+    faces = skeleton(shapes)
+    bbfaces = boundedby(shapes, faces)
+    # Check that the tetrahedra connectivity refers to all three vertices of the faces
+    allmatch = true
+    @test nrelations(shapes.increl) == nrelations(bbfaces.increl)
+    for j in 1:nrelations(bbfaces.increl)
+        for k in 1:nentities(bbfaces.increl, j)
+            f = bbfaces.increl(j, k)
+            for m in 1:3
+                allmatch = allmatch && (faces.increl(abs(f), m) in shapes.increl(j))
+            end # m
+        end # k
+    end # j
+    @test allmatch
+    # Check that the orientations of the faces is correct
+    allmatch = true
+    @test nrelations(shapes.increl) == nrelations(bbfaces.increl)
+    for j in 1:nrelations(bbfaces.increl)
+        for k in 1:nentities(bbfaces.increl, j)
+            for f in bbfaces.increl(j)
+                orientation = sign(f)
+                f = abs(f)
+                fc = faces.increl(f)
+                matchone = false
+                for m in 1:4
+                    oc = shapes.increl(j)[shapes.shapedesc.facets[m, :]]
+                    if length(intersect(fc, oc)) == 3
+                        s = _sense(fc, oc, nshifts(faces.shapedesc))
+                        matchone = (s == orientation)
+                    end
+                    if matchone
+                        break
+                    end
+                end # m
+                allmatch = allmatch && matchone
+            end
+        end # k
+    end # j
+    @test allmatch
+    # Check the transpose incidence relation
+    tincrel = increl_transpose(bbfaces.increl)
+    allmatch = true
+    for j in 1:nrelations(tincrel)
+        for k in 1:nentities(tincrel, j)
+            e = tincrel(j, k)
+            allmatch = allmatch && (j in abs.(bbfaces.increl(e)))
+        end # k
+    end # j
+    @test allmatch
     true
 end
 end
