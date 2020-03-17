@@ -289,12 +289,33 @@ module mt4topo1
 using StaticArrays
 using MeshCore: ShapeCollection, connectivity, manifdim, nvertices, nedgets, nshapes
 using MeshCore: Vertices, boundedby2, skeleton
-using MeshCore: IncRelFixed, Vertices, increl_transpose
+using MeshCore: IncRelFixed, Vertices, increl_transpose, nrelations, nentities
 using ..samplet4: mesh
 using Test
 function test()
     vertices, shapes = mesh()
-    
+    # Test the incidence relations 2 -> 0 & 0 -> 2
+    faces = skeleton(shapes)
+    tincrel = increl_transpose(faces.increl)
+    allmatch = true
+    for j in 1:nrelations(tincrel)
+        for k in 1:nentities(tincrel, j)
+            f = tincrel(j, k)
+            allmatch = allmatch && (j in faces.increl(f))
+        end # k
+    end # j
+    @test allmatch
+    # Test the incidence relations 1 -> 0 & 0 -> 1
+    edges = skeleton(faces)
+    tincrel = increl_transpose(edges.increl)
+    allmatch = true
+    for j in 1:nrelations(tincrel)
+        for k in 1:nentities(tincrel, j)
+            f = tincrel(j, k)
+            allmatch = allmatch && (j in edges.increl(f))
+        end # k
+    end # j
+    @test allmatch
     true
 end
 end
