@@ -11,6 +11,31 @@ end
 using .mmesh1
 mmesh1.test()
 
+module mmesh1a1
+using MeshCore: _sense
+using Test
+function test()
+    oc = [4, 1, 5, 13]
+    fc = [4, 1, 5, 13]
+    @test _sense(fc, oc, 4) == +1
+    fc = [13, 4, 1, 5]
+    @test _sense(fc, oc, 4) == +1
+    fc = [1, 5, 13, 4]
+    @test _sense(fc, oc, 4) == +1
+    fc = [1, 4, 13, 5]
+    @test _sense(fc, oc, 4) == -1
+    fc = [5, 1, 4, 13]
+    @test _sense(fc, oc, 4) == -1
+    fc = [13, 5, 1, 4]
+    @test _sense(fc, oc, 4) == -1
+    fc = [4, 13, 5, 1]
+    @test _sense(fc, oc, 4) == -1
+    true
+end
+end
+using .mmesh1a1
+mmesh1a1.test()
+
 module mmesh2
 using StaticArrays
 using MeshCore: Vertices, nvertices, coordinates

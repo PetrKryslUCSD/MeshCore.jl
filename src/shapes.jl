@@ -89,13 +89,6 @@ Retrieve the number of boundary facets per shape.
 nfacets(shapes::ShapeCollection) = nfacets(shapes.shapedesc)
 
 """
-    facets(shapes::ShapeCollection)
-
-Retrieve the connectivity of the facets.
-"""
-facets(shapes::ShapeCollection) = shapes.shapedesc.facets
-
-"""
     facetconnectivity(shapes::ShapeCollection, i::I, j::I) where {I}
 
 Retrieve connectivity of the `j`-th facet shape of the `i`-th shape from the collection.
@@ -117,13 +110,6 @@ edgetdesc(shapes::ShapeCollection) = shapes.shapedesc.edgetdesc
 Retrieve the number of boundary edgets per shape.
 """
 nedgets(shapes::ShapeCollection) = nedgets(shapes.shapedesc)
-
-"""
-    edgets(shapes::ShapeCollection)
-
-Retrieve the connectivity of the edgets.
-"""
-edgets(shapes::ShapeCollection) = shapes.shapedesc.edgets
 
 """
     edgetconnectivity(shapes::ShapeCollection, i::I, j::I) where {I}
