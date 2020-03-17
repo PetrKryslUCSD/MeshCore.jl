@@ -5,4 +5,7 @@
 
 # MeshCore.jl
 
-Small package for the topology of meshes for the Finite Element Methods (FEM).
+Small package for the topology of meshes for the Finite Element Methods (FEM). All essential topological incidence relations are provided: see the guide. The library provides efficient storage of  coordinates and connectivities in static arrays for speed of access.
+
+Note: The coverage appears low, but that seems to be a bug in the computation of the coverage
+when applied to one-line functions defined for multiple types.
