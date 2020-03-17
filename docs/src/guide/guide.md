@@ -15,8 +15,8 @@ Contents:
 - Facet: shape bounding another shape. A shape is bounded by facets.
 - Edget: shape one manifold dimension lower than the facet. For instance a
   tetrahedron is bounded by facets, which in turn are bounded by edges. These
-  edges are the "edgets" of the tetrahedron. Edgets  can be thought of as the
-  bounding shapes of the facets. They can also be thought of as a "leaky" bounding shapes of 3-D cells.
+  edges are the "edgets" of the tetrahedron.  The edgets can also be thought of
+  as a "leaky" bounding shapes of 3-D cells.
 - Covering: the boundary of a 3-D cell is the union of the vertices, edges, and faces.
 - Shape collection: set of shapes. Each shape is defined with reference
   to other shapes through an incidence relation.
@@ -46,8 +46,9 @@ vertices, shapes = mesh["vertices"], mesh["shapes"][1]
 @test (nvertices(vertices), nshapes(shapes)) == (376, 996)
 ```
 Extract zero-dimensional entities (points) by a triple application of the
-`skeleton` function. Check that the number of shapes is equal to the number of
-the vertices (in this particular skeleton they correspond one-to-one).
+`skeleton` function. Check that the number of shapes in the skeleton is equal to
+the number of the vertices (in this particular skeleton they correspond
+one-to-one).
 ```
 bshapes = skeleton(skeleton(skeleton(shapes)))
 @test (nvertices(vertices), nshapes(bshapes)) == (376, 376)
@@ -188,9 +189,10 @@ it provides cover for the edges of the tetrahedron.
 | 2     | 2 -> 0 | ------ | ------ | ------ |
 | 3     | ------ | 3 -> 1 | ------ | ------ |
 
-The relationship ``2  \rightarrow 0`` can be derived in two ways: from the incidence relation ``3
-\rightarrow  0`` by the `skeleton` function, or by the `boundedby2` function applied
-to a shape collection of cells and  a shape collection of the edges.
+The relationship ``2  \rightarrow 0`` can be derived in two ways: from the
+incidence relation ``3 \rightarrow  0`` by the `skeleton` function, or by the
+`boundedby2` function applied to a shape collection of cells and  a shape
+collection of the edges.
 
 
 ### Incidence relations ``d_1 \rightarrow d_2``, where ``d_1 \lt d_2``
@@ -212,3 +214,13 @@ pass through the entire mesh. The incidence relations in the upper triangle of
 the table are all of variable arity: for instance the incidence relation ``1
 \rightarrow 3`` is the list of three-dimensional cells that share a given edge.
 Clearly the number of cells varies from edge to edge.
+
+### Incidence relations ``d \rightarrow d``, where ``d \gt 1``
+
+These incidence relations do not fit the table referenced many times above. The
+definition of such a relation is not unique:  It needs to refer to a connecting shape. For
+instance, the relationship between faces,   ``2 \rightarrow 2``, needs to state
+through which shape the incidence occurs: is it through the common vertex? Is it
+through a common edge? Similarly, for cells the incidence relationship ``3
+\rightarrow 3`` will be different for the incidence to follow from a common
+vertex, a common edge, or a common face.
