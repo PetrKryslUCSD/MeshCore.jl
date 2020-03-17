@@ -16,7 +16,8 @@ Contents:
 - Edget: shape one manifold dimension lower than the facet. For instance a
   tetrahedron is bounded by facets, which in turn are bounded by edges. These
   edges are the "edgets" of the tetrahedron. Edgets  can be thought of as the
-  bounding shapes of the facets.
+  bounding shapes of the facets. They can also be thought of as a "leaky" bounding shapes of 3-D cells.
+- Covering: the boundary of a 3-D cell is the union of the vertices, edges, and faces.
 - Shape collection: set of shapes. Each shape is defined with reference
   to other shapes through an incidence relation.
 - Incidence relation: Map from one shape to another shape. For instance,
