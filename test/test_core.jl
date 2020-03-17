@@ -4,6 +4,7 @@ using Test
 function test()
     @test manifdim(P1) == 0
     @test nfacets(L2) == 2
+
     true
 end
 end
@@ -29,13 +30,13 @@ mmesh2.test()
 module mmesh3
 using StaticArrays
 using MeshCore: L2, Q4, ShapeCollection, manifdim, nvertices, nfacets, facetdesc, nshapes
-using MeshCore: IncRelFixed
+using MeshCore: Q4ShapeDesc, shapedesc, n1storderv, nedgets, nshifts
+using MeshCore: IncRelFixed, connectivity
 using Test
 function test()
-    shapedesc = Q4
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
-    cc = [SVector{nvertices(shapedesc)}(c[idx]) for idx in 1:length(c)]
-    shapes = ShapeCollection(shapedesc, IncRelFixed(cc))
+    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
+    shapes = ShapeCollection(Q4, IncRelFixed(cc))
     @test shapes.increl(3, 3) == 7
     @test shapes.increl(1, 4) == 5
     @test shapes.increl(6, 1) == 7
@@ -44,6 +45,13 @@ function test()
     @test facetdesc(shapes) == L2
     @test nfacets(shapes) == 4
     @test nshapes(shapes) == 6
+    @test manifdim(shapedesc(shapes)) == 2
+    @test nvertices(shapedesc(shapes)) == 4
+    @test nfacets(shapedesc(shapes)) == 4
+    @test nedgets(shapedesc(shapes)) == 4
+    @test n1storderv(shapedesc(shapes)) == 4
+    @test nshifts(shapedesc(shapes)) == 4
+    @test 7 in connectivity(shapes, 3)
     true
 end
 end
@@ -294,6 +302,16 @@ using ..samplet4: mesh
 using Test
 function test()
     vertices, shapes = mesh()
+    # Test the incidence relations 3 -> 0 & 0 -> 3
+    tincrel = increl_transpose(shapes.increl)
+    allmatch = true
+    for j in 1:nrelations(tincrel)
+        for k in 1:nentities(tincrel, j)
+            f = tincrel(j, k)
+            allmatch = allmatch && (j in shapes.increl(f))
+        end # k
+    end # j
+    @test allmatch
     # Test the incidence relations 2 -> 0 & 0 -> 2
     faces = skeleton(shapes)
     tincrel = increl_transpose(faces.increl)
@@ -316,6 +334,7 @@ function test()
         end # k
     end # j
     @test allmatch
+
     true
 end
 end
