@@ -87,15 +87,21 @@ mmesh5.test()
 
 module mmesh6
 using StaticArrays
-using MeshCore: Vertices, coordinates
+using MeshCore: Vertices, coordinates, nspacedims, coordinatetype
 using MeshCore: L2, Q4, ShapeCollection, manifdim, nvertices, nfacets, facetdesc, nshapes, facetconnectivity
 using MeshCore: IncRelFixed, connectivity
 using MeshCore: skeleton
 using Test
 function test()
     shapedesc = Q4
-    xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
+    xyz = Float64[0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
     v =  Vertices(xyz)
+    @test nvertices(v) == 12
+    @test coordinatetype(v) == Float64
+    @test coordinates(v, 2) == [633.3333333333334, 0.0]
+    coord = coordinates(v, SVector{2}([2, 3]))
+    @test coord[1] == [633.3333333333334, 0.0]
+    @test coord[2] == [1266.6666666666667, 0.0]
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
     cc = [SVector{nvertices(shapedesc)}(c[idx]) for idx in 1:length(c)]
     shapes = ShapeCollection(shapedesc, IncRelFixed(cc))
