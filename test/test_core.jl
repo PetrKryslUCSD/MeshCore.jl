@@ -282,3 +282,21 @@ end
 end
 using .mtopoop4
 mtopoop4.test()
+
+include("samplet4.jl")
+
+module mt4topo1
+using StaticArrays
+using MeshCore: ShapeCollection, connectivity, manifdim, nvertices, nedgets, nshapes
+using MeshCore: Vertices, boundedby2, skeleton
+using MeshCore: IncRelFixed, Vertices, increl_transpose
+using ..samplet4: mesh
+using Test
+function test()
+    vertices, shapes = mesh()
+    
+    true
+end
+end
+using .mt4topo1
+mt4topo1.test()
