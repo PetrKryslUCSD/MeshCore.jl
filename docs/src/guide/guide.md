@@ -3,18 +3,20 @@
 # Guide
 
 Contents:
-- [Glossary](#Glossary)
-- [Example](#Example)
-- [Basic objects](#BasicObjects)
+- [Glossary](@ref)
+- [Example](@ref)
+- [Basic objects](@ref)
+- [Incidence relations](@ref)
 
-## <a name="Glossary"></a>Glossary
+## Glossary
 
-- Shape: topological shape of any manifold dimension, 0 for vertices, 1 for
-  edges, 2 for faces, and 3 for cells.
+- Shape: topological shape of any manifold dimension, ``0`` for vertices, ``1`` for
+  edges, ``2`` for faces, and ``3`` for cells.
 - Facet: shape bounding another shape. A shape is bounded by facets.
-- Edget: shape one manifold dimension lower than the facet. For instance
-  a tetrahedron is bounded by facets, which in turn are bounded by edges.
-  These edges are the "edgets" of the tetrahedron.
+- Edget: shape one manifold dimension lower than the facet. For instance a
+  tetrahedron is bounded by facets, which in turn are bounded by edges. These
+  edges are the "edgets" of the tetrahedron. Edgets  can be thought of as the
+  bounding shapes of the facets.
 - Shape collection: set of shapes. Each shape is defined with reference
   to other shapes through an incidence relation.
 - Incidence relation: Map from one shape to another shape. For instance,
@@ -22,11 +24,17 @@ Contents:
   incidence relation ``3 \rightarrow 0``, i. e. for each tetrahedron
   the four vertices are listed. Some incidence relations link a shape to
   a fixed number of other shapes, other incidence relations are of variable arity.
-- Connectivity: The connectivity is the incidence
-  relation linking the shape (``d``-dimensional manifold, where ``d \ge 0``) to
-  the set of vertices, ``d \rightarrow 0``.
+- Connectivity: The connectivity is the incidence relation ``d \rightarrow 0``
+  linking the shape (``d``-dimensional manifold, where ``d \ge 0``) to the set
+  of vertices (``0``-dimensional manifold).
+- Mesh: Collection of shapes. It may be also a set of collections of shapes, but
+  it is usually quite enough  to consider a mesh and the collection of shapes to
+  be one and the same.  
+- Initial mesh: The entry point into the library. The first mesh that was defined.
+- Derived mesh: Mesh derived from another mesh through an incidence relation
+- calculation.
 
-## <a name="Example"></a>Example
+## Example
 
 Let us begin with a simple example of the use of the library:
 First import the mesh from a file and check that the correct number of entities
@@ -48,7 +56,7 @@ Export the mesh for visualization (requires the use of the `MeshPorter` package)
 vtkwrite("trunc_cyl_shell_0-boundary-skeleton", vertices, bshapes)
 ```
 
-## <a name="BasicObjects"></a>Basic objects
+## Basic objects
 
 The objects with which the library works are the vertices and the shape
 collections. The vertices are points in space, and the shape collections are
@@ -82,50 +90,105 @@ composed of triangles will start from the incidence relation ``2 \rightarrow
 
 | Manif. dim.      |   0   |   1   |   2   |  3   |
 |:--------|:--------|:--------|:--------|:--------|
-| 0     | 0 -> 0 | x | x | x |
-| 1     | 1 -> 0 | x | x | x |
-| 2     | 2 -> 0 | x | x | x |
-| 3     | 3 -> 0 | x | x | x |
+| 0     | 0 -> 0 |------ | ------ | ------ |
+| 1     | 1 -> 0 |------ | ------ | ------ |
+| 2     | 2 -> 0 |------ | ------ | ------ |
+| 3     | 3 -> 0 |------ | ------ | ------ |
 
-### Topological relations
+## Incidence relations
 
-The topological relations computable with the library are summarized in the
+The incidence relations computable with the library are summarized in the
 table below. They include the initial incidence relation  in the first column of
 the table (connectivity of the first mesh), and the subsequently available
 incidence relations in the rest of the table. Some of these relations are
-defined for meshes derived from the first mesh.
+defined for meshes derived from the initial mesh.
 
 | Manif. dim.      |   0   |   1   |   2   |  3   |
 |:--------|:--------|:--------|:--------|:--------|
 | 0     | 0 -> 0 | 0 -> 1 | 0 -> 2 | 0 -> 3 |
-| 1     | 1 -> 0 | x | x | x |
-| 2     | 2 -> 0 | 2 -> 1 | x | x |
-| 3     | 3 -> 0 | x | 3 -> 2 | x |
+| 1     | 1 -> 0 | ------ | 1 -> 2 | 1 -> 3 |
+| 2     | 2 -> 0 | 2 -> 1 | ------ | 2 -> 3 |
+| 3     | 3 -> 0 | 3 -> 1 | 3 -> 2 | ------ |
 
-### Connectivity
+In general the relations below the diagonal require the calculation of derived
+meshes. The relations above the diagonal are obtained by the so-called transpose
+operation, and do not require the construction of new meshes. Also, the
+relations below the diagonal are of fixed size. That is the number of entities
+incident on a given entity is a fixed number that can be determined beforehand.
+An example is  the relation ``3 \rightarrow 2``, where for the ``j``-th cell the
+list consists of the faces bounding the cell.
 
-The shapes are defined by the *connectivity*. The connectivity is the incidence
-relation linking the shape (``d``-dimensional manifold, where ``d \ge 0``) to
-the set of vertices.  The number of vertices connected by the shapes is a fixed
-number, for instance 8 for linear hexahedra.
+On the other hand, the relations above the diagonal are in general of variable
+length. For example the relation ``2 \rightarrow 3`` represents the cells which
+are bounded by a face: so either 2 or 1 cells.
 
-The collection of ``d``-dimensional shapes is thus defined by the connectivity
-``d \rightarrow 0``. The starting point for the processing of  the mesh is
-typically a two-dimensional or three-dimensional mesh. Let us say we start with
-a three dimensional mesh, so the basic data structure consists of the incidence
-relation ``3 \rightarrow 0``. The incidence relation ``2 \rightarrow 0`` can be
-derived by application of the method `skeleton`. Repeated application of the
-`skeleton` method will yield the relation ``1 \rightarrow 0``, and finally ``0
-\rightarrow 0``. Note that at difference to other definitions of the incidence
-relation ``0 \rightarrow 0`` (Logg 2008) this relation is one-to-one, not
-one-to-many.
+### Incidence relations ``d \rightarrow 0``
+
+The table below summarizes the incidence relations that represent  the initial meshes.
+
+| Manif. dim. |   0   |   1   |   2   |  3   |
+|:--------|:--------|:--------|:--------|:--------|
+| 0     | 0 -> 0 |------ | ------ | ------ |
+| 1     | 1 -> 0 |------ | ------ | ------ |
+| 2     | 2 -> 0 |------ | ------ | ------ |
+| 3     | 3 -> 0 |------ | ------ | ------ |
+
+For instance, for a surface mesh the relation ``2 \rightarrow 0`` is defined initially.
+The relations *above* that can be calculated with the `skeleton` function.
+So,  the skeleton of the surface mesh would consist of all the edges
+in the mesh, expressible as the incidence relation  ``1 \rightarrow 0``.
 
 Note that the `skeleton` method constructs a derived mesh: the incidence relations
-are therefore defined for related, but separate meshes.
+in the column of the above table are therefore defined for related, but separate, meshes.
 
-### Incidence relations
+### Incidence relations ``d \rightarrow d-1``
 
-#### Incidence relations ``0 \rightarrow d``
+This incidence relation provides for each shape the list of shapes of manifold
+dimension lower by one by which the shape is bounded. For example, for each
+triangular face (manifold dimension 2), the relationship would state the global
+numbers of edges (manifold dimension 1) by which the triangle face is bounded.
+
+| Manif. dim.  |   0   |   1   |   2   |  3   |
+|:--------|:--------|:--------|:--------|:--------|
+|   0     | ------ | ------ | ------ | ------ |
+|   1     | 1 -> 0 | ------ | ------ | ------ |
+|   2     | ------ | 2 -> 1 | ------ | ------ |
+|   3     | ------ | ------ | 3 -> 2 | ------ |
+
+The incidence  relation ``d \rightarrow d-1`` may be derived with the function
+`boundedby`, which operates on two shape collections: the shapes of dimension ``d``
+and the facet shapes of dimension ``d-1``.
+
+The relationship ``1  \rightarrow 0`` can be derived in two ways: from the incidence relation ``2
+\rightarrow  0`` by the `skeleton` function, or by the `boundedby` function applied
+to a shape collection of edges and  a shape collection of the vertices.
+
+### Incidence relations ``d \rightarrow d-2``
+
+This incidence relation provides for each shape the list of shapes of manifold
+dimension lower by two by which the shape is "bounded". For example, for each
+triangular face (manifold dimension 2), the relationship would state the global
+numbers of vertices (manifold dimension 0) by which the triangle face is
+"bounded". The word "bounded" is in quotes because the relationship of bounding
+is very leaky: Clearly we do not cover most of the boundary, only the vertices.
+
+Similar relationship can be derived for instance between tetrahedra and the
+edges (``3 \rightarrow 1``). Again, the incidence relation is very leaky in that
+it provides cover for the edges of the tetrahedron.
+
+| Manif. dim.      |   0   |   1   |   2   |  3   |
+|:--------|:--------|:--------|:--------|:--------|
+| 0     | ------ | ------ | ------ | ------ |
+| 1     | ------ | ------ | ------ | ------ |
+| 2     | 2 -> 0 | ------ | ------ | ------ |
+| 3     | ------ | 3 -> 1 | ------ | ------ |
+
+The relationship ``2  \rightarrow 0`` can be derived in two ways: from the incidence relation ``3
+\rightarrow  0`` by the `skeleton` function, or by the `boundedby2` function applied
+to a shape collection of cells and  a shape collection of the edges.
+
+
+### Incidence relations ``0 \rightarrow d``
 
 The relations in the first row of the table (``0 \rightarrow d``) are lists of
 shapes incident on individual vertices. These are computed on demand by the
@@ -138,34 +201,29 @@ ir = increl_vertextoshape(shapes)
 Here `manifdim(shapes)` is 2. The incidence list of two-dimensional shapes
 connected to node 13 can be retrieved as `ir(13)`.
 
-#### Incidence relations ``d \rightarrow d-1``
+| Manif. dim.      |   0   |   1   |   2   |  3   |
+|:--------|:--------|:--------|:--------|:--------|
+|   0     | ------ | 0 -> 1 | 0 -> 2 | 0 -> 3 |
+|   1     | ------ | ------ | ------ | ------ |
+|   2     | ------ | ------ | ------ | ------ |
+|   3     | ------ | ------ | ------ | ------ |
 
-The relations below the diagonal of the table (``d \rightarrow d-1``) are lists
-of facet shapes incident on individual shapes: the shapes are bounded by the
-facets in the list. The result of this operation is a shape collection with the
-incidence relation computed by the function `boundedby`. The individual
-incidence relations can be accessed by dispatch on the incidence-relation data.
-For instance, the relation ``2 \rightarrow 1`` can be computed for 2-manifold
-shapes as
-```
-shapes = ShapeCollection(Q4, cc)
-shapes1 = boundedby(shapes, skeleton(shapes))
-```
-Here `manifdim(shapes)` is 2, and `manifdim(skeleton(shapes))` is 1. The incidence
-list of 1-dimensional shapes (edges) bounding the quadrilateral  3 can be
-retrieved as `shapes1.increl(3)`.
+### Incidence relations ``d_1 \rightarrow d_2``
 
-#### Incidence relations ``d-1 \rightarrow d``
+The relations in the first row of the table (``0 \rightarrow d``) are lists of
+shapes incident on individual vertices. These are computed on demand by the
+function `increl_vertextoshape`. The individual incidence relations can be accessed by
+dispatch on the `IncRelVertexToShape` data. For instance, the relation ``0 \rightarrow 2`` can be
+computed for 2-manifold shapes as
+```
+ir = increl_vertextoshape(shapes)
+```
+Here `manifdim(shapes)` is 2. The incidence list of two-dimensional shapes
+connected to node 13 can be retrieved as `ir(13)`.
 
-The relations above the diagonal  of the table (``d-1 \rightarrow d``) are lists
-of  shapes incident on individual facet shapes: the facet shapes bound the shapes. The lists are computed on
-demand by the function `increl_bounding`. The individual incidence relations can be
-accessed by dispatch on the `IncRelBounding` data. For instance, the relation ``1
-\rightarrow 2`` can be computed for 2-manifold shapes as
-```
-shapes = ShapeCollection(Q4, cc)
-ir = increl_bounding(shapes, skeleton(shapes))
-```
-Here `manifdim(shapes)` is 2, and `manifdim(skeleton(shapes))` is 1. The incidence
-list of 1-dimensional shapes (edges) bounding the quadrilateral  3 can be
-retrieved as `ir(3)`.
+| Manif. dim.      |   0   |   1   |   2   |  3   |
+|:--------|:--------|:--------|:--------|:--------|
+|   0     | ------ | 0 -> 1 | 0 -> 2 | 0 -> 3 |
+|   1     | ------ | ------ | 1 -> 2 | 1 -> 3 |
+|   2     | ------ | ------ | ------ | 2 -> 3 |
+|   3     | ------ | ------ | ------ | ------ |
