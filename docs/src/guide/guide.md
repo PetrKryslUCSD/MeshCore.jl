@@ -143,8 +143,8 @@ in the column of the above table are therefore defined for related, but separate
 
 ### Incidence relations ``d \rightarrow d-1``
 
-This incidence relation provides for each shape the list of shapes of manifold
-dimension lower by one by which the shape is bounded. For example, for each
+This incidence relation provides for each shape the list of shapes by which the
+shape is bounded of manifold dimension lower by one. For example, for each
 triangular face (manifold dimension 2), the relationship would state the global
 numbers of edges (manifold dimension 1) by which the triangle face is bounded.
 
@@ -165,8 +165,8 @@ to a shape collection of edges and  a shape collection of the vertices.
 
 ### Incidence relations ``d \rightarrow d-2``
 
-This incidence relation provides for each shape the list of shapes of manifold
-dimension lower by two by which the shape is "bounded". For example, for each
+This incidence relation provides for each shape the list of shapes by which the
+shape is "bounded" of manifold dimension lower by two. For example, for each
 triangular face (manifold dimension 2), the relationship would state the global
 numbers of vertices (manifold dimension 0) by which the triangle face is
 "bounded". The word "bounded" is in quotes because the relationship of bounding
@@ -188,38 +188,11 @@ The relationship ``2  \rightarrow 0`` can be derived in two ways: from the incid
 to a shape collection of cells and  a shape collection of the edges.
 
 
-### Incidence relations ``0 \rightarrow d``
+### Incidence relations ``d_1 \rightarrow d_2``, where ``d_1 \lt d_2``
 
-The relations in the first row of the table (``0 \rightarrow d``) are lists of
-shapes incident on individual vertices. These are computed on demand by the
-function `increl_vertextoshape`. The individual incidence relations can be accessed by
-dispatch on the `IncRelVertexToShape` data. For instance, the relation ``0 \rightarrow 2`` can be
-computed for 2-manifold shapes as
-```
-ir = increl_vertextoshape(shapes)
-```
-Here `manifdim(shapes)` is 2. The incidence list of two-dimensional shapes
-connected to node 13 can be retrieved as `ir(13)`.
-
-| Manif. dim.      |   0   |   1   |   2   |  3   |
-|:--------|:--------|:--------|:--------|:--------|
-|   0     | ------ | 0 -> 1 | 0 -> 2 | 0 -> 3 |
-|   1     | ------ | ------ | ------ | ------ |
-|   2     | ------ | ------ | ------ | ------ |
-|   3     | ------ | ------ | ------ | ------ |
-
-### Incidence relations ``d_1 \rightarrow d_2``
-
-The relations in the first row of the table (``0 \rightarrow d``) are lists of
-shapes incident on individual vertices. These are computed on demand by the
-function `increl_vertextoshape`. The individual incidence relations can be accessed by
-dispatch on the `IncRelVertexToShape` data. For instance, the relation ``0 \rightarrow 2`` can be
-computed for 2-manifold shapes as
-```
-ir = increl_vertextoshape(shapes)
-```
-Here `manifdim(shapes)` is 2. The incidence list of two-dimensional shapes
-connected to node 13 can be retrieved as `ir(13)`.
+The relations above the diagonal of the table below are lists of shapes incident
+on lower-dimension shapes. These are computed from the incidence relations from
+the lower triangle of the table by the function `increl_transpose`.
 
 | Manif. dim.      |   0   |   1   |   2   |  3   |
 |:--------|:--------|:--------|:--------|:--------|
@@ -227,3 +200,10 @@ connected to node 13 can be retrieved as `ir(13)`.
 |   1     | ------ | ------ | 1 -> 2 | 1 -> 3 |
 |   2     | ------ | ------ | ------ | 2 -> 3 |
 |   3     | ------ | ------ | ------ | ------ |
+
+No new meshes are needed to construct the upper triangle  of the incidence
+relations table. However, constructing the incidence relation  will still take a
+pass through the entire mesh. The incidence relations in the upper triangle of
+the table are all of variable arity: for instance the incidence relation ``1
+\rightarrow 3`` is the list of three-dimensional cells that share a given edge.
+Clearly the number of cells varies from edge to edge.
