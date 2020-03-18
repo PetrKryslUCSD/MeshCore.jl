@@ -1,8 +1,8 @@
 """
     IncRel{LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
 
-Incidence relation expressing connectivity between the entity on the left and a
-list of entities on the right.
+Incidence relation expressing connectivity between an entity of the shape on the
+left and a list of entities of the shape on the right.
 """
 struct IncRel{LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
 	left::ShapeColl{LEFT}
@@ -20,19 +20,46 @@ function IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, data::Matrix{T})
 	IncRel(left, right, _v)
 end
 
+"""
+    nrelations(ir::IncRel)
+
+Number of individual relations in the incidence relation.
+"""
 nrelations(ir::IncRel)  = length(ir._v)
-nentities(ir::IncRel, j::IT) where {IT} = length(ir._v[j])
+
+"""
+    nentities(ir::IncRel, j::Int64) 
+
+Number of individual entities in the `j`-th relation in the incidence relation.
+"""
+nentities(ir::IncRel, j::Int64) = length(ir._v[j])
+
+"""
+    (ir::IncRel)(j::IT, k::IT) where {IT}
+
+Retrieve the incidence relation for `j`-th relation, k-th entity.
+"""
 (ir::IncRel)(j::IT, k::IT) where {IT} = ir._v[j][k]
+
+"""
+    (ir::IncRel)(j::IT) where {IT}
+
+Retrieve the row of the incidence relation for `j`-th relation.
+"""
 (ir::IncRel)(j::IT) where {IT} = ir._v[j]
 
 """
     transpose(mesh::IncRel)
 
-Compute the incidence relation `d1 -> d2`, where `d2 >= d1` for `d2`-dimensional shapes.
+Compute the incidence relation `d1 -> d2`, where `d2 >= d1`.
 
 This only makes sense for `d2 >= 0`. For `d2=1` we get for each vertex the list
 of edges connected to the vertex, and analogously faces and cells for `d=2` and
 `d=3`.
+
+# Returns
+Incidence relation for the transposed mesh. The left and right shape collection
+are swapped in the output relative to the input.
 """
 function transpose(mesh::IncRel)
 	# Find out how many of the transpose incidence relations there are
@@ -111,90 +138,112 @@ function boundary(mesh::IncRel)
     return skeleton(mesh; boundaryonly = true)
 end
 
-# """
-#     boundedby(shapes::ShapeColl, facetshapes::ShapeColl)
-#
-# Compute the shape collection that expresses the incidence `d -> d-1` for `d`-dimensional shapes.
-#
-# In other words, this is the incidence between shapes and the shapes that bound
-# these shapes (facets). For tetrahedra as the shapes, the incidence relation
-# lists the numbers of the faces that bound each individual tetrahedron.
-# The resulting shape is of the same shape description as the `shapes` on input.
-#
-# !!! note
-# The numbers of the facets are signed: positive when the facet bounds the shape
-# in the sense in which it is defined by the shape as oriented with an outer
-# normal; negative otherwise. The sense is defined by the numbering of the
-# 1st-order vertices of the facet shape.
-# """
-# function boundedby(shapes::ShapeColl, facetshapes::ShapeColl)
-# 	@assert manifdim(shapes) == manifdim(facetshapes)+1
-# 	hfc = hyperfacecontainer()
-#     for i in 1:nshapes(facetshapes)
-# 		fc = connectivity(facetshapes, i)
-#         addhyperface!(hfc, fc, i) # store the facet number with the hyper face
-#     end
-# 	nsmax = nshapes(shapes)
-#     _v = Vector{Int64}[];
-# 	sizehint!(_v, nsmax)
-#     for i in 1:nsmax
-#         push!(_v, fill(0, nfacets(shapes)))  # initially empty arrays
-#     end
-# 	for i in 1:nshapes(shapes)
-# 		for j in 1:nfacets(shapes)
-# 			fc = facetconnectivity(shapes, i, j)
-# 			hf = gethyperface(hfc, fc)
-# 			if hf == EMPTYHYPERFACE
-# 				@error "Hyper face not found? $(fc)"
-# 			end
-# 			sgn = _sense(fc[1:n1storderv(facetshapes.shapedesc)], hf.oc, nshifts(facetshapes.shapedesc))
-# 			_v[i][j] = sgn * hf.store
-# 		end
-#     end
-# 	cc = [SVector{nfacets(shapes)}(_v[idx]) for idx in 1:length(_v)]
-#     return ShapeColl(shapes.shapedesc, IncRel(cc))
-# end
-#
-# """
-#     boundedby2(shapes::ShapeColl, edgetshapes::ShapeColl)
-#
-# Compute the shape collection that expresses the incidence `d -> d-2` for `d`-dimensional shapes.
-#
-# In other words, this is the incidence between shapes and the shapes that "bound"
-# the boundaries of these shapes (i. e. edgets). For tetrahedra as the shapes, the incidence relation
-# lists the numbers of the edges that "bound" each individual tetrahedron.
-# The resulting shape is of the same shape description as the `shapes` on input.
-#
-# !!! note
-# The numbers of the edgets are signed: positive when the edget bounds the shape
-# in the sense in which it is defined by the shape as oriented with an outer
-# normal; negative otherwise. The sense is defined by the numbering of the
-# 1st-order vertices of the edget shape.
-# """
-# function boundedby2(shapes::ShapeColl, edgetshapes::ShapeColl)
-# 	@assert manifdim(shapes) == manifdim(edgetshapes)+2
-# 	hfc = hyperfacecontainer()
-#     for i in 1:nshapes(edgetshapes)
-# 		fc = connectivity(edgetshapes, i)
-# 		addhyperface!(hfc, fc, i) # store the facet number with the hyper face
-#     end
-# 	nsmax = nshapes(shapes)
-#     _v = Vector{Int64}[];
-# 	sizehint!(_v, nsmax)
-#     for i in 1:nsmax
-#         push!(_v, fill(0, nedgets(shapes)))  # initially empty arrays
-#     end
-# 	for i in 1:nshapes(shapes)
-# 		for j in 1:nedgets(shapes)
-# 			fc = edgetconnectivity(shapes, i, j)
-# 			hf = gethyperface(hfc, fc)
-# 			if hf == EMPTYHYPERFACE
-# 				@error "Hyper face not found? $(fc)"
-# 			end
-# 			sgn = _sense(fc[1:n1storderv(edgetshapes.shapedesc)], hf.oc, nshifts(edgetshapes.shapedesc))
-# 			_v[i][j] = sgn * hf.store
-# 		end
-#     end
-# 	cc = [SVector{nedgets(shapes)}(_v[idx]) for idx in 1:length(_v)]
-#     return ShapeColl(shapes.shapedesc, IncRel(cc))
-# end
+"""
+    boundedby(mesh::IncRel, fmesh::IncRel)
+
+Compute the incidence relation `d -> d-1` for `d`-dimensional shapes.
+
+In other words, this is the incidence between shapes and the shapes that bound
+these shapes (facets). For tetrahedra as the shapes, the incidence relation
+lists the numbers of the faces that bound each individual tetrahedron.
+The resulting left shape is of the same shape description as in the `mesh`.
+
+!!! note
+The numbers of the facets are signed: positive when the facet bounds the shape
+in the sense in which it is defined by the shape as oriented with an outer
+normal; negative otherwise. The sense is defined by the numbering of the
+1st-order vertices of the facet shape.
+
+# Returns
+Incidence relation for the bounded-by mesh. The left shape collection is the
+same as for the `mesh`, the right shape collection is for the facets (shapes of
+manifold dimension one less than the manifold dimension of the shapes
+themselves).
+"""
+function boundedby(mesh::IncRel, fmesh::IncRel)
+	@assert manifdim(mesh.left) == manifdim(fmesh.left)+1
+    n1st = n1storderv(fmesh.left.shapedesc)
+    nshif = nshifts(fmesh.left.shapedesc)
+	hfc = hyperfacecontainer()
+    for i in 1:nrelations(fmesh)
+        fc = fmesh(i)
+        addhyperface!(hfc, fc, i) # store the facet number with the hyper face
+    end
+	nsmax = nrelations(mesh)
+    _v = Vector{Int64}[];
+	sizehint!(_v, nsmax)
+    for i in 1:nsmax
+        push!(_v, fill(0, nfacets(mesh.left)))  # initially empty arrays
+    end
+	for i in 1:nrelations(mesh)
+        v = mesh(i)
+		for j in 1:nfacets(mesh.left)
+            fc = v[facetconnectivity(mesh.left, j)]
+			hf = gethyperface(hfc, fc)
+			if hf == EMPTYHYPERFACE
+				@error "Hyper face not found? $(hf)"
+			end
+			sgn = _sense(fc[1:n1st], hf.oc, nshif)
+			_v[i][j] = sgn * hf.store
+		end
+    end
+	cc = [SVector{nfacets(mesh.left)}(_v[idx]) for idx in 1:length(_v)]
+    bfaces = ShapeColl(fmesh.left.shapedesc, length(_v))
+    return IncRel(mesh.left, bfaces, cc)
+end
+
+"""
+    boundedby2(mesh::IncRel, emesh::IncRel)
+
+Compute the incidence relation `d -> d-2` for `d`-dimensional shapes.
+
+In other words, this is the incidence between shapes and the shapes that "bound"
+the boundaries of these shapes (i. e. edgets). For tetrahedra as the shapes, the
+incidence relation lists the numbers of the edges that "bound" each individual
+tetrahedron. The resulting shape is of the same shape description as the
+`shapes` on input.
+
+!!! note
+The numbers of the edgets are signed: positive when the edget bounds the shape
+in the sense in which it is defined by the shape as oriented with an outer
+normal; negative otherwise. The sense is defined by the numbering of the
+1st-order vertices of the edget shape.
+
+# Returns
+Incidence relation for the "bounded-by" mesh. The left shape collection is the
+same as for the `mesh`, the right shape collection is for the edgets (shapes of
+manifold dimension two less than the manifold dimension of the shapes
+themselves).
+"""
+function boundedby2(mesh::IncRel, emesh::IncRel)
+    @assert manifdim(mesh.left) == manifdim(emesh.left)+2
+    n1st = n1storderv(emesh.left.shapedesc)
+    nshif = nshifts(emesh.left.shapedesc)
+    hfc = hyperfacecontainer()
+    for i in 1:nrelations(emesh)
+        fc = emesh(i)
+        addhyperface!(hfc, fc, i) # store the facet number with the hyper face
+    end
+    nsmax = nrelations(mesh)
+    _v = Vector{Int64}[];
+    sizehint!(_v, nsmax)
+    for i in 1:nsmax
+        push!(_v, fill(0, nedgets(mesh.left)))  # initially empty arrays
+    end
+    for i in 1:nrelations(mesh)
+        v = mesh(i)
+        for j in 1:nedgets(mesh.left)
+            fc = v[edgetconnectivity(mesh.left, j)]
+            hf = gethyperface(hfc, fc)
+            if hf == EMPTYHYPERFACE
+                @error "Hyper face not found? $(hf)"
+            end
+            sgn = _sense(fc[1:n1st], hf.oc, nshif)
+            _v[i][j] = sgn * hf.store
+        end
+    end
+    cc = [SVector{nedgets(mesh.left)}(_v[idx]) for idx in 1:length(_v)]
+    bedges = ShapeColl(emesh.left.shapedesc, length(_v))
+    return IncRel(mesh.left, bedges, cc)
+end
+

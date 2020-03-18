@@ -188,75 +188,121 @@ end
 end
 using .mtopoop1
 mtopoop1.test()
-#
-# module mtopoop2
-# using StaticArrays
-# using MeshCore: L2, Q4, ShapeColl, connectivity, manifdim, nvertices, nfacets, facetdesc, nshapes
-# using MeshCore: Vertices, boundedby, skeleton
-# using MeshCore: IncRel, Vertices
-# using Test
-# function test()
-#     xyz = [0.0 0.0; 633.3 0.0; 1266.6 0.0; 1900.0 0.0; 0.0 400.0; 633.3 400.0; 1266.6 400.0; 1900.0 400.0; 0.0 800.0; 633.3 800.0; 1266.6 800.0; 1900.0 800.0]
-#     vertices =  Vertices(xyz)
-#     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
-#     cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
-#     shapes = ShapeColl(Q4, IncRel(cc))
-#     facetshapes = skeleton(shapes)
-#     @test nshapes(facetshapes) == 17
-#     bbshapes = boundedby(shapes, facetshapes)
-#     shouldget = Array{Int64,1}[[16, 1, 14, 17], [-14, 9, 6, 15], [2, 12, 10, -1], [-10, 4, 7, -9], [13, 11, 5, -12], [-5, 8, 3, -4]]
-#     allmatch = true
-#     for j in 1:length(shouldget)
-#         for k in 1:length(shouldget[j])
-#             allmatch = allmatch && (bbshapes.increl(j, k) == shouldget[j][k])
-#         end
-#     end
-#     @test allmatch
-#     true
-# end
-# end
-# using .mtopoop2
-# mtopoop2.test()
-#
-# module mtopoop3
-# using StaticArrays
-# using MeshCore: L2, Q4, ShapeColl, connectivity, manifdim, nvertices, nfacets, facetdesc, nshapes
-# using MeshCore: Vertices, boundedby, skeleton
-# using MeshCore: IncRel, Vertices, increl_transpose
-# using Test
-# function test()
-#     xyz = [0.0 0.0; 633.3 0.0; 1266.6 0.0; 1900.0 0.0; 0.0 400.0; 633.3 400.0; 1266.6 400.0; 1900.0 400.0; 0.0 800.0; 633.3 800.0; 1266.6 800.0; 1900.0 800.0]
-#     vertices =  Vertices(xyz)
-#     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
-#     cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
-#     shapes = ShapeColl(Q4, IncRel(cc))
-#     facetshapes = skeleton(shapes)
-#     @test nshapes(facetshapes) == 17
-#     bbshapes = boundedby(shapes, facetshapes)
-#     shouldget = Array{Int64,1}[[16, 1, 14, 17], [-14, 9, 6, 15], [2, 12, 10, -1], [-10, 4, 7, -9], [13, 11, 5, -12], [-5, 8, 3, -4]]
-#     allmatch = true
-#     for j in 1:length(shouldget)
-#         for k in 1:length(shouldget[j])
-#             allmatch = allmatch && (bbshapes.increl(j, k) == shouldget[j][k])
-#         end
-#     end
-#     @test allmatch
-#     # Now test the transposed incidence relation
-#     tincrel = increl_transpose(bbshapes.increl)
-#     shouldget = Array{Int64,1}[[1, 3], [3], [6], [4, 6], [5, 6], [2], [4], [6], [2, 4], [3, 4], [5], [3, 5], [5], [1, 2], [2], [1], [1]]
-#     allmatch = true
-#     for j in 1:length(shouldget)
-#         for k in 1:length(shouldget[j])
-#             allmatch = allmatch && (tincrel(j, k) == shouldget[j][k])
-#         end
-#     end
-#     @test allmatch
-#     true
-# end
-# end
-# using .mtopoop3
-# mtopoop3.test()
-#
+
+module mtopoop2
+using StaticArrays
+using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nshapes
+using MeshCore: Locations, boundedby, skeleton
+using MeshCore: IncRel
+using Test
+function test()
+    xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
+    locs =  Locations(xyz)
+    c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
+    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
+    q4s = ShapeColl(Q4, 6)
+    vrts = ShapeColl(P1, 12)
+    mesh = IncRel(q4s, vrts, cc)
+    fmesh = skeleton(mesh)
+    # Test the transpose incidence relation
+    tmesh = boundedby(mesh, fmesh)
+    shouldget = Array{Int64,1}[[16, 1, 14, 17], [-14, 9, 6, 15], [2, 12, 10, -1], [-10, 4, 7, -9], [13, 11, 5, -12], [-5, 8, 3, -4]]
+    allmatch = true
+    for j in 1:length(shouldget)
+        for k in 1:length(shouldget[j])
+            allmatch = allmatch && (tmesh(j, k) == shouldget[j][k])
+        end
+    end
+    @test allmatch
+    true
+end
+end
+using .mtopoop2
+mtopoop2.test()
+
+module mtopoop3
+using StaticArrays
+using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nshapes
+using MeshCore: Locations, boundedby, skeleton, transpose
+using MeshCore: IncRel
+using Test
+function test()
+    xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
+    locs =  Locations(xyz)
+    c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
+    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
+    q4s = ShapeColl(Q4, 6)
+    vrts = ShapeColl(P1, 12)
+    mesh = IncRel(q4s, vrts, cc)
+    fmesh = skeleton(mesh)
+    # Test the bounded-by incidence relation
+    bbmesh = boundedby(mesh, fmesh)
+    shouldget = Array{Int64,1}[[16, 1, 14, 17], [-14, 9, 6, 15], [2, 12, 10, -1], [-10, 4, 7, -9], [13, 11, 5, -12], [-5, 8, 3, -4]]
+    allmatch = true
+    for j in 1:length(shouldget)
+        for k in 1:length(shouldget[j])
+            allmatch = allmatch && (bbmesh(j, k) == shouldget[j][k])
+        end
+    end
+    @test allmatch
+    # Now test the transposed incidence relation
+    tbbmesh = transpose(bbmesh)
+    shouldget = Array{Int64,1}[[1, 3], [3], [6], [4, 6], [5, 6], [2], [4], [6], [2, 4], [3, 4], [5], [3, 5], [5], [1, 2], [2], [1], [1]]
+    allmatch = true
+    for j in 1:length(shouldget)
+        for k in 1:length(shouldget[j])
+            allmatch = allmatch && (tbbmesh(j, k) == shouldget[j][k])
+        end
+    end
+    @test allmatch
+    true
+end
+end
+using .mtopoop3
+mtopoop3.test()
+
+module mtopoop4
+using StaticArrays
+using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nshapes
+using MeshCore: Locations, boundedby2, skeleton, transpose
+using MeshCore: IncRel
+using Test
+function test()
+    xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
+    locs =  Locations(xyz)
+    c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
+    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
+    q4s = ShapeColl(Q4, 6)
+    vrts = ShapeColl(P1, 12)
+    mesh = IncRel(q4s, vrts, cc)
+    # fmesh = skeleton(mesh)
+    vmesh = IncRel(ShapeColl(P1, 12), vrts, [[i] for i in 1:nshapes(vrts)] )
+    # Test the bounded-by incidence relation
+    bbmesh = boundedby2(mesh, vmesh)
+    shouldget = Array{Int64,1}[[1, 2, 6, 5], [5, 6, 10, 9], [2, 3, 7, 6], [6, 7, 11, 10], [3, 4, 8, 7], [7, 8, 12, 11]]
+    allmatch = true
+    for j in 1:length(shouldget)
+        for k in 1:length(shouldget[j])
+            allmatch = allmatch && (bbmesh(j, k) == shouldget[j][k])
+        end
+    end
+    @test allmatch
+    # Now test the transposed incidence relation
+    tbbmesh = transpose(bbmesh)
+    shouldget = Array{Int64,1}[[1], [1, 3], [3, 5], [5], [1, 2], [1, 2, 3, 4], [3, 4, 5, 6], [5, 6], [2], [2, 4], [4, 6], [6]]
+    allmatch = true
+    for j in 1:length(shouldget)
+        for k in 1:length(shouldget[j])
+            allmatch = allmatch && (tbbmesh(j, k) == shouldget[j][k])
+        end
+    end
+    @test allmatch
+    true
+end
+end
+using .mtopoop4
+mtopoop4.test()
+
 # module mtopoop4
 # using StaticArrays
 # using MeshCore: L2, Q4, P1, ShapeColl, connectivity, manifdim, nvertices, nedgets, nshapes
