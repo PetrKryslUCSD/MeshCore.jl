@@ -46,7 +46,7 @@ coordinatetype(loc::Locations{N, T}) where {N, T} = T
 
 Retrieve coordinates of a single vertex.
 """
-coordinates(loc::Locations{N, T}, i::I) where {N, T, I<:Int} = loc._v[i]
+coordinates(loc::Locations{N, T}, i::Int64) where {N, T} = loc._v[i]
 
 """
     coordinates(loc::Locations{N, T}, I::SVector) where {N, T}
@@ -61,3 +61,14 @@ Access coordinates of selected Locations.
     end
     return :(SVector($expr))
 end
+
+
+"""
+    LocAccess{N, T}
+
+Data structure to access the locations of vertices.
+"""
+struct LocAccess{N, T}
+    locs::Locations{N, T}
+end
+(la::LocAccess)(j::Int64) = coordinates(la.locs, j)

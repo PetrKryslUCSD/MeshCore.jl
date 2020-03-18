@@ -8,6 +8,11 @@ This is the type of a homogeneous collection of finite element shapes.
 struct ShapeColl{S <: AbsShapeDesc}
     shapedesc::S # Shape descriptor
 	nshapes::Int64 # Number of shapes in the collection
+	attributes::Dict
+end
+
+function ShapeColl(shapedesc::S, nshapes::Int64) where {S <: AbsShapeDesc}
+	ShapeColl(shapedesc::S, nshapes::Int64, Dict{Symbol, Any}())
 end
 
 """

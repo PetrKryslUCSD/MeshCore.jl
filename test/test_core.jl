@@ -1,3 +1,5 @@
+
+
 module mtest1
 using MeshCore: P1, L2, manifdim, nfacets
 using Test
@@ -409,3 +411,39 @@ end
 end
 using .mt4topo1
 mt4topo1.test()
+
+module mtestattr1
+using MeshCore: Locations, coordinates, Attrib, LocAccess, P1, ShapeColl
+using Test
+using BenchmarkTools
+
+function test()
+    xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
+    locs =  Locations(xyz)
+
+    # la = LocAccess(locs)
+    # a = Attrib(la)
+    # @btime $a.val(10)
+    # @btime coordinates($locs, 10)
+    #
+    # a = Attrib(j -> coordinates(locs, j))
+    # @btime $a.val(10)
+    # @btime coordinates($locs, 10)
+
+    la = LocAccess(locs)
+    a = Attrib(la)
+    @test a.val(10) == [633.3333333333334, 800.0]
+
+    la = LocAccess(locs)
+    a = Attrib(la)
+    vertices = ShapeColl(P1, size(xyz, 1), Dict(:geom=>a))
+    a = vertices.attributes[:geom]
+    @test a.val(10) == [633.3333333333334, 800.0]
+    # @btime $a.val(10)
+    # @btime a.val(10)
+
+    true
+end
+end
+using .mtestattr1
+mtestattr1.test()
