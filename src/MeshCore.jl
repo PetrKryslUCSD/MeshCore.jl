@@ -3,9 +3,10 @@ module MeshCore
 using StaticArrays
 
 include("hyperface.jl")
-include("vertices.jl")
-include("increl.jl")
+include("locations.jl")
+
 include("shapedesc.jl")
 include("shapes.jl")
+include("increl.jl")
 
 end # module

@@ -1,6 +1,6 @@
 
 """
-    AbstractShapeDesc
+    AbsShapeDesc
 
 Abstract shape descriptor (simplex, or cuboid, of various manifold dimension)
 
@@ -25,59 +25,59 @@ number of connected vertices, `NF` is the number of boundary facets, `N1OV`
 number of first-order vertices, `FD` is the descriptor of the facet
 (boundary shape).
 """
-abstract type AbstractShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
+abstract type AbsShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
 end
 
 """
-    manifdim(sd::AbstractShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}) where {MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
+    manifdim(sd::AbsShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}) where {MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
 
 What is the manifold dimension of this shape?
 """
-manifdim(sd::AbstractShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}) where {MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} = MD
+manifdim(sd::AbsShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}) where {MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} = MD
 
 """
-    nvertices(sd::AbstractShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}) where {MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
+    nvertices(sd::AbsShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}) where {MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
 
 How many vertices does the shape connect?
 """
-nvertices(sd::AbstractShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}) where {MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} = NV
+nvertices(sd::AbsShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}) where {MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} = NV
 
 """
-    nfacets(sd::AbstractShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}) where {MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
+    nfacets(sd::AbsShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}) where {MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
 
 How many facets bound the shape?
 """
-nfacets(sd::AbstractShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}) where {MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} = NF
+nfacets(sd::AbsShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}) where {MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} = NF
 
 """
-    nedgets(sd::AbstractShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}) where {MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
+    nedgets(sd::AbsShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}) where {MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
 
 How many edgets bound the shape?
 """
-nedgets(sd::AbstractShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}) where {MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} = NE
+nedgets(sd::AbsShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}) where {MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} = NE
 
 """
-    n1storderv(sd::AbstractShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}) where {MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
+    n1storderv(sd::AbsShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}) where {MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
 
 How many 1st-order vertices are there per shape?
 
 For instance, for hexahedra each shape has 8 1st-order vertices.
 """
-n1storderv(sd::AbstractShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}) where {MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} = N1OV
+n1storderv(sd::AbsShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}) where {MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} = N1OV
 
 """
-    nshifts(sd::AbstractShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}) where {MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
+    nshifts(sd::AbsShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}) where {MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
 
 How many circular shifts should be tried to figure out the orientation (sense)?
 """
-nshifts(sd::AbstractShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}) where {MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} = NSHIFTS
+nshifts(sd::AbsShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}) where {MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} = NSHIFTS
 
 """
     NoSuchShapeDesc
 
 Base descriptor: no shape is of this description.
 """
-struct NoSuchShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} <: AbstractShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
+struct NoSuchShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} <: AbsShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
 end
 
 const NoSuchShape = NoSuchShapeDesc{
@@ -96,7 +96,7 @@ const NoSuchShape = NoSuchShapeDesc{
 
 Shape descriptor of a point shape.
 """
-struct P1ShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} <: AbstractShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
+struct P1ShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} <: AbsShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
     facetdesc::FD
     facets::SMatrix{NF, 0, Int64, 0}
     edgetdesc::ED
@@ -119,7 +119,7 @@ NoSuchShapeDesc,  # ED
 
 Shape descriptor of a line segment shape.
 """
-struct L2ShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} <: AbstractShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
+struct L2ShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} <: AbsShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
     facetdesc::FD
     facets::SMatrix{NF, 1, Int64, 2}
     edgetdesc::ED
@@ -142,7 +142,7 @@ NoSuchShapeDesc,  # ED
 
 Shape descriptor of a quadrilateral shape.
 """
-struct Q4ShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} <: AbstractShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
+struct Q4ShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} <: AbsShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
     facetdesc::FD
     facets::SMatrix{NF, 2, Int64, 4*2}
     edgetdesc::ED
@@ -165,7 +165,7 @@ P1ShapeDesc,  # ED
 
 Shape descriptor of a hexahedral shape.
 """
-struct H8ShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} <: AbstractShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
+struct H8ShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} <: AbsShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
     facetdesc::FD
     facets::SMatrix{NF, 4, Int64, 6*4}
     edgetdesc::ED
@@ -194,7 +194,7 @@ L2ShapeDesc, # ED
 
 Shape descriptor of a triangular shape.
 """
-struct T3ShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} <: AbstractShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
+struct T3ShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} <: AbsShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
     facetdesc::FD
     facets::SMatrix{NF, 2, Int64, 3*2}
     edgetdesc::ED
@@ -216,7 +216,7 @@ P1ShapeDesc, # ED
 
 Shape descriptor of a tetrahedral shape.
 """
-struct T4ShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} <: AbstractShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
+struct T4ShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} <: AbsShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
     facetdesc::FD
     facets::SMatrix{NF, 3, Int64, 4*3}
     edgetdesc::ED
