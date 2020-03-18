@@ -133,32 +133,61 @@ end
 end
 using .mmesh6
 mmesh6.test()
-#
-# module mtopoop1
-# using StaticArrays
-# using MeshCore: L2, Q4, ShapeColl, connectivity, manifdim, nvertices, nfacets, facetdesc, nshapes
-# using MeshCore: IncRel, Vertices, increl_transpose
-# using Test
-# function test()
-#     xyz = [0.0 0.0; 633.3 0.0; 1266.6 0.0; 1900.0 0.0; 0.0 400.0; 633.3 400.0; 1266.6 400.0; 1900.0 400.0; 0.0 800.0; 633.3 800.0; 1266.6 800.0; 1900.0 800.0]
-#     vertices =  Vertices(xyz)
-#     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
-#     cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
-#     shapes = ShapeColl(Q4, IncRel(cc))
-#     tincrel = increl_transpose(shapes.increl)
-#     shouldget = Array{Int64,1}[[1], [1, 3], [3, 5], [5], [1, 2], [1, 2, 3, 4], [3, 4, 5, 6], [5, 6], [2], [2, 4], [4, 6], [6]]
-#     allmatch = true
-#     for j in 1:length(shouldget)
-#         for k in 1:length(shouldget[j])
-#             allmatch = allmatch && (tincrel(j, k) == shouldget[j][k])
-#         end
-#     end
-#     @test allmatch
-#     true
-# end
-# end
-# using .mtopoop1
-# mtopoop1.test()
+
+module mmesh7
+using StaticArrays
+using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nrelations, facetconnectivity
+using MeshCore: Locations, IncRel
+using MeshCore: skeleton, coordinates, boundary, nshapes
+using Test
+function test()
+    xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
+    locs =  Locations(xyz)
+    c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
+    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
+    q4s = ShapeColl(Q4, 6)
+    vrts = ShapeColl(P1, 12)
+    mesh = IncRel(q4s, vrts, cc)
+
+    bdrymesh = boundary(mesh)
+    @test nrelations(bdrymesh) == 10
+    # @show bdrymesh.left, bdrymesh.right
+    @test nshapes(bdrymesh.left) == 10
+    @test nshapes(bdrymesh.right) == 12
+    true
+end
+end
+using .mmesh7
+mmesh7.test()
+
+module mtopoop1
+using StaticArrays
+using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nshapes
+using MeshCore: IncRel, Locations, transpose, nshapes
+using Test
+function test()
+    xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
+    locs =  Locations(xyz)
+    c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
+    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
+    q4s = ShapeColl(Q4, 6)
+    vrts = ShapeColl(P1, 12)
+    mesh = IncRel(q4s, vrts, cc)
+    # Test the transpose incidence relation
+    tmesh = transpose(mesh)
+    shouldget = Array{Int64,1}[[1], [1, 3], [3, 5], [5], [1, 2], [1, 2, 3, 4], [3, 4, 5, 6], [5, 6], [2], [2, 4], [4, 6], [6]]
+    allmatch = true
+    for j in 1:length(shouldget)
+        for k in 1:length(shouldget[j])
+            allmatch = allmatch && (tmesh(j, k) == shouldget[j][k])
+        end
+    end
+    @test allmatch
+    true
+end
+end
+using .mtopoop1
+mtopoop1.test()
 #
 # module mtopoop2
 # using StaticArrays

@@ -25,39 +25,39 @@ nentities(ir::IncRel, j::IT) where {IT} = length(ir._v[j])
 (ir::IncRel)(j::IT, k::IT) where {IT} = ir._v[j][k]
 (ir::IncRel)(j::IT) where {IT} = ir._v[j]
 
-# """
-#     increl_transpose(ir::IR) where {IR}
-#
-# Compute the incidence relation `d1 -> d2`, where `d2 >= d1` for `d2`-dimensional shapes.
-#
-# This only makes sense for `d2 >= 0`. For `d2=1` we get for each vertex the list
-# of edges connected to the vertex, and analogously faces and cells for `d=2` and
-# `d=3`.
-# """
-# function increl_transpose(ir::IR) where {IR}
-# 	# Find out how many of the transpose incidence relations there are
-# 	nvmax = 0
-# 	for j in 1:nrelations(ir)
-# 		for k in 1:nentities(ir, j)
-# 			nvmax = max(nvmax, ir(j, k))
-# 		end
-# 	end
-# 	# pre-allocate relations vector
-#     _v = Vector{Int64}[];
-# 	sizehint!(_v, nvmax)
-# 	# Initialize the relations to empty
-#     for i in 1:nvmax
-#         push!(_v, Int64[])  # initially empty arrays
-#     end
-# 	# Build the transpose relations
-#     for j in 1:nrelations(ir)
-# 		for k in 1:nentities(ir, j)
-# 			c = abs(ir(j, k)) # this could be an oriented entity: remove the sign
-# 			push!(_v[c], j)
-# 		end
-# 	end
-#     return IncRelVar(_v)
-# end
+"""
+    transpose(mesh::IncRel)
+
+Compute the incidence relation `d1 -> d2`, where `d2 >= d1` for `d2`-dimensional shapes.
+
+This only makes sense for `d2 >= 0`. For `d2=1` we get for each vertex the list
+of edges connected to the vertex, and analogously faces and cells for `d=2` and
+`d=3`.
+"""
+function transpose(mesh::IncRel)
+	# Find out how many of the transpose incidence relations there are
+	nvmax = 0
+	for j in 1:nrelations(mesh)
+		for k in 1:nentities(mesh, j)
+			nvmax = max(nvmax, mesh(j, k))
+		end
+	end
+	# pre-allocate relations vector
+    _v = Vector{Int64}[];
+	sizehint!(_v, nvmax)
+	# Initialize the relations to empty
+    for i in 1:nvmax
+        push!(_v, Int64[])  # initially empty arrays
+    end
+	# Build the transpose relations
+    for j in 1:nrelations(mesh)
+		for k in 1:nentities(mesh, j)
+			c = abs(mesh(j, k)) # this could be an oriented entity: remove the sign
+			push!(_v[c], j)
+		end
+	end
+    return IncRel(mesh.right, mesh.left, _v)
+end
 
 """
     skeleton(mesh::IncRel; options...)
@@ -101,14 +101,14 @@ function skeleton(mesh::IncRel; options...)
 end
 
 """
-    boundary(shapes::ShapeColl)
+    boundary(mesh::IncRel)
 
-Compute the shape collection for the boundary of the collection on input.
+Compute the incidence relation for the boundary of the collection on input.
 
 This is a convenience version of the `skeleton` function.
 """
-function boundary(shapes::ShapeColl)
-    return skeleton(shapes; boundaryonly = true)
+function boundary(mesh::IncRel)
+    return skeleton(mesh; boundaryonly = true)
 end
 
 # """
