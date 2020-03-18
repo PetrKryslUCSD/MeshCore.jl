@@ -1,4 +1,4 @@
-module mmesh1
+module mtest1
 using MeshCore: P1, L2, manifdim, nfacets
 using Test
 function test()
@@ -8,10 +8,10 @@ function test()
     true
 end
 end
-using .mmesh1
-mmesh1.test()
+using .mtest1
+mtest1.test()
 
-module mmesh1a1
+module mtest1a1
 using MeshCore: _sense
 using Test
 function test()
@@ -33,10 +33,10 @@ function test()
     true
 end
 end
-using .mmesh1a1
-mmesh1a1.test()
+using .mtest1a1
+mtest1a1.test()
 
-module mmesh2
+module mtest2
 using StaticArrays
 using MeshCore: Locations, nlocations, coordinates
 using Test
@@ -49,10 +49,10 @@ function test()
     true
 end
 end
-using .mmesh2
-mmesh2.test()
+using .mtest2
+mtest2.test()
 
-module mmesh3
+module mtest3
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nlocations, nfacets, facetdesc, nshapes
 using MeshCore: Q4ShapeDesc, shapedesc, n1storderv, nedgets, nshifts, nvertices
@@ -82,10 +82,10 @@ function test()
     true
 end
 end
-using .mmesh3
-mmesh3.test()
+using .mtest3
+mtest3.test()
 
-module mmesh5
+module mtest5
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nrelations, facetconnectivity
 using MeshCore: IncRel
@@ -103,10 +103,10 @@ function test()
     true
 end
 end
-using .mmesh5
-mmesh5.test()
+using .mtest5
+mtest5.test()
 
-module mmesh6
+module mtest6
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nrelations, facetconnectivity
 using MeshCore: Locations, IncRel
@@ -126,15 +126,15 @@ function test()
     for i in 1:nrelations(facemesh)
         x = coordinates(locs, facemesh(i))
     end #
-    @test coordinates(locs, facemesh(17)) == StaticArrays.SArray{Tuple{2},Float64,1,2}[[0.0, 400.0], [0.0, 0.0]]    
+    @test coordinates(locs, facemesh(17)) == StaticArrays.SArray{Tuple{2},Float64,1,2}[[0.0, 400.0], [0.0, 0.0]]
     @test coordinates(locs, facemesh(17)[1]) == [0.0, 400.0]
     true
 end
 end
-using .mmesh6
-mmesh6.test()
+using .mtest6
+mtest6.test()
 
-module mmesh7
+module mtest7
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nrelations, facetconnectivity
 using MeshCore: Locations, IncRel
@@ -157,8 +157,8 @@ function test()
     true
 end
 end
-using .mmesh7
-mmesh7.test()
+using .mtest7
+mtest7.test()
 
 module mtopoop1
 using StaticArrays
@@ -303,144 +303,109 @@ end
 using .mtopoop4
 mtopoop4.test()
 
-# module mtopoop4
-# using StaticArrays
-# using MeshCore: L2, Q4, P1, ShapeColl, connectivity, manifdim, nvertices, nedgets, nshapes
-# using MeshCore: Vertices, boundedby2, skeleton
-# using MeshCore: IncRel, Vertices, increl_transpose
-# using Test
-# function test()
-#     xyz = [0.0 0.0; 633.3 0.0; 1266.6 0.0; 1900.0 0.0; 0.0 400.0; 633.3 400.0; 1266.6 400.0; 1900.0 400.0; 0.0 800.0; 633.3 800.0; 1266.6 800.0; 1900.0 800.0]
-#     vertices =  Vertices(xyz)
-#     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
-#     cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
-#     shapes = ShapeColl(Q4, IncRel(cc))
-#     edgetshapes = ShapeColl(P1, IncRel([SVector{nvertices(P1)}([idx]) for idx in 1:nvertices(vertices)]))
-#     @test nshapes(edgetshapes) == 12
-#     bb2shapes = boundedby2(shapes, edgetshapes)
-#     shouldget = Array{Int64,1}[[1, 2, 6, 5], [5, 6, 10, 9], [2, 3, 7, 6], [6, 7, 11, 10], [3, 4, 8, 7], [7, 8, 12, 11]]
-#     allmatch = true
-#     for j in 1:length(shouldget)
-#         for k in 1:length(shouldget[j])
-#             allmatch = allmatch && (bb2shapes.increl(j, k) == shouldget[j][k])
-#         end
-#     end
-#     @test allmatch
-#     # Now test the transposed incidence relation
-#     tincrel = increl_transpose(bb2shapes.increl)
-#     shouldget = Array{Int64,1}[[1], [1, 3], [3, 5], [5], [1, 2], [1, 2, 3, 4], [3, 4, 5, 6], [5, 6], [2], [2, 4], [4, 6], [6]]
-#     allmatch = true
-#     for j in 1:length(shouldget)
-#         for k in 1:length(shouldget[j])
-#             allmatch = allmatch && (tincrel(j, k) == shouldget[j][k])
-#         end
-#     end
-#     @test allmatch
-#     true
-# end
-# end
-# using .mtopoop4
-# mtopoop4.test()
-#
-# include("samplet4.jl")
-#
-# module mt4topo1
-# using StaticArrays
-# using MeshCore: ShapeColl, connectivity, manifdim, nvertices, nedgets, nshapes
-# using MeshCore: Vertices, boundedby2, skeleton, boundedby, nshifts, _sense
-# using MeshCore: IncRel, Vertices, increl_transpose, nrelations, nentities
-# using ..samplet4: mesh
-# using Test
-# function test()
-#     vertices, shapes = mesh()
-#
-#     # Test the incidence relations 3 -> 0 & 0 -> 3
-#     tincrel = increl_transpose(shapes.increl)
-#     allmatch = true
-#     for j in 1:nrelations(tincrel)
-#         for k in 1:nentities(tincrel, j)
-#             f = tincrel(j, k)
-#             allmatch = allmatch && (j in shapes.increl(f))
-#         end # k
-#     end # j
-#     @test allmatch
-#
-#     # Test the incidence relations 2 -> 0 & 0 -> 2
-#     faces = skeleton(shapes)
-#     tincrel = increl_transpose(faces.increl)
-#     allmatch = true
-#     for j in 1:nrelations(tincrel)
-#         for k in 1:nentities(tincrel, j)
-#             f = tincrel(j, k)
-#             allmatch = allmatch && (j in faces.increl(f))
-#         end # k
-#     end # j
-#     @test allmatch
-#
-#     # Test the incidence relations 1 -> 0 & 0 -> 1
-#     edges = skeleton(faces)
-#     tincrel = increl_transpose(edges.increl)
-#     allmatch = true
-#     for j in 1:nrelations(tincrel)
-#         for k in 1:nentities(tincrel, j)
-#             f = tincrel(j, k)
-#             allmatch = allmatch && (j in edges.increl(f))
-#         end # k
-#     end # j
-#     @test allmatch
-#
-#     # Test the incidence relations 3 -> 2 & 2 -> 3
-#     faces = skeleton(shapes)
-#     bbfaces = boundedby(shapes, faces)
-#     # Check that the tetrahedra connectivity refers to all three vertices of the faces
-#     allmatch = true
-#     @test nrelations(shapes.increl) == nrelations(bbfaces.increl)
-#     for j in 1:nrelations(bbfaces.increl)
-#         for k in 1:nentities(bbfaces.increl, j)
-#             f = bbfaces.increl(j, k)
-#             for m in 1:3
-#                 allmatch = allmatch && (faces.increl(abs(f), m) in shapes.increl(j))
-#             end # m
-#         end # k
-#     end # j
-#     @test allmatch
-#     # Check that the orientations of the faces is correct
-#     allmatch = true
-#     @test nrelations(shapes.increl) == nrelations(bbfaces.increl)
-#     for j in 1:nrelations(bbfaces.increl)
-#         for k in 1:nentities(bbfaces.increl, j)
-#             for f in bbfaces.increl(j)
-#                 orientation = sign(f)
-#                 f = abs(f)
-#                 fc = faces.increl(f)
-#                 matchone = false
-#                 for m in 1:4
-#                     oc = shapes.increl(j)[shapes.shapedesc.facets[m, :]]
-#                     if length(intersect(fc, oc)) == 3
-#                         s = _sense(fc, oc, nshifts(faces.shapedesc))
-#                         matchone = (s == orientation)
-#                     end
-#                     if matchone
-#                         break
-#                     end
-#                 end # m
-#                 allmatch = allmatch && matchone
-#             end
-#         end # k
-#     end # j
-#     @test allmatch
-#     # Check the transpose incidence relation
-#     tincrel = increl_transpose(bbfaces.increl)
-#     allmatch = true
-#     for j in 1:nrelations(tincrel)
-#         for k in 1:nentities(tincrel, j)
-#             e = tincrel(j, k)
-#             allmatch = allmatch && (j in abs.(bbfaces.increl(e)))
-#         end # k
-#     end # j
-#     @test allmatch
-#     true
-# end
-# end
-# using .mt4topo1
-# mt4topo1.test()
+include("samplet4.jl")
+
+module mt4topo1
+using StaticArrays
+using MeshCore: P1, T4, ShapeColl,  manifdim, nvertices, nedgets, nshapes
+using MeshCore: boundedby2, skeleton, boundedby, nshifts, _sense
+using MeshCore: IncRel, Locations, transpose, nrelations, nentities, nlocations
+using ..samplet4: samplet4mesh
+using Test
+function test()
+    xyz, cc = samplet4mesh()
+    # Construct the initial incidence relation
+    locs = Locations(xyz)
+    vrts = ShapeColl(P1, nlocations(locs))
+    tets = ShapeColl(T4, size(cc, 1))
+    ir30 = IncRel(tets, vrts, cc)
+    # Test the incidence relations 3 -> 0 & 0 -> 3
+    ir03 = transpose(ir30)
+    allmatch = true
+    for j in 1:nrelations(ir03)
+        for k in 1:nentities(ir03, j)
+            f = ir03(j, k)
+            allmatch = allmatch && (j in ir30(f))
+        end # k
+    end # j
+    @test allmatch
+
+    # Test the incidence relations 2 -> 0 & 0 -> 2
+    ir20 = skeleton(ir30)
+    ir02 = transpose(ir20)
+    allmatch = true
+    for j in 1:nrelations(ir02)
+        for k in 1:nentities(ir02, j)
+            f = ir02(j, k)
+            allmatch = allmatch && (j in ir20(f))
+        end # k
+    end # j
+    @test allmatch
+
+    # Test the incidence relations 1 -> 0 & 0 -> 1
+    ir10 = skeleton(ir20)
+    ir01 = transpose(ir10)
+    allmatch = true
+    for j in 1:nrelations(ir01)
+        for k in 1:nentities(ir01, j)
+            f = ir01(j, k)
+            allmatch = allmatch && (j in ir10(f))
+        end # k
+    end # j
+    @test allmatch
+
+    # Test the incidence relations 3 -> 2 & 2 -> 3
+    ir20 = skeleton(ir30)
+    ir32 = boundedby(ir30, ir20)
+    # Check that the tetrahedra connectivity refers to all three vertices of the faces
+    allmatch = true
+    @test nrelations(ir30) == nrelations(ir32)
+    for j in 1:nrelations(ir32)
+        for k in 1:nentities(ir32, j)
+            f = ir32(j, k)
+            for m in 1:3
+                allmatch = allmatch && (ir20(abs(f), m) in ir30(j))
+            end # m
+        end # k
+    end # j
+    @test allmatch
+    # Check that the orientations of the faces is correct
+    allmatch = true
+    @test nrelations(ir30) == nrelations(ir32)
+    for j in 1:nrelations(ir32)
+        for k in 1:nentities(ir32, j)
+            for f in ir32(j)
+                orientation = sign(f)
+                f = abs(f)
+                fc = ir20(f)
+                matchone = false
+                for m in 1:4
+                    oc = ir30(j)[ir30.left.shapedesc.facets[m, :]]
+                    if length(intersect(fc, oc)) == 3
+                        s = _sense(fc, oc, nshifts(ir20.left.shapedesc))
+                        matchone = (s == orientation)
+                    end
+                    if matchone
+                        break
+                    end
+                end # m
+                allmatch = allmatch && matchone
+            end
+        end # k
+    end # j
+    @test allmatch
+    # Check the transpose incidence relation
+    ir23 = transpose(ir32)
+    allmatch = true
+    for j in 1:nrelations(ir23)
+        for k in 1:nentities(ir23, j)
+            e = ir23(j, k)
+            allmatch = allmatch && (j in abs.(ir32(e)))
+        end # k
+    end # j
+    @test allmatch
+    true
+end
+end
+using .mt4topo1
+mt4topo1.test()
