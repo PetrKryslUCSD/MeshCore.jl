@@ -1,7 +1,7 @@
 module samplet4
 using StaticArrays
-using MeshCore: Vertices, nvertices, coordinates, ShapeCollection, T4
-function mesh()
+using MeshCore: Locations, nvertices, coordinates, ShapeColl, T4
+function samplet4mesh()
     xyz = [
     0.0 0.0 0.0
     1.0 0.0 0.0
@@ -64,7 +64,6 @@ function mesh()
     2.0 8.0 5.0
     3.0 8.0 5.0
     ]
-    vertices =  Vertices(xyz)
     c = [1 25 21 22
     6 5 2 26
     26 2 22 25
@@ -210,7 +209,6 @@ function mesh()
     36 35 56 59
     39 59 35 36
     ]
-    shapes = ShapeCollection(T4, c)
-    return vertices, shapes
+    return xyz, c
 end
 end
