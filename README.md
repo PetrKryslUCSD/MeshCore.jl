@@ -11,4 +11,4 @@ Small package for the topology of meshes for the Finite Element Methods (FEM). A
 
 - 03/18/2020: The library was completely redesigned around incidence relations. Much simpler than before!
 - 03/16/2020: Note: The coverage appears low, but that seems to be a bug in the computation of the coverage
-when applied to one-line functions defined for multiple types.
+  when applied to one-line functions defined for multiple types.

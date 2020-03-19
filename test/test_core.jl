@@ -413,7 +413,7 @@ using .mt4topo1
 mt4topo1.test()
 
 module mtestattr1
-using MeshCore: Locations, coordinates, Attrib, LocAccess, P1, ShapeColl
+using MeshCore: Locations, coordinates, Attrib, LocAccess, P1, ShapeColl, attribute
 using Test
 using BenchmarkTools
 
@@ -439,6 +439,9 @@ function test()
     vertices = ShapeColl(P1, size(xyz, 1), Dict(:geom=>a))
     a = vertices.attributes[:geom]
     @test a.val(10) == [633.3333333333334, 800.0]
+
+    a = attribute(vertices, :geom)
+    @test a.val(10) == [633.3333333333334, 800.0]
     # @btime $a.val(10)
     # @btime a.val(10)
 
@@ -447,3 +450,37 @@ end
 end
 using .mtestattr1
 mtestattr1.test()
+
+module mt4mesh1
+using StaticArrays
+using MeshCore: P1, T4, ShapeColl,  manifdim, nvertices, nedgets, nshapes
+using MeshCore: boundedby2, skeleton, boundedby, nshifts, _sense
+using MeshCore: IncRel, Locations, transpose, nrelations, nentities, nlocations
+using MeshCore: Mesh, insert!, Attrib, LocAccess, increl, shapecoll, attribute
+using ..samplet4: samplet4mesh
+using Test
+function test()
+    xyz, cc = samplet4mesh()
+    # Construct the initial incidence relation
+    locs = Locations(xyz)
+    la = LocAccess(locs)
+    vrts = ShapeColl(P1, nlocations(locs), Dict(:geom=>Attrib(la)))
+    tets = ShapeColl(T4, size(cc, 1))
+    ir30 = IncRel(tets, vrts, cc)
+
+    mesh = Mesh()
+    insert!(mesh, :vertices, vrts)
+    insert!(mesh, :tetrahedra, tets)
+    insert!(mesh, :ir30, ir30)
+    
+    @test shapecoll(mesh, :vertices) == vrts
+    @test increl(mesh, :ir30) == ir30
+    s = shapecoll(mesh, :vertices)
+    a = attribute(s, :geom)
+    @test a.val(nshapes(s)) == [3.0, 8.0, 5.0]
+
+    true
+end
+end
+using .mt4mesh1
+mt4mesh1.test()

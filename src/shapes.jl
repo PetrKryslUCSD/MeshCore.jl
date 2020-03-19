@@ -8,9 +8,14 @@ This is the type of a homogeneous collection of finite element shapes.
 struct ShapeColl{S <: AbsShapeDesc}
     shapedesc::S # Shape descriptor
 	nshapes::Int64 # Number of shapes in the collection
-	attributes::Dict
+	attributes::Dict # dictionary of attributes
 end
 
+"""
+    ShapeColl(shapedesc::S, nshapes::Int64) where {S <: AbsShapeDesc}
+
+Set up new shape collection with an empty dictionary of attributes.
+"""
 function ShapeColl(shapedesc::S, nshapes::Int64) where {S <: AbsShapeDesc}
 	ShapeColl(shapedesc::S, nshapes::Int64, Dict{Symbol, Any}())
 end
@@ -88,6 +93,13 @@ Retrieve connectivity of the `j`-th edget shape of the `i`-th shape from the col
 function edgetconnectivity(shapes::ShapeColl, j::Int64)
     return shapes.shapedesc.edgets[j, :]
 end
+
+"""
+    attribute(shapes::ShapeColl, s::Symbol)
+
+Retrieve a named attribute.
+"""
+attribute(shapes::ShapeColl, s::Symbol) = shapes.attributes[s]
 
 function _sense(fc, oc, nshifts) # is the facet used in the positive or in the negative sense?
 	if fc == oc

@@ -25,11 +25,11 @@ Contents:
   tetrahedron is bounded by facets, which in turn are bounded by edges. These
   edges are the "edgets" of the tetrahedron.  The edgets can also be thought of
   as a "leaky" bounding shapes of 3-D cells.
-- *Mesh*: The mesh can be understood as an incidence relation between two shape
+- *Mesh topology*: The mesh topology can be understood as an incidence relation between two shape
   collections.
-- *Initial mesh*: The entry point into the library. The first mesh that was
+- *Initial mesh topology*: The entry point into the library. The first mesh that was
   defined. Typically by the incidence relation ``d \rightarrow 0``.
-- *Derived mesh*: Mesh derived from another mesh. The operations defined in the
+- *Derived mesh topology*: Mesh derived from another mesh. The operations defined in the
   library are the *skeleton*, the *transpose*, the *bounded-by for facets*, and *bounded-by for edgets*.
 
 ## Example
@@ -57,8 +57,8 @@ vtkwrite("trunc_cyl_shell_0-boundary-skeleton", vertices, bshapes)
 
 ## Basic objects
 
-The objects with which the library works are the locations for the
-representation of the geometry (type `Locations`), and the incidence relations
+
+The objects with which the library works are the incidence relations
 (`IncRel`), the shape descriptors (subtypes of `AbstractShapeDesc`), and the
 shape collections (`ShapeColl`).
 
