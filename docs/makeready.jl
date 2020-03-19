@@ -1,0 +1,1 @@
+pkg"add Documenter"

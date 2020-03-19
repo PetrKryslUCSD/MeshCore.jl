@@ -415,7 +415,7 @@ mt4topo1.test()
 module mtestattr1
 using MeshCore: Locations, coordinates, Attrib, LocAccess, P1, ShapeColl, attribute
 using Test
-using BenchmarkTools
+# using BenchmarkTools
 
 function test()
     xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
