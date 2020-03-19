@@ -13,7 +13,7 @@ Locations{N, T<:AbstractFloat}
 ## Shape descriptors
 
 ```@docs
-AbstractShapeDesc
+AbsShapeDesc
 NoSuchShapeDesc
 P1ShapeDesc
 L2ShapeDesc

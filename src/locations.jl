@@ -71,4 +71,10 @@ Data structure to access the locations of vertices.
 struct LocAccess{N, T}
     locs::Locations{N, T}
 end
+
+"""
+    (la::LocAccess)(j::Int64)
+
+Access the coordinate of the `j`-th vertex.
+"""
 (la::LocAccess)(j::Int64) = coordinates(la.locs, j)

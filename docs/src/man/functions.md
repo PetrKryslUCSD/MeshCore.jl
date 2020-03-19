@@ -47,8 +47,8 @@ attribute(shapes::ShapeColl, s::Symbol)
 IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, data::Matrix{T}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
 nrelations
 nentities
-(ir::IncRelFixed)(j::IT, k::IT) where {IT} = ir._v[j][k]
-(ir::IncRelFixed)(j::IT) where {IT} = ir._v[j]
+(ir::IncRel)(j::IT, k::IT) where {IT}
+(ir::IncRelFixed)(j::IT) where {IT}
 ```
 
 ### Relations below the diagonal

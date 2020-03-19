@@ -149,10 +149,10 @@ lists the numbers of the faces that bound each individual tetrahedron.
 The resulting left shape is of the same shape description as in the `mesh`.
 
 !!! note
-The numbers of the facets are signed: positive when the facet bounds the shape
-in the sense in which it is defined by the shape as oriented with an outer
-normal; negative otherwise. The sense is defined by the numbering of the
-1st-order vertices of the facet shape.
+    The numbers of the facets are signed: positive when the facet bounds the shape
+    in the sense in which it is defined by the shape as oriented with an outer
+    normal; negative otherwise. The sense is defined by the numbering of the
+    1st-order vertices of the facet shape.
 
 # Returns
 Incidence relation for the bounded-by mesh. The left shape collection is the
@@ -204,10 +204,10 @@ tetrahedron. The resulting shape is of the same shape description as the
 `shapes` on input.
 
 !!! note
-The numbers of the edgets are signed: positive when the edget bounds the shape
-in the sense in which it is defined by the shape as oriented with an outer
-normal; negative otherwise. The sense is defined by the numbering of the
-1st-order vertices of the edget shape.
+    The numbers of the edgets are signed: positive when the edget bounds the shape
+    in the sense in which it is defined by the shape as oriented with an outer
+    normal; negative otherwise. The sense is defined by the numbering of the
+    1st-order vertices of the edget shape.
 
 # Returns
 Incidence relation for the "bounded-by" mesh. The left shape collection is the
