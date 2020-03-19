@@ -16,3 +16,8 @@ it might make sense to separate topology from geometry in the source files.
 Perhaps these should be computed and cached my `skeleton`?
 
 - The vertices should also be stored as a shape collection. Of manifold dimension zero.
+
+- Organization of meshes.
+
+Mesh has a number of shape collections and a number of incidence relations.
+Geometry is an attribute of the shape collection of vertices.

@@ -10,30 +10,27 @@ Contents:
 
 ## Glossary
 
-- Shape: topological shape of any manifold dimension, ``0`` for vertices, ``1`` for
-  edges, ``2`` for faces, and ``3`` for cells.
-- Facet: shape bounding another shape. A shape is bounded by facets.
-- Edget: shape one manifold dimension lower than the facet. For instance a
+- *Shape*: topological shape of any manifold dimension, ``0`` for vertices,
+  ``1`` for edges, ``2`` for faces, and ``3`` for cells.
+- *Shape descriptor*: description of the type of the shape, such as the number
+  of vertices, facets, edgets, and so on.
+- *Shape collection*: set of shapes of a particular shape.
+- *Incidence relation*: Map from one shape collection to another shape
+  collection. For instance, three-dimensional finite elements (cells) are typically linked to the vertices by
+  the incidence relation ``3 \rightarrow 0``, i. e. for each tetrahedron the
+  four vertices are listed. Some incidence relations link a shape to a fixed
+  number of other shapes, other incidence relations are of variable arity.
+- *Facet*: shape bounding another shape. A shape is bounded by facets.
+- *Edget*: shape one manifold dimension lower than the facet. For instance a
   tetrahedron is bounded by facets, which in turn are bounded by edges. These
   edges are the "edgets" of the tetrahedron.  The edgets can also be thought of
   as a "leaky" bounding shapes of 3-D cells.
-- Covering: the boundary of a 3-D cell is the union of the vertices, edges, and faces.
-- Shape collection: set of shapes. Each shape is defined with reference
-  to other shapes through an incidence relation.
-- Incidence relation: Map from one shape to another shape. For instance,
-  three-dimensional finite elements are defined by the
-  incidence relation ``3 \rightarrow 0``, i. e. for each tetrahedron
-  the four vertices are listed. Some incidence relations link a shape to
-  a fixed number of other shapes, other incidence relations are of variable arity.
-- Connectivity: The connectivity is the incidence relation ``d \rightarrow 0``
-  linking the shape (``d``-dimensional manifold, where ``d \ge 0``) to the set
-  of vertices (``0``-dimensional manifold).
-- Mesh: Collection of shapes. It may be also a set of collections of shapes, but
-  it is usually quite enough  to consider a mesh and the collection of shapes to
-  be one and the same.  
-- Initial mesh: The entry point into the library. The first mesh that was defined.
-- Derived mesh: Mesh derived from another mesh through an incidence relation
-  calculation.
+- *Mesh topology*: The mesh topology can be understood as an incidence relation between two shape
+  collections.
+- *Initial mesh topology*: The entry point into the library. The first mesh that was
+  defined. Typically by the incidence relation ``d \rightarrow 0``.
+- *Derived mesh topology*: Mesh derived from another mesh. The operations defined in the
+  library are the *skeleton*, the *transpose*, the *bounded-by for facets*, and *bounded-by for edgets*.
 
 ## Example
 
@@ -60,19 +57,39 @@ vtkwrite("trunc_cyl_shell_0-boundary-skeleton", vertices, bshapes)
 
 ## Basic objects
 
-The objects with which the library works are the vertices and the shape
-collections. The vertices are points in space, and the shape collections are
-homogeneous collections of  shapes such as the usual vertices (0-dimensional
-manifolds), line segments (1-dimensional manifolds), triangles and
-quadrilaterals (2-dimensional manifolds), tetrahedra and hexahedra
-(3-dimensional manifolds).
 
-### Connectivity
+The objects with which the library works are the incidence relations
+(`IncRel`), the shape descriptors (subtypes of `AbstractShapeDesc`), and the
+shape collections (`ShapeColl`).
 
-The shapes are defined by the *connectivity*. The connectivity is the incidence
+### Geometry
+
+The locations are points in space. They are defined for the vertices.
+
+### Shape descriptors and shape collections
+
+The shape collections are homogeneous collections of  shapes such as the usual
+vertices (0-dimensional manifolds), line segments (1-dimensional manifolds),
+triangles and quadrilaterals (2-dimensional manifolds), tetrahedra and
+hexahedra (3-dimensional manifolds). The shape descriptors describe the
+topology of one entity of the shape.
+
+### Incidence relations
+
+The incidence relations are really
+definitions of meshes where one shape collection, the one on the left of the
+incidents relation, is mapped to ``N`` entities in the shape collection on the
+right.
+
+## Topology of meshes
+
+Meshes are understood here simply as incidence relations. For instance, at the simplest level
+meshes are defined by the *connectivity*. The connectivity is the incidence
 relation linking the shape (``d``-dimensional manifold, where ``d \ge 0``) to
 the set of vertices.  The number of vertices connected by the shapes is a fixed
-number, for instance 8 for linear hexahedra.
+number, for instance 4 for linear tetrahedra.
+
+
 
 The collection of ``d``-dimensional shapes is thus defined by the connectivity
 ``d \rightarrow 0``. The starting point for the processing of  the mesh is
