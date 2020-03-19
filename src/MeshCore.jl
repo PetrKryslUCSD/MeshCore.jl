@@ -8,6 +8,5 @@ include("attributes.jl")
 include("shapedesc.jl")
 include("shapes.jl")
 include("increl.jl")
-include("mesh.jl")
 
 end # module
