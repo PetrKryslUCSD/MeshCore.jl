@@ -1,11 +1,20 @@
-
-
 module mtest1
-using MeshCore: P1, L2, manifdim, nfacets
+using MeshCore: NoSuchShape, P1, L2, ShapeColl, manifdim, nfacets
+using MeshCore: shapedesc, nshapes, manifdim, nvertices, facetdesc, nfacets, edgetdesc, nedgets
 using Test
 function test()
     @test manifdim(P1) == 0
     @test nfacets(L2) == 2
+    vrts = ShapeColl(P1, 12)
+    lines = ShapeColl(L2, 32)
+    @test shapedesc(vrts) == P1
+    @test nshapes(vrts) == 12
+    @test manifdim(vrts) == manifdim(P1)
+    @test nvertices(lines) == nvertices(L2)
+    @test facetdesc(lines) == P1
+    @test nfacets(lines) == nfacets(L2)
+    @test edgetdesc(lines) == NoSuchShape
+    @test nedgets(lines) == 0
 
     true
 end
@@ -40,7 +49,7 @@ mtest1a1.test()
 
 module mtest2
 using StaticArrays
-using MeshCore: Locations, nlocations, coordinates
+using MeshCore: Locations, nlocations, coordinates, nspacedims, coordinatetype
 using Test
 function test()
     xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
@@ -48,6 +57,8 @@ function test()
     @test nlocations(v) == 12
     x = coordinates(v, SVector{2}([2, 4]))
     @test x[1] == SVector{2}([633.3333333333334 0.0])
+    @test nspacedims(v) == 2
+@test coordinatetype(v) == Float64
     true
 end
 end
