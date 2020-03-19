@@ -4,15 +4,14 @@
 CurrentModule = MeshCore
 ```
 
-## Vertices
+## Geometry
 
 ```@docs
-Vertices
+Locations{N, T<:AbstractFloat}
 ```
 
-## Shapes
+## Shape descriptors
 
-### Shape descriptors
 ```@docs
 AbstractShapeDesc
 NoSuchShapeDesc
@@ -24,14 +23,22 @@ T3ShapeDesc
 T4ShapeDesc
 ```
 
-### Collection of shapes
+## Shape collections
+
 ```@docs
-ShapeCollection
+ShapeColl{S <: AbsShapeDesc}
 ```
+
+## Attributes
+
+```@docs
+AbsAttrib
+Attrib{F}<:AbsAttrib
+```
+
 
 ## Incidence relations
 
 ```@docs
-IncRelFixed
-IncRelVar
+IncRel{LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
 ```

@@ -32,8 +32,7 @@ Contents:
 
 ## Example
 
-Let us begin with a simple example of the use of the library:
-First import the mesh from a file:
+Let us begin with a simple example of the use of the library. (The next step relies on a related package, `MeshPorter`.) First import the mesh from a file:
 ```
 mesh = import_NASTRAN("trunc_cyl_shell_0.nas")
 ```

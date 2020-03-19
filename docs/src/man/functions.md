@@ -4,59 +4,66 @@
 CurrentModule = MeshCore
 ```
 
-## Vertices
+## Geometry
 
 ```@docs
-Vertices(xyz::Array{T, 2}) where {T}
-nvertices
-nspacedims
-coordinatetype
-coordinates
+Locations(xyz::Array{T, 2}) where {T}
+nlocations(loc::Locations{N, T}) where {N, T}
+nspacedims(loc::Locations{N, T}) where {N, T}
+coordinatetype(loc::Locations{N, T}) where {N, T}
+coordinates(loc::Locations{N, T}, i::Int64) where {N, T}
+coordinates(loc::Locations{N, T}, I::SVector) where {N, T}
+```
+
+## Access to geometry from an attribute
+
+
+```@docs
+(la::LocAccess)(j::Int64)
 ```
 
 ## Shapes
 
 ```@docs
-ShapeCollection(shapedesc::S, C::Array{T, 2}) where {S <: AbstractShapeDesc, T}
+ShapeColl(shapedesc::S, nshapes::Int64) where {S <: AbsShapeDesc}
 shapedesc
-connectivity
 nshapes
 manifdim
 nvertices
-n1storderv
-nshifts
 facetdesc
 nfacets
-facets
-edgetconnectivity
+facetconnectivity
 edgetdesc
 nedgets
-edgets
 edgetconnectivity
+n1storderv
+nshifts
+attribute(shapes::ShapeColl, s::Symbol)
 ```
 
 ## Incidence relations
 
 ```@docs
+IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, data::Matrix{T}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
 nrelations
 nentities
 (ir::IncRelFixed)(j::IT, k::IT) where {IT} = ir._v[j][k]
 (ir::IncRelFixed)(j::IT) where {IT} = ir._v[j]
 ```
 
-## Relations below the diagonal
+### Relations below the diagonal
 
 ```@docs
-skeleton
-boundary
-boundedby
-boundedby2
+skeleton(mesh::IncRel; options...)
+boundary(mesh::IncRel)
+boundedby(mesh::IncRel, fmesh::IncRel)
+boundedby2(mesh::IncRel, emesh::IncRel)
 ```
 
-## Relations above the diagonal
+### Relations above the diagonal
 
 ```@docs
-increl_transpose
+transpose(mesh::IncRel)
 ```
 
 ## Index
