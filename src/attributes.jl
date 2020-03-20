@@ -30,5 +30,15 @@ a = vertices.attributes[:label]
 ```
 """
 struct Attrib{F}<:AbsAttrib
-    val::F
+    val::F # function or a callable object
+    name::String # name of the attribute
+end
+
+"""
+    Attrib(val::F) where {F}
+
+Construct attribute with default name.
+"""
+function Attrib(val::F) where {F}
+    Attrib(val, "attrib")
 end

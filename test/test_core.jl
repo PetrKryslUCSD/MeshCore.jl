@@ -1,5 +1,5 @@
 module mtest1
-using MeshCore: NoSuchShape, P1, L2, ShapeColl, manifdim, nfacets
+using MeshCore: NoSuchShape, P1, L2, ShapeColl, manifdim, nfacets, SHAPE_DESC
 using MeshCore: shapedesc, nshapes, manifdim, nvertices, facetdesc, nfacets, edgetdesc, nedgets
 using Test
 function test()
@@ -15,7 +15,12 @@ function test()
     @test nfacets(lines) == nfacets(L2)
     @test edgetdesc(lines) == NoSuchShape
     @test nedgets(lines) == 0
-
+    @test SHAPE_DESC["P1"].name == "P1"
+    @test SHAPE_DESC["L2"].name == "L2"
+    @test SHAPE_DESC["T3"].name == "T3"
+    @test SHAPE_DESC["T4"].name == "T4"
+    @test SHAPE_DESC["Q4"].name == "Q4"
+    @test SHAPE_DESC["H8"].name == "H8"
     true
 end
 end
@@ -76,7 +81,11 @@ function test()
     cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
     q4s = ShapeColl(Q4, 6)
     vrts = ShapeColl(P1, 12)
-    mesh = IncRel(q4s, vrts, cc)
+    ir = IncRel(q4s, vrts, cc)
+    q4s = ShapeColl(Q4, 6, "q4s")
+    vrts = ShapeColl(P1, 12, "vrts")
+    ir = IncRel(q4s, vrts, cc)
+    @test ir.name == "q4s -> vrts"
     @test manifdim(q4s) == 2
     @test nvertices(q4s) == 4
     @test facetdesc(q4s) == L2
@@ -88,9 +97,9 @@ function test()
     @test nedgets(shapedesc(q4s)) == 4
     @test n1storderv(shapedesc(q4s)) == 4
     @test nshifts(shapedesc(q4s)) == 4
-    @test mesh(3, 3) == 7
-    @test mesh(1, 4) == 5
-    @test mesh(6, 1) == 7
+    @test ir(3, 3) == 7
+    @test ir(1, 4) == 5
+    @test ir(6, 1) == 7
 
     true
 end
@@ -446,12 +455,13 @@ function test()
     @test a.val(10) == [633.3333333333334, 800.0]
 
     la = LocAccess(locs)
-    a = Attrib(la)
-    vertices = ShapeColl(P1, size(xyz, 1), Dict(:geom=>a))
-    a = vertices.attributes[:geom]
+    a = Attrib(la, "geom")
+    # @show typeof(Dict(a.name=>a))
+    vertices = ShapeColl(P1, size(xyz, 1), Dict(a.name=>a))
+    a = vertices.attributes["geom"]
     @test a.val(10) == [633.3333333333334, 800.0]
 
-    a = attribute(vertices, :geom)
+    a = attribute(vertices, "geom")
     @test a.val(10) == [633.3333333333334, 800.0]
     # @btime $a.val(10)
     # @btime a.val(10)

@@ -26,6 +26,8 @@ coordinates(loc::Locations{N, T}, I::SVector) where {N, T}
 
 ```@docs
 ShapeColl(shapedesc::S, nshapes::Int64) where {S <: AbsShapeDesc}
+ShapeColl(shapedesc::S, nshapes::Int64, d::Dict) where {S <: AbsShapeDesc}
+ShapeColl(shapedesc::S, nshapes::Int64, s::String) where {S <: AbsShapeDesc}
 shapedesc
 nshapes
 manifdim
@@ -44,7 +46,8 @@ attribute(shapes::ShapeColl, s::Symbol)
 ## Incidence relations
 
 ```@docs
-IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, data::Matrix{T}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
+IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, v::Vector{T}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
+IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, data::Matrix{MT}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, MT}
 nrelations
 nentities
 (ir::IncRel)(j::IT, k::IT) where {IT}

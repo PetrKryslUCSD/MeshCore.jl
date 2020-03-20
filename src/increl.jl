@@ -8,16 +8,26 @@ struct IncRel{LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
 	left::ShapeColl{LEFT}
 	right::ShapeColl{RIGHT}
 	_v::Vector{T} # vector of vectors of shape numbers
+    name::String # name of the incidence relation
 end
 
 """
-    IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, data::Matrix{T}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
+    IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, data::Matrix{MT}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, MT}
 
-Convenience constructor supplying a matrix instead of a vector of vectors.
+Convenience constructor with a vector of vectors and a default name.
 """
-function IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, data::Matrix{T}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
+function IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, v::Vector{T}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
+    IncRel(left, right, deepcopy(v), left.name * " -> " * right.name)
+end
+
+"""
+    IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, data::Matrix{MT}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, MT}
+
+Convenience constructor supplying a matrix instead of a vector of vectors and a default name.
+"""
+function IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, data::Matrix{MT}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, MT}
 	_v = [SVector{nvertices(left.shapedesc)}(data[idx, :]) for idx in 1:size(data, 1)]
-	IncRel(left, right, _v)
+	IncRel(left, right, _v, left.name * " -> " * right.name)
 end
 
 """

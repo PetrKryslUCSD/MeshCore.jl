@@ -101,6 +101,7 @@ struct P1ShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} <: AbsShapeDesc{MD, NV
     facets::SMatrix{NF, 0, Int64, 0}
     edgetdesc::ED
     edgets::SMatrix{NE, 0, Int64, 0}
+    name::String
 end
 
 const P1 = P1ShapeDesc{
@@ -112,7 +113,7 @@ NoSuchShapeDesc,  # FD
 NoSuchShapeDesc,  # ED
 1, # N1OV
 0 # NSHIFTS
-}(NoSuchShape, SMatrix{0, 0}(Int64[]), NoSuchShape, SMatrix{0, 0}(Int64[]))
+}(NoSuchShape, SMatrix{0, 0}(Int64[]), NoSuchShape, SMatrix{0, 0}(Int64[]), "P1")
 
 """
     L2ShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
@@ -124,6 +125,7 @@ struct L2ShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} <: AbsShapeDesc{MD, NV
     facets::SMatrix{NF, 1, Int64, 2}
     edgetdesc::ED
     edgets::SMatrix{NE, 0, Int64, 0}
+    name::String
 end
 
 const L2 = L2ShapeDesc{
@@ -135,7 +137,7 @@ P1ShapeDesc,  # FD
 NoSuchShapeDesc,  # ED
 2, # N1OV
 0 # NSHIFTS
-}(P1, SMatrix{2, 1}([1; 2]), NoSuchShape, SMatrix{0, 0}(Int64[]))
+}(P1, SMatrix{2, 1}([1; 2]), NoSuchShape, SMatrix{0, 0}(Int64[]), "L2")
 
 """
     Q4ShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
@@ -147,6 +149,7 @@ struct Q4ShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} <: AbsShapeDesc{MD, NV
     facets::SMatrix{NF, 2, Int64, 4*2}
     edgetdesc::ED
     edgets::SMatrix{NE, 1, Int64, 4*1}
+    name::String
 end
 
 const Q4 = Q4ShapeDesc{
@@ -158,7 +161,7 @@ L2ShapeDesc, # FD
 P1ShapeDesc,  # ED
 4,  # N1OV
 4 # NSHIFTS
-}(L2, SMatrix{4, 2}([1 2; 2 3; 3 4; 4 1]), P1, SMatrix{4, 1}([1; 2; 3; 4]))
+}(L2, SMatrix{4, 2}([1 2; 2 3; 3 4; 4 1]), P1, SMatrix{4, 1}([1; 2; 3; 4]), "Q4")
 
 """
     H8ShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
@@ -170,6 +173,7 @@ struct H8ShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} <: AbsShapeDesc{MD, NV
     facets::SMatrix{NF, 4, Int64, 6*4}
     edgetdesc::ED
     edgets::SMatrix{NE, 2, Int64, 12*2}
+    name::String
 end
 
 const H8 = H8ShapeDesc{
@@ -187,7 +191,7 @@ L2ShapeDesc, # ED
 2 3 7 6;
 3 4 8 7;
 4 1 5 8;
-6 7 8 5]), L2, SMatrix{12, 2}([1 2; 2 3; 3 4; 4 1; 5 6; 6 7; 7 8; 8 5; 1 5; 2 6; 3 7; 4 8;];))
+6 7 8 5]), L2, SMatrix{12, 2}([1 2; 2 3; 3 4; 4 1; 5 6; 6 7; 7 8; 8 5; 1 5; 2 6; 3 7; 4 8;];), "H8")
 
 """
     T3ShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
@@ -199,6 +203,7 @@ struct T3ShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} <: AbsShapeDesc{MD, NV
     facets::SMatrix{NF, 2, Int64, 3*2}
     edgetdesc::ED
     edgets::SMatrix{NE, 1, Int64, 3*1}
+    name::String
 end
 
 const T3 = T3ShapeDesc{2, # MD
@@ -209,7 +214,7 @@ L2ShapeDesc, # FD
 P1ShapeDesc, # ED
 3, # N1OV
 3 # NSHIFTS
-}(L2, SMatrix{3, 2}([1 2; 2 3; 3 1]), P1, SMatrix{3, 1}([1; 2; 3]))
+}(L2, SMatrix{3, 2}([1 2; 2 3; 3 1]), P1, SMatrix{3, 1}([1; 2; 3]), "T3")
 
 """
     T4ShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
@@ -221,6 +226,7 @@ struct T4ShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} <: AbsShapeDesc{MD, NV
     facets::SMatrix{NF, 3, Int64, 4*3}
     edgetdesc::ED
     edgets::SMatrix{NE, 2, Int64, 6*2}
+    name::String
 end
 
 const T4 = T4ShapeDesc{3,  # MD
@@ -231,7 +237,7 @@ T3ShapeDesc, # FD
 L2ShapeDesc, # ED
 4, # N1OV
 0 # NSHIFTS
-}(T3, SMatrix{4, 3}([1 3 2; 1 2 4; 2 3 4; 1 4 3]), L2, SMatrix{6, 2}([1  2; 2  3; 3  1; 4  1; 4  2; 4  3]))
+}(T3, SMatrix{4, 3}([1 3 2; 1 2 4; 2 3 4; 1 4 3]), L2, SMatrix{6, 2}([1  2; 2  3; 3  1; 4  1; 4  2; 4  3]), "T4")
 
 """
     SHAPE_DESC

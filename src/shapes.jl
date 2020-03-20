@@ -9,15 +9,34 @@ struct ShapeColl{S <: AbsShapeDesc}
     shapedesc::S # Shape descriptor
 	nshapes::Int64 # Number of shapes in the collection
 	attributes::Dict # dictionary of attributes
+    name::String # name of the shape collection
 end
 
 """
     ShapeColl(shapedesc::S, nshapes::Int64) where {S <: AbsShapeDesc}
 
-Set up new shape collection with an empty dictionary of attributes.
+Set up new shape collection with an empty dictionary of attributes and a default name.
 """
 function ShapeColl(shapedesc::S, nshapes::Int64) where {S <: AbsShapeDesc}
-	ShapeColl(shapedesc::S, nshapes::Int64, Dict{Symbol, Any}())
+	ShapeColl(shapedesc::S, nshapes::Int64, Dict(), "shapes")
+end
+
+"""
+    ShapeColl(shapedesc::S, nshapes::Int64, d::Dict{Symbol, Any}) where {S <: AbsShapeDesc}
+
+Set up new shape collection with a default name.
+"""
+function ShapeColl(shapedesc::S, nshapes::Int64, d::Dict) where {S <: AbsShapeDesc}
+    ShapeColl(shapedesc::S, nshapes::Int64, d, "shapes")
+end
+
+"""
+    ShapeColl(shapedesc::S, nshapes::Int64, d::Dict{Symbol, Any}) where {S <: AbsShapeDesc}
+
+Set up new shape collection with an empty dictionary of attributes.
+"""
+function ShapeColl(shapedesc::S, nshapes::Int64, s::String) where {S <: AbsShapeDesc}
+    ShapeColl(shapedesc::S, nshapes::Int64, Dict(), s)
 end
 
 """
@@ -99,7 +118,7 @@ end
 
 Retrieve a named attribute.
 """
-attribute(shapes::ShapeColl, s::Symbol) = shapes.attributes[s]
+attribute(shapes::ShapeColl, s::String) = shapes.attributes[s]
 
 function _sense(fc, oc, nshifts) # is the facet used in the positive or in the negative sense?
 	if fc == oc
