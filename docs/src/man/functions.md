@@ -20,6 +20,7 @@ coordinates(loc::Locations{N, T}, I::SVector) where {N, T}
 
 ```@docs
 (la::LocAccess)(j::Int64)
+nlocations(la::LocAccess)
 ```
 
 ## Shapes

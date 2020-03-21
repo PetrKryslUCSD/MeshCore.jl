@@ -73,6 +73,13 @@ struct LocAccess{N, T}
 end
 
 """
+    nlocations(la::LocAccess)
+
+Retrieve the number of locations.
+"""
+nlocations(la::LocAccess) = nlocations(la.locations)
+
+"""
     (la::LocAccess)(j::Int64)
 
 Access the coordinate of the `j`-th vertex.
