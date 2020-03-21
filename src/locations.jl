@@ -73,11 +73,11 @@ struct LocAccess{N, T}
 end
 
 """
-    nlocations(la::LocAccess)
+    locations(la::LocAccess)
 
-Retrieve the number of locations.
+Retrieve the data structure of the locations.
 """
-nlocations(la::LocAccess) = nlocations(la.locations)
+locations(la::LocAccess) = la.locations
 
 """
     (la::LocAccess)(j::Int64)
