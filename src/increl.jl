@@ -38,7 +38,7 @@ Number of individual relations in the incidence relation.
 nrelations(ir::IncRel)  = length(ir._v)
 
 """
-    nentities(ir::IncRel, j::Int64) 
+    nentities(ir::IncRel, j::Int64)
 
 Number of individual entities in the `j`-th relation in the incidence relation.
 """
@@ -151,7 +151,7 @@ function _countrepeats(A)
         if A[i, :] == A[i-1, :]
             occurrences[i] = occurrences[i-1] + 1
         else
-            occurrences[i] = 1 
+            occurrences[i] = 1
         end
     end
     return occurrences
@@ -162,7 +162,7 @@ end
 
 Compute the skeleton of an incidence relation.
 
-This computes a new incidence relation from an existing incidence relation. 
+This computes a new incidence relation from an existing incidence relation.
 
 # Options
 - `boundaryonly`: include in the skeleton only shapes on the boundary
@@ -204,7 +204,7 @@ function skeleton(ir::IncRel; options...)
         unqhfc = shfc[unq, :] # unique hyper faces
     else
         # unique rows are obtained by ignoring the repeats
-        unq = findall(a -> a == 1, rep) 
+        unq = findall(a -> a == 1, rep)
         unqhfc = shfc[unq, :] # unique hyper faces
     end
     return IncRel(ShapeColl(facetdesc(ir.left), size(unqhfc, 1)), ir.right, unqhfc)
@@ -221,58 +221,98 @@ function boundary(ir::IncRel)
     return skeleton(ir; boundaryonly = true)
 end
 
+function _selectrepeating(v, nrepeats)
+	m = length(v);
+    occurrences = zeros(eltype(v), m);
+	sort!(v)
+	occurrences[1] = 1
+    for i in 2:m
+        if v[i] == v[i-1]
+            occurrences[i] = occurrences[i-1] + 1
+        else
+            occurrences[i] = 1
+        end
+    end
+	repeats = [o == nrepeats for o in occurrences]
+    return v[repeats]
+end
+
 """
-    boundedby(ir::IncRel, fir::IncRel)
+    boundedby(ir::IncRel, fir::IncRel, tfir::IncRel)
 
 Compute the incidence relation `d -> d-1` for `d`-dimensional shapes.
 
-In other words, this is the incidence relation between shapes and the shapes that bound
-these shapes (facets). For tetrahedra as the shapes, the incidence relation
-lists the numbers of the faces that bound each individual tetrahedron.
+In other words, this is the incidence relation between shapes and the shapes
+that bound these shapes (facets). For tetrahedra as the shapes, the incidence
+relation lists the numbers of the faces that bound each individual tetrahedron.
 The resulting left shape is of the same shape description as in the `ir`.
 
-!!! note
-    The numbers of the facets are signed: positive when the facet bounds the shape
-    in the sense in which it is defined by the shape as oriented with an outer
-    normal; negative otherwise. The sense is defined by the numbering of the
-    1st-order vertices of the facet shape.
+# Arguments
+- `ir` = incidence relation `d -> 0`,
+- `fir` = incidence relation `d-1 -> 0`,
+- `tfir` = transpose of the above, incidence relation `0 -> d-1`.
 
 # Returns
 Incidence relation for the bounded-by incidence relation. The left shape
 collection is the same as for the `ir`, the right shape collection is for the
 facets (shapes of manifold dimension one less than the manifold dimension of the
 shapes themselves).
+
+!!! note
+    The numbers of the facets are signed: positive when the facet bounds the shape
+    in the sense in which it is defined by the shape as oriented with an outer
+    normal; negative otherwise. The sense is defined by the numbering of the
+    1st-order vertices of the facet shape.
+"""
+function boundedby(ir::IncRel, fir::IncRel, tfir::IncRel)
+	@assert (manifdim(ir.right) == 0) && (manifdim(tfir.left) == 0)
+	@assert manifdim(ir.left) == manifdim(tfir.right)+1
+	@assert manifdim(tfir.right) == manifdim(fir.left)
+	n1st = n1storderv(fir.left.shapedesc)
+	nshif = nshifts(fir.left.shapedesc)
+	# Sweep through the relations of d -> 0, and use the 0 -> d-1 tfir
+	_c = fill(0, nrelations(ir), nfacets(ir.left))
+	for i in 1:nrelations(ir) # Sweep through the relations of d -> 0
+		sv = ir(i)
+		c = Int64[] # this will be the list of facets at the vertices of this entity
+		for j in 1:nentities(ir, i) # for all vertices
+			fv = ir(i, j)
+			for k in 1:nentities(tfir, fv)
+				push!(c, tfir(fv, k))
+			end # k
+		end
+		c = _selectrepeating(c, nvertices(tfir.right)) # keep the repeats
+		@assert length(c) == nfacets(ir.left)
+		# Now figure out the orientations
+		for k in 1:nfacets(ir.left)
+			fc = sv[facetconnectivity(ir.left, k)]
+			sfc = sort(fc)
+			for j in 1:length(c)
+				oc = fir(c[j])
+				if sfc == sort(oc)
+					sgn = _sense(fc[1:n1st], oc, nshif)
+					_c[i, k] = sgn * c[j]
+					break;
+				end
+			end # j
+		end
+	end
+	bfacets = ShapeColl(fir.left.shapedesc, size(_c, 1))
+	return IncRel(ir.left, bfacets, _c)
+end
+
+"""
+    boundedby(ir::IncRel, fir::IncRel)
+
+Compute the incidence relation `d -> d-1` for `d`-dimensional shapes.
+
+Convenience function where the transpose of the incidence relation on the right
+is computed on the fly.
+
+# See also: @ref(boundedby(ir::IncRel, fir::IncRel, tfir::IncRel))
 """
 function boundedby(ir::IncRel, fir::IncRel)
-	@assert manifdim(ir.left) == manifdim(fir.left)+1
-    n1st = n1storderv(fir.left.shapedesc)
-    nshif = nshifts(fir.left.shapedesc)
-	hfc = hyperfacecontainer()
-    for i in 1:nrelations(fir)
-        fc = fir(i)
-        addhyperface!(hfc, fc, i) # store the facet number with the hyper face
-    end
-	nsmax = nrelations(ir)
-    _v = Vector{Int64}[];
-	sizehint!(_v, nsmax)
-    for i in 1:nsmax
-        push!(_v, fill(0, nfacets(ir.left)))  # initially empty arrays
-    end
-	for i in 1:nrelations(ir)
-        v = ir(i)
-		for j in 1:nfacets(ir.left)
-            fc = v[facetconnectivity(ir.left, j)]
-			hf = gethyperface(hfc, fc)
-			if hf == EMPTYHYPERFACE
-				@error "Hyper face not found? $(hf)"
-			end
-			sgn = _sense(fc[1:n1st], hf.oc, nshif)
-			_v[i][j] = sgn * hf.store
-		end
-    end
-	cc = [SVector{nfacets(ir.left)}(_v[idx]) for idx in 1:length(_v)]
-    bfaces = ShapeColl(fir.left.shapedesc, length(_v))
-    return IncRel(ir.left, bfaces, cc)
+	return boundedby(ir, fir, transpose(fir))
 end
 
 """
@@ -298,35 +338,53 @@ same as for the `ir`, the right shape collection is for the edgets (shapes of
 manifold dimension two less than the manifold dimension of the shapes
 themselves).
 """
-function boundedby2(ir::IncRel, eir::IncRel)
-    @assert manifdim(ir.left) == manifdim(eir.left)+2
-    n1st = n1storderv(eir.left.shapedesc)
-    nshif = nshifts(eir.left.shapedesc)
-    hfc = hyperfacecontainer()
-    for i in 1:nrelations(eir)
-        fc = eir(i)
-        addhyperface!(hfc, fc, i) # store the facet number with the hyper face
-    end
-    nsmax = nrelations(ir)
-    _v = Vector{Int64}[];
-    sizehint!(_v, nsmax)
-    for i in 1:nsmax
-        push!(_v, fill(0, nedgets(ir.left)))  # RAW: Watch out, allocating
-    end
-    for i in 1:nrelations(ir)
-        v = ir(i)
-        for j in 1:nedgets(ir.left)
-            fc = v[edgetconnectivity(ir.left, j)]
-            hf = gethyperface(hfc, fc)
-            if hf == EMPTYHYPERFACE
-                @error "Hyper face not found? $(hf)"
-            end
-            sgn = _sense(fc[1:n1st], hf.oc, nshif)
-            _v[i][j] = sgn * hf.store
-        end
-    end
-    cc = [SVector{nedgets(ir.left)}(_v[idx]) for idx in 1:length(_v)]
-    bedges = ShapeColl(eir.left.shapedesc, length(_v))
-    return IncRel(ir.left, bedges, cc)
+function boundedby2(ir::IncRel, eir::IncRel, teir::IncRel)
+	@assert (manifdim(ir.right) == 0) && (manifdim(teir.left) == 0)
+	@assert manifdim(ir.left) == manifdim(teir.right)+2
+	@assert manifdim(teir.right) == manifdim(eir.left)
+	n1st = n1storderv(eir.left.shapedesc)
+	nshif = nshifts(eir.left.shapedesc)
+	# Sweep through the relations of d -> 0, and use the 0 -> d-1 teir
+	_c = fill(0, nrelations(ir), nedgets(ir.left))
+	for i in 1:nrelations(ir) # Sweep through the relations of d -> 0
+		sv = ir(i)
+		c = Int64[] # this will be the list of facets at the vertices of this entity
+		for j in 1:nentities(ir, i) # for all vertices
+			fv = ir(i, j)
+			for k in 1:nentities(teir, fv)
+				push!(c, teir(fv, k))
+			end # k
+		end
+		c = _selectrepeating(c, nvertices(teir.right)) # keep the repeats
+		@assert length(c) == nedgets(ir.left)
+		# Now figure out the orientations
+		for k in 1:nedgets(ir.left)
+			fc = sv[edgetconnectivity(ir.left, k)]
+			sfc = sort(fc)
+			for j in 1:length(c)
+				oc = eir(c[j])
+				if sfc == sort(oc)
+					sgn = _sense(fc[1:n1st], oc, nshif)
+					_c[i, k] = sgn * c[j]
+					break;
+				end
+			end # j
+		end
+	end
+	bedgets = ShapeColl(eir.left.shapedesc, size(_c, 1))
+	return IncRel(ir.left, bedgets, _c)
 end
 
+"""
+    boundedby(ir::IncRel, eir::IncRel)
+
+Compute the incidence relation `d -> d-2` for `d`-dimensional shapes.
+
+Convenience function where the transpose of the incidence relation on the right
+is computed on the fly.
+
+# See also: @ref(boundedby2(ir::IncRel, eir::IncRel, efir::IncRel))
+"""
+function boundedby2(ir::IncRel, eir::IncRel)
+	return boundedby2(ir, eir, transpose(eir))
+end

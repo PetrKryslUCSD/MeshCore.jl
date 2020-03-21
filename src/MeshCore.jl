@@ -2,7 +2,7 @@ module MeshCore
 
 using StaticArrays
 
-include("hyperface.jl")
+include("utilities.jl")
 include("locations.jl")
 include("attributes.jl")
 include("shapedesc.jl")

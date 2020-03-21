@@ -218,7 +218,7 @@ mtopoop1.test()
 module mtopoop2
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nshapes
-using MeshCore: Locations, boundedby, skeleton
+using MeshCore: Locations, boundedby, skeleton, transpose
 using MeshCore: IncRel
 using Test
 function test()
@@ -232,7 +232,7 @@ function test()
     fmesh = skeleton(mesh)
     # Test the transpose incidence relation
     tmesh = boundedby(mesh, fmesh)
-    shouldget = StaticArrays.SArray{Tuple{4},Int64,1,4}[[1, 4, -8,                     
+    shouldget = StaticArrays.SArray{Tuple{4},Int64,1,4}[[1, 4, -8,
 2], [8, 11, 15, 9], [3, 6, -10, -4], [10, 13, 16, -11], [5, 7, -12, -6], [12, 14, 17, -13                    ]]
     allmatch = true
     for j in 1:length(shouldget)
@@ -264,7 +264,7 @@ function test()
     fmesh = skeleton(mesh)
     # Test the bounded-by incidence relation
     bbmesh = boundedby(mesh, fmesh)
-    shouldget = StaticArrays.SArray{Tuple{4},Int64,1,4}[[1, 4, -8, 2], [8, 11, 15, 9], [3, 6, -10, -4], [10, 13, 16, -11], [5, 7, -12, -6], [12, 14, 17, -13]] 
+    shouldget = StaticArrays.SArray{Tuple{4},Int64,1,4}[[1, 4, -8, 2], [8, 11, 15, 9], [3, 6, -10, -4], [10, 13, 16, -11], [5, 7, -12, -6], [12, 14, 17, -13]]
     allmatch = true
     for j in 1:length(shouldget)
         for k in 1:length(shouldget[j])
@@ -274,7 +274,7 @@ function test()
     @test allmatch
     # Now test the transposed incidence relation
     tbbmesh = transpose(bbmesh)
-    shouldget = Array{Int64,1}[[1], [1], [3], [1, 3], [5], [3, 5], [5], [1, 2], [2], [3, 4], [2, 4], [5, 6], 
+    shouldget = Array{Int64,1}[[1], [1], [3], [1, 3], [5], [3, 5], [5], [1, 2], [2], [3, 4], [2, 4], [5, 6],
     [4, 6], [6], [2], [4], [6]]
     allmatch = true
     for j in 1:length(shouldget)
