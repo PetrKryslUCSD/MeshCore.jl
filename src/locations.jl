@@ -77,7 +77,7 @@ end
 
 Retrieve the data structure of the locations.
 """
-locations(la::LocAccess) = la.locations
+locations(la::LocAccess) = la.locs
 
 """
     (la::LocAccess)(j::Int64)
