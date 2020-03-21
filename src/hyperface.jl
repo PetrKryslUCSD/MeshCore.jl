@@ -23,7 +23,7 @@ function addhyperface!(container, hyperface, store = 0)
         end
     end
     if fnd != true
-        push!(C, HyperFace(bc, hyperface, 1, store));
+        push!(C, HyperFace(bc, deepcopy(hyperface), 1, store));
     end
     container[anchor] = C; # set the contents at anchor
     return container

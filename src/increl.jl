@@ -59,7 +59,7 @@ Retrieve the row of the incidence relation for `j`-th relation.
 (ir::IncRel)(j::IT) where {IT} = ir._v[j]
 
 """
-    transpose(mesh::IncRel)
+    transpose(ir::IncRel)
 
 Compute the incidence relation `d1 -> d2`, where `d2 >= d1`.
 
@@ -68,15 +68,15 @@ of edges connected to the vertex, and analogously faces and cells for `d=2` and
 `d=3`.
 
 # Returns
-Incidence relation for the transposed mesh. The left and right shape collection
-are swapped in the output relative to the input.
+Incidence relation for the transposed incidence relation. The left and right
+shape collection are swapped in the output relative to the input.
 """
-function transpose(mesh::IncRel)
+function transpose(ir::IncRel)
 	# Find out how many of the transpose incidence relations there are
 	nvmax = 0
-	for j in 1:nrelations(mesh)
-		for k in 1:nentities(mesh, j)
-			nvmax = max(nvmax, mesh(j, k))
+	for j in 1:nrelations(ir)
+		for k in 1:nentities(ir, j)
+			nvmax = max(nvmax, ir(j, k))
 		end
 	end
 	# pre-allocate relations vector
@@ -87,19 +87,80 @@ function transpose(mesh::IncRel)
         push!(_v, Int64[])  # initially empty arrays
     end
 	# Build the transpose relations
-    for j in 1:nrelations(mesh)
-		for k in 1:nentities(mesh, j)
-			c = abs(mesh(j, k)) # this could be an oriented entity: remove the sign
+    for j in 1:nrelations(ir)
+		for k in 1:nentities(ir, j)
+			c = abs(ir(j, k)) # this could be an oriented entity: remove the sign
 			push!(_v[c], j)
 		end
 	end
-    return IncRel(mesh.right, mesh.left, _v)
+    return IncRel(ir.right, ir.left, _v)
+end
+
+function _asmatrix(ir)
+    c = fill(0, nshapes(ir.left), nvertices(shapedesc(ir.left)))
+    for i in 1:nshapes(ir.left)
+        c[i, :] = ir(i)
+    end
+    return c
+end
+
+function _mysortdim2!(A)
+    # Sort each row  of A in ascending order.
+    m, n = size(A);
+    r = zeros(eltype(A), n)
+    for k in 1:m
+        for i in 1:n
+            r[i] = A[k,i]
+        end
+        sort!(r);
+        for i in 1:n
+            A[k,i] = r[i]
+        end
+    end
+    return A
+end
+
+function _mysortrowsperm(A)
+    # Sort the rows of A by sorting each column from back to front.
+    m,n = size(A);
+    indx = collect(1:m); sindx = zeros(eltype(A), m)
+    nindx = zeros(eltype(A), m);
+    col = zeros(eltype(A), m)
+    for c = n:-1:1
+        for i in 1:m
+            col[i] = A[indx[i],c]
+        end
+        #Sorting a column vector is much faster than sorting a column matrix
+        # sindx = sortperm(col, alg=QuickSort);
+        sortperm!(sindx, col, alg=QuickSort); # available for 0.4, slightly faster
+        for i in 1:m
+            nindx[i] = indx[sindx[i]]
+        end
+        for i in 1:m
+            indx[i] = nindx[i]
+        end
+    end
+    return indx
+end
+
+function _countrepeats(A)
+    m, n = size(A);
+    occurrences = zeros(eltype(A), m);
+    occurrences[1] = 1
+    for i in 2:m
+        if A[i, :] == A[i-1, :]
+            occurrences[i] = occurrences[i-1] + 1
+        else
+            occurrences[i] = 1 
+        end
+    end
+    return occurrences
 end
 
 """
-    skeleton(mesh::IncRel; options...)
+    skeleton(ir::IncRel; options...)
 
-Compute the skeleton of the mesh.
+Compute the skeleton of an incidence relation.
 
 This computes a new incidence relation from an existing incidence relation. 
 
@@ -108,55 +169,67 @@ This computes a new incidence relation from an existing incidence relation.
     of the input collection, `true` or `false` (default).
 
 # Returns
-Incidence relation for the skeleton mesh. The left shape collection consists of
-facets (shapes of manifold dimension one less than the manifold dimension of the
-shapes themselves). The right shape collection is the same as for the input.
+Incidence relation for the skeleton of the input incidence relation. The left
+shape collection consists of facets (shapes of manifold dimension one less than
+the manifold dimension of the shapes themselves). The right shape collection is
+the same as for the input.
 """
-function skeleton(mesh::IncRel; options...)
+function skeleton(ir::IncRel; options...)
     boundaryonly = false
     if :boundaryonly in keys(options)
         boundaryonly = options[:boundaryonly];
     end
-    hfc = hyperfacecontainer()
-    for i in 1:nrelations(mesh)
-        v = mesh(i)
-        for j in 1:nfacets(mesh.left)
-            fc = v[facetconnectivity(mesh.left, j)]
-            addhyperface!(hfc, fc)
-        end
+    c = _asmatrix(ir) # incidence as a 2D array
+    # construct a 2D array of the hyperface incidences
+    hfc = c[:, facetconnectivity(ir.left, 1)]
+    for i in 2:nfacets(shapedesc(ir.left))
+        hfc = vcat(hfc, c[:, facetconnectivity(ir.left, i)])
     end
-    nv = nvertices(facetdesc(mesh.left))
-    c = SVector{nv, Int64}[]
-    for hfa in values(hfc)
-        for hf in hfa
-            if (boundaryonly && hf.nref != 2) || (!boundaryonly)
-                push!(c, SVector{nv}(hf.oc))
-            end
+    # make a working copy
+    s2hfc = deepcopy(hfc)
+    _mysortdim2!(s2hfc) # sort columnwise
+    idx = _mysortrowsperm(s2hfc) # find row permutation that sorts the rows
+    # sort the rows of both the original hyper face array and the column-sorted array
+    shfc = hfc[idx, :]
+    s2hfc = s2hfc[idx, :]
+    rep = _countrepeats(s2hfc) # find the repeats of the rows
+    if boundaryonly
+        isunq = falses(length(rep))
+        for i in 1:length(rep)-1
+            # The hyperface is boundary if it has no repeats
+            isunq[i] = (rep[i] == 1) && (rep[i+1] == 1)
         end
+        isunq[end] = (rep[end] == 1)
+        unq = findall(a -> a == true, isunq) # all not-repeated rows are unique
+        unqhfc = shfc[unq, :] # unique hyper faces
+    else
+        # unique rows are obtained by ignoring the repeats
+        unq = findall(a -> a == 1, rep) 
+        unqhfc = shfc[unq, :] # unique hyper faces
     end
-    return IncRel(ShapeColl(facetdesc(mesh.left), length(c)), mesh.right, c)
+    return IncRel(ShapeColl(facetdesc(ir.left), size(unqhfc, 1)), ir.right, unqhfc)
 end
 
 """
-    boundary(mesh::IncRel)
+    boundary(ir::IncRel)
 
-Compute the incidence relation for the boundary of the collection on input.
+Compute the incidence relation for the boundary of the incidence relation on input.
 
 This is a convenience version of the `skeleton` function.
 """
-function boundary(mesh::IncRel)
-    return skeleton(mesh; boundaryonly = true)
+function boundary(ir::IncRel)
+    return skeleton(ir; boundaryonly = true)
 end
 
 """
-    boundedby(mesh::IncRel, fmesh::IncRel)
+    boundedby(ir::IncRel, fir::IncRel)
 
 Compute the incidence relation `d -> d-1` for `d`-dimensional shapes.
 
-In other words, this is the incidence between shapes and the shapes that bound
+In other words, this is the incidence relation between shapes and the shapes that bound
 these shapes (facets). For tetrahedra as the shapes, the incidence relation
 lists the numbers of the faces that bound each individual tetrahedron.
-The resulting left shape is of the same shape description as in the `mesh`.
+The resulting left shape is of the same shape description as in the `ir`.
 
 !!! note
     The numbers of the facets are signed: positive when the facet bounds the shape
@@ -165,30 +238,30 @@ The resulting left shape is of the same shape description as in the `mesh`.
     1st-order vertices of the facet shape.
 
 # Returns
-Incidence relation for the bounded-by mesh. The left shape collection is the
-same as for the `mesh`, the right shape collection is for the facets (shapes of
-manifold dimension one less than the manifold dimension of the shapes
-themselves).
+Incidence relation for the bounded-by incidence relation. The left shape
+collection is the same as for the `ir`, the right shape collection is for the
+facets (shapes of manifold dimension one less than the manifold dimension of the
+shapes themselves).
 """
-function boundedby(mesh::IncRel, fmesh::IncRel)
-	@assert manifdim(mesh.left) == manifdim(fmesh.left)+1
-    n1st = n1storderv(fmesh.left.shapedesc)
-    nshif = nshifts(fmesh.left.shapedesc)
+function boundedby(ir::IncRel, fir::IncRel)
+	@assert manifdim(ir.left) == manifdim(fir.left)+1
+    n1st = n1storderv(fir.left.shapedesc)
+    nshif = nshifts(fir.left.shapedesc)
 	hfc = hyperfacecontainer()
-    for i in 1:nrelations(fmesh)
-        fc = fmesh(i)
+    for i in 1:nrelations(fir)
+        fc = fir(i)
         addhyperface!(hfc, fc, i) # store the facet number with the hyper face
     end
-	nsmax = nrelations(mesh)
+	nsmax = nrelations(ir)
     _v = Vector{Int64}[];
 	sizehint!(_v, nsmax)
     for i in 1:nsmax
-        push!(_v, fill(0, nfacets(mesh.left)))  # initially empty arrays
+        push!(_v, fill(0, nfacets(ir.left)))  # initially empty arrays
     end
-	for i in 1:nrelations(mesh)
-        v = mesh(i)
-		for j in 1:nfacets(mesh.left)
-            fc = v[facetconnectivity(mesh.left, j)]
+	for i in 1:nrelations(ir)
+        v = ir(i)
+		for j in 1:nfacets(ir.left)
+            fc = v[facetconnectivity(ir.left, j)]
 			hf = gethyperface(hfc, fc)
 			if hf == EMPTYHYPERFACE
 				@error "Hyper face not found? $(hf)"
@@ -197,13 +270,13 @@ function boundedby(mesh::IncRel, fmesh::IncRel)
 			_v[i][j] = sgn * hf.store
 		end
     end
-	cc = [SVector{nfacets(mesh.left)}(_v[idx]) for idx in 1:length(_v)]
-    bfaces = ShapeColl(fmesh.left.shapedesc, length(_v))
-    return IncRel(mesh.left, bfaces, cc)
+	cc = [SVector{nfacets(ir.left)}(_v[idx]) for idx in 1:length(_v)]
+    bfaces = ShapeColl(fir.left.shapedesc, length(_v))
+    return IncRel(ir.left, bfaces, cc)
 end
 
 """
-    boundedby2(mesh::IncRel, emesh::IncRel)
+    boundedby2(ir::IncRel, eir::IncRel)
 
 Compute the incidence relation `d -> d-2` for `d`-dimensional shapes.
 
@@ -220,30 +293,30 @@ tetrahedron. The resulting shape is of the same shape description as the
     1st-order vertices of the edget shape.
 
 # Returns
-Incidence relation for the "bounded-by" mesh. The left shape collection is the
-same as for the `mesh`, the right shape collection is for the edgets (shapes of
+Incidence relation for the "bounded-by" ir. The left shape collection is the
+same as for the `ir`, the right shape collection is for the edgets (shapes of
 manifold dimension two less than the manifold dimension of the shapes
 themselves).
 """
-function boundedby2(mesh::IncRel, emesh::IncRel)
-    @assert manifdim(mesh.left) == manifdim(emesh.left)+2
-    n1st = n1storderv(emesh.left.shapedesc)
-    nshif = nshifts(emesh.left.shapedesc)
+function boundedby2(ir::IncRel, eir::IncRel)
+    @assert manifdim(ir.left) == manifdim(eir.left)+2
+    n1st = n1storderv(eir.left.shapedesc)
+    nshif = nshifts(eir.left.shapedesc)
     hfc = hyperfacecontainer()
-    for i in 1:nrelations(emesh)
-        fc = emesh(i)
+    for i in 1:nrelations(eir)
+        fc = eir(i)
         addhyperface!(hfc, fc, i) # store the facet number with the hyper face
     end
-    nsmax = nrelations(mesh)
+    nsmax = nrelations(ir)
     _v = Vector{Int64}[];
     sizehint!(_v, nsmax)
     for i in 1:nsmax
-        push!(_v, fill(0, nedgets(mesh.left)))  # initially empty arrays
+        push!(_v, fill(0, nedgets(ir.left)))  # RAW: Watch out, allocating
     end
-    for i in 1:nrelations(mesh)
-        v = mesh(i)
-        for j in 1:nedgets(mesh.left)
-            fc = v[edgetconnectivity(mesh.left, j)]
+    for i in 1:nrelations(ir)
+        v = ir(i)
+        for j in 1:nedgets(ir.left)
+            fc = v[edgetconnectivity(ir.left, j)]
             hf = gethyperface(hfc, fc)
             if hf == EMPTYHYPERFACE
                 @error "Hyper face not found? $(hf)"
@@ -252,8 +325,8 @@ function boundedby2(mesh::IncRel, emesh::IncRel)
             _v[i][j] = sgn * hf.store
         end
     end
-    cc = [SVector{nedgets(mesh.left)}(_v[idx]) for idx in 1:length(_v)]
-    bedges = ShapeColl(emesh.left.shapedesc, length(_v))
-    return IncRel(mesh.left, bedges, cc)
+    cc = [SVector{nedgets(ir.left)}(_v[idx]) for idx in 1:length(_v)]
+    bedges = ShapeColl(eir.left.shapedesc, length(_v))
+    return IncRel(ir.left, bedges, cc)
 end
 
