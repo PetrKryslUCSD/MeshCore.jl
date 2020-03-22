@@ -10,16 +10,17 @@ Contents:
 
 ## Glossary
 
-- *Shape*: topological shape of any manifold dimension, ``0`` for vertices,
-  ``1`` for edges, ``2`` for faces, and ``3`` for cells.
-- *Shape descriptor*: description of the type of the shape, such as the number
-  of vertices, facets, edgets, and so on.
-- *Shape collection*: set of shapes of a particular shape.
 - *Incidence relation*: Map from one shape collection to another shape
   collection. For instance, three-dimensional finite elements (cells) are typically linked to the vertices by
   the incidence relation ``3 \rightarrow 0``, i. e. for each tetrahedron the
   four vertices are listed. Some incidence relations link a shape to a fixed
   number of other shapes, other incidence relations are of variable arity.
+  This is what is usually understood as a "mesh".
+- *Shape*: topological shape of any manifold dimension, ``0`` for vertices,
+  ``1`` for edges, ``2`` for faces, and ``3`` for cells.
+- *Shape descriptor*: description of the type of the shape, such as the number
+  of vertices, facets, edgets, and so on.
+- *Shape collection*: set of shapes of a particular shape description.
 - *Facet*: shape bounding another shape. A shape is bounded by facets.
 - *Edget*: shape one manifold dimension lower than the facet. For instance a
   tetrahedron is bounded by facets, which in turn are bounded by edges. These
@@ -37,12 +38,12 @@ Let us begin with a simple example of the use of the library. (The next step rel
 mesh = import_NASTRAN("trunc_cyl_shell_0.nas")
 ```
 The mesh data structure can be now queried as to the incidence relations.
-The `:connectivity` is the incidents relation that defines the connectivity of the tetrahedral mesh that was read in:
+The `:connectivity` is the incidence relation that defines the connectivity of the tetrahedral mesh that was read in:
 ```
 connectivity = increl(mesh, :connectivity)
 @test (nshapes(connectivity.right), nshapes(connectivity.left)) == (376, 996)
 ```
-The incidents relation connects the shape collection on the left (tetrahedra), with the shape collection on the right (vertices). We can check that the correct number of entities
+The incidence relation connects the shape collection on the left (tetrahedra), with the shape collection on the right (vertices). We can check that the correct number of entities
 were imported:
 ```
 @test (nshapes(connectivity.right), nshapes(connectivity.left)) == (376, 996)
@@ -89,7 +90,7 @@ topology of one entity of the shape.
 
 The incidence relations are really
 definitions of meshes where one shape collection, the one on the left of the
-incidents relation, is mapped to ``N`` entities in the shape collection on the
+incidence relation, is mapped to ``N`` entities in the shape collection on the
 right.
 
 ## Topology of meshes
@@ -252,3 +253,13 @@ through which shape the incidence occurs: is it through the common vertex? Is it
 through a common edge? Similarly, for cells the incidence relationship ``3
 \rightarrow 3`` will be different for the incidence to follow from a common
 vertex, a common edge, or a common face.
+
+### How incidence relations are computed
+
+For definiteness here we assume that the initial mesh (i. e. the incidence relation)
+| Manif. dim.      |   0   |   1   |   2   |  3   |
+|:----------------|:----------------|:----------------|:----------------|:----------------|
+|   0     | 0 -> 0: sk(1 -> 0) | 0 -> 1: tr(1 -> 0) | 0 -> 2: tr(2 -> 0) | 0 -> 3: tr(3 -> 0) |
+|   1     | 1 -> 0: sk(2 -> 0) | ------ | 1 -> 2: tr(2 -> 1) | 1 -> 3: tr(3 -> 1) |
+|   2     | 2 -> 0: sk(3 -> 0) | 2 -> 1: bf(2 -> 0, 1 -> 0, 0 -> 1) | ------ | 2 -> 3: tr(3 -> 2) |
+|   3     | 3 -> 0 | 3 -> 1: be(3 -> 0, 1 -> 0, 0 -> 1) | 3 -> 2: bf(3 -> 0, 2 -> 0, 0 -> 2)| ------ |

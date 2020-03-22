@@ -253,10 +253,10 @@ The resulting left shape is of the same shape description as in the `ir`.
 - `tfir` = transpose of the above, incidence relation `0 -> d-1`.
 
 # Returns
-Incidence relation for the bounded-by incidence relation. The left shape
-collection is the same as for the `ir`, the right shape collection is for the
-facets (shapes of manifold dimension one less than the manifold dimension of the
-shapes themselves).
+Incidence relation for the bounded-by relationship between shape collections.
+The left shape collection is the same as for the `ir`, the right shape
+collection is for the facets (shapes of manifold dimension one less than the
+manifold dimension of the shapes themselves).
 
 !!! note
     The numbers of the facets are signed: positive when the facet bounds the shape
@@ -326,17 +326,17 @@ incidence relation lists the numbers of the edges that "bound" each individual
 tetrahedron. The resulting shape is of the same shape description as the
 `shapes` on input.
 
+# Returns
+The incidence relation for the "bounded by" relationship between shape
+collections. The left shape collection is the same as for the `ir`, the right
+shape collection is for the edgets (shapes of manifold dimension two less than
+the manifold dimension of the shapes themselves).
+
 !!! note
     The numbers of the edgets are signed: positive when the edget bounds the shape
     in the sense in which it is defined by the shape as oriented with an outer
     normal; negative otherwise. The sense is defined by the numbering of the
     1st-order vertices of the edget shape.
-
-# Returns
-Incidence relation for the "bounded-by" ir. The left shape collection is the
-same as for the `ir`, the right shape collection is for the edgets (shapes of
-manifold dimension two less than the manifold dimension of the shapes
-themselves).
 """
 function bbyedgets(ir::IncRel, eir::IncRel, teir::IncRel)
 	@assert (manifdim(ir.right) == 0) && (manifdim(teir.left) == 0)
