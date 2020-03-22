@@ -257,6 +257,8 @@ vertex, a common edge, or a common face.
 ### How incidence relations are computed
 
 For definiteness here we assume that the initial mesh (i. e. the incidence relation)
+is ``3 \rightarrow 0``.
+
 | Manif. dim.      |   0   |   1   |   2   |  3   |
 |:----------------|:----------------|:----------------|:----------------|:----------------|
 |   0     | 0 -> 0: sk(1 -> 0) | 0 -> 1: tr(1 -> 0) | 0 -> 2: tr(2 -> 0) | 0 -> 3: tr(3 -> 0) |
