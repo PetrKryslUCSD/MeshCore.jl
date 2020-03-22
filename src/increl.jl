@@ -49,14 +49,18 @@ nentities(ir::IncRel, j::Int64) = length(ir._v[j])
 
 Retrieve the incidence relation for `j`-th relation, k-th entity.
 """
-(ir::IncRel)(j::IT, k::IT) where {IT} = ir._v[j][k]
+function (ir::IncRel{LEFT, RIGHT, T})(j::Int64, k::Int64) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
+	ir._v[j][k]
+end
 
 """
     (ir::IncRel)(j::IT) where {IT}
 
 Retrieve the row of the incidence relation for `j`-th relation.
 """
-(ir::IncRel)(j::IT) where {IT} = ir._v[j]
+function (ir::IncRel{LEFT, RIGHT, T})(j::Int64) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
+	ir._v[j]
+end
 
 """
     transpose(ir::IncRel)
@@ -72,6 +76,7 @@ Incidence relation for the transposed incidence relation. The left and right
 shape collection are swapped in the output relative to the input.
 """
 function transpose(ir::IncRel)
+	@_check (manifdim(ir.left) >= manifdim(ir.right))
 	# Find out how many of the transpose incidence relations there are
 	nvmax = 0
 	for j in 1:nrelations(ir)
@@ -175,6 +180,8 @@ the manifold dimension of the shapes themselves). The right shape collection is
 the same as for the input.
 """
 function skeleton(ir::IncRel; options...)
+	@_check (manifdim(ir.right) == 0)
+	@_check (manifdim(ir.left) > 0)
     boundaryonly = false
     if :boundaryonly in keys(options)
         boundaryonly = options[:boundaryonly];
@@ -265,9 +272,9 @@ manifold dimension of the shapes themselves).
     1st-order vertices of the facet shape.
 """
 function bbyfacets(ir::IncRel, fir::IncRel, tfir::IncRel)
-	@assert (manifdim(ir.right) == 0) && (manifdim(tfir.left) == 0)
-	@assert manifdim(ir.left) == manifdim(tfir.right)+1
-	@assert manifdim(tfir.right) == manifdim(fir.left)
+	@_check (manifdim(ir.right) == 0) && (manifdim(tfir.left) == 0)
+	@_check manifdim(ir.left) == manifdim(tfir.right)+1
+	@_check manifdim(tfir.right) == manifdim(fir.left)
 	n1st = n1storderv(fir.left.shapedesc)
 	nshif = nshifts(fir.left.shapedesc)
 	# Sweep through the relations of d -> 0, and use the 0 -> d-1 tfir
@@ -282,7 +289,7 @@ function bbyfacets(ir::IncRel, fir::IncRel, tfir::IncRel)
 			end # k
 		end
 		c = _selectrepeating(c, nvertices(tfir.right)) # keep the repeats
-		@assert length(c) == nfacets(ir.left)
+		@_check length(c) == nfacets(ir.left)
 		# Now figure out the orientations
 		for k in 1:nfacets(ir.left)
 			fc = sv[facetconnectivity(ir.left, k)]
@@ -339,9 +346,9 @@ the manifold dimension of the shapes themselves).
     1st-order vertices of the edget shape.
 """
 function bbyedgets(ir::IncRel, eir::IncRel, teir::IncRel)
-	@assert (manifdim(ir.right) == 0) && (manifdim(teir.left) == 0)
-	@assert manifdim(ir.left) == manifdim(teir.right)+2
-	@assert manifdim(teir.right) == manifdim(eir.left)
+	@_check (manifdim(ir.right) == 0) && (manifdim(teir.left) == 0)
+	@_check manifdim(ir.left) == manifdim(teir.right)+2
+	@_check manifdim(teir.right) == manifdim(eir.left)
 	n1st = n1storderv(eir.left.shapedesc)
 	nshif = nshifts(eir.left.shapedesc)
 	# Sweep through the relations of d -> 0, and use the 0 -> d-1 teir
@@ -356,7 +363,7 @@ function bbyedgets(ir::IncRel, eir::IncRel, teir::IncRel)
 			end # k
 		end
 		c = _selectrepeating(c, nvertices(teir.right)) # keep the repeats
-		@assert length(c) == nedgets(ir.left)
+		@_check length(c) == nedgets(ir.left)
 		# Now figure out the orientations
 		for k in 1:nedgets(ir.left)
 			fc = sv[edgetconnectivity(ir.left, k)]

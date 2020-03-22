@@ -1,5 +1,5 @@
 # An assert might be disabled at various optimization levels. This macro will not be.
-macro privateassert(ex, msgs...)
+macro _check(ex, msgs...)
     msg = isempty(msgs) ? ex : msgs[1]
     if isa(msg, AbstractString)
         msg = msg # pass-through
@@ -17,4 +17,11 @@ macro privateassert(ex, msgs...)
         end
     end
     return :($(esc(ex)) ? $(nothing) : throw(AssertionError($msg)))
+end
+
+
+function _print(a)
+    for i in 1:size(a, 1)
+        println(a[i, :])
+    end
 end

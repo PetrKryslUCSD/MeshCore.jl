@@ -67,6 +67,15 @@ end
     LocAccess{N, T}
 
 Data structure to access the locations of vertices.
+
+# Example
+The use is intended for the data stored in an attribute:
+```
+locs =  Locations(xyz)
+la = LocAccess(locs)
+a = Attrib(la)
+@test a.val(10) == [633.3333333333334, 800.0]
+```
 """
 struct LocAccess{N, T}
     locs::Locations{N, T}
@@ -77,11 +86,15 @@ end
 
 Retrieve the data structure of the locations.
 """
-locations(la::LocAccess) = la.locs
+function locations(la::LocAccess{N, T}) where {N, T}
+    return la.locs
+end
 
 """
-    (la::LocAccess)(j::Int64)
+    (la::LocAccess{N, T})(j::Int64) where {N, T}
 
 Access the coordinate of the `j`-th vertex.
 """
-(la::LocAccess)(j::Int64) = coordinates(la.locs, j)
+function (la::LocAccess{N, T})(j::Int64) where {N, T}
+    return coordinates(la.locs, j)
+end
