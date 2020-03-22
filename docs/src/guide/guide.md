@@ -190,11 +190,11 @@ numbers of edges (manifold dimension 1) by which the triangle face is bounded.
 |   3     | ------ | ------ | 3 -> 2 | ------ |
 
 The incidence  relation ``d \rightarrow d-1`` may be derived with the function
-`boundedby`, which operates on two shape collections: the shapes of dimension ``d``
+`bbyfacets`, which operates on two shape collections: the shapes of dimension ``d``
 and the facet shapes of dimension ``d-1``.
 
 The relationship ``1  \rightarrow 0`` can be derived in two ways: from the incidence relation ``2
-\rightarrow  0`` by the `skeleton` function, or by the `boundedby` function applied
+\rightarrow  0`` by the `skeleton` function, or by the `bbyfacets` function applied
 to a shape collection of edges and  a shape collection of the vertices.
 
 ### Incidence relations ``d \rightarrow d-2``
@@ -219,7 +219,7 @@ it provides cover for the edges of the tetrahedron.
 
 The relationship ``2  \rightarrow 0`` can be derived in two ways: from the
 incidence relation ``3 \rightarrow  0`` by the `skeleton` function, or by the
-`boundedby2` function applied to a shape collection of cells and  a shape
+`bbyfacets` function applied to a shape collection of cells and  a shape
 collection of the edges.
 
 

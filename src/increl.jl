@@ -238,7 +238,7 @@ function _selectrepeating(v, nrepeats)
 end
 
 """
-    boundedby(ir::IncRel, fir::IncRel, tfir::IncRel)
+    bbyfacets(ir::IncRel, fir::IncRel, tfir::IncRel)
 
 Compute the incidence relation `d -> d-1` for `d`-dimensional shapes.
 
@@ -264,7 +264,7 @@ shapes themselves).
     normal; negative otherwise. The sense is defined by the numbering of the
     1st-order vertices of the facet shape.
 """
-function boundedby(ir::IncRel, fir::IncRel, tfir::IncRel)
+function bbyfacets(ir::IncRel, fir::IncRel, tfir::IncRel)
 	@assert (manifdim(ir.right) == 0) && (manifdim(tfir.left) == 0)
 	@assert manifdim(ir.left) == manifdim(tfir.right)+1
 	@assert manifdim(tfir.right) == manifdim(fir.left)
@@ -302,21 +302,21 @@ function boundedby(ir::IncRel, fir::IncRel, tfir::IncRel)
 end
 
 """
-    boundedby(ir::IncRel, fir::IncRel)
+    bbyfacets(ir::IncRel, fir::IncRel)
 
 Compute the incidence relation `d -> d-1` for `d`-dimensional shapes.
 
 Convenience function where the transpose of the incidence relation on the right
 is computed on the fly.
 
-# See also: @ref(boundedby(ir::IncRel, fir::IncRel, tfir::IncRel))
+# See also: [bbyfacets(ir::IncRel, fir::IncRel, tfir::IncRel](@ref)
 """
-function boundedby(ir::IncRel, fir::IncRel)
-	return boundedby(ir, fir, transpose(fir))
+function bbyfacets(ir::IncRel, fir::IncRel)
+	return bbyfacets(ir, fir, transpose(fir))
 end
 
 """
-    boundedby2(ir::IncRel, eir::IncRel)
+    bbyedgets(ir::IncRel, eir::IncRel)
 
 Compute the incidence relation `d -> d-2` for `d`-dimensional shapes.
 
@@ -338,7 +338,7 @@ same as for the `ir`, the right shape collection is for the edgets (shapes of
 manifold dimension two less than the manifold dimension of the shapes
 themselves).
 """
-function boundedby2(ir::IncRel, eir::IncRel, teir::IncRel)
+function bbyedgets(ir::IncRel, eir::IncRel, teir::IncRel)
 	@assert (manifdim(ir.right) == 0) && (manifdim(teir.left) == 0)
 	@assert manifdim(ir.left) == manifdim(teir.right)+2
 	@assert manifdim(teir.right) == manifdim(eir.left)
@@ -376,15 +376,15 @@ function boundedby2(ir::IncRel, eir::IncRel, teir::IncRel)
 end
 
 """
-    boundedby(ir::IncRel, eir::IncRel)
+    bbyedgets(ir::IncRel, eir::IncRel)
 
 Compute the incidence relation `d -> d-2` for `d`-dimensional shapes.
 
 Convenience function where the transpose of the incidence relation on the right
 is computed on the fly.
 
-# See also: @ref(boundedby2(ir::IncRel, eir::IncRel, efir::IncRel))
+# See also: [bbyedgets(ir::IncRel, eir::IncRel, efir::IncRel)](@ref)
 """
-function boundedby2(ir::IncRel, eir::IncRel)
-	return boundedby2(ir, eir, transpose(eir))
+function bbyedgets(ir::IncRel, eir::IncRel)
+	return bbyedgets(ir, eir, transpose(eir))
 end

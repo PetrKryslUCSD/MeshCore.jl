@@ -218,7 +218,7 @@ mtopoop1.test()
 module mtopoop2
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nshapes
-using MeshCore: Locations, boundedby, skeleton, transpose
+using MeshCore: Locations, bbyfacets, skeleton, transpose
 using MeshCore: IncRel
 using Test
 function test()
@@ -231,7 +231,7 @@ function test()
     mesh = IncRel(q4s, vrts, cc)
     fmesh = skeleton(mesh)
     # Test the transpose incidence relation
-    tmesh = boundedby(mesh, fmesh)
+    tmesh = bbyfacets(mesh, fmesh)
     shouldget = StaticArrays.SArray{Tuple{4},Int64,1,4}[[1, 4, -8,
 2], [8, 11, 15, 9], [3, 6, -10, -4], [10, 13, 16, -11], [5, 7, -12, -6], [12, 14, 17, -13                    ]]
     allmatch = true
@@ -250,7 +250,7 @@ mtopoop2.test()
 module mtopoop3
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nshapes
-using MeshCore: Locations, boundedby, skeleton, transpose
+using MeshCore: Locations, bbyfacets, skeleton, transpose
 using MeshCore: IncRel
 using Test
 function test()
@@ -263,7 +263,7 @@ function test()
     mesh = IncRel(q4s, vrts, cc)
     fmesh = skeleton(mesh)
     # Test the bounded-by incidence relation
-    bbmesh = boundedby(mesh, fmesh)
+    bbmesh = bbyfacets(mesh, fmesh)
     shouldget = StaticArrays.SArray{Tuple{4},Int64,1,4}[[1, 4, -8, 2], [8, 11, 15, 9], [3, 6, -10, -4], [10, 13, 16, -11], [5, 7, -12, -6], [12, 14, 17, -13]]
     allmatch = true
     for j in 1:length(shouldget)
@@ -292,7 +292,7 @@ mtopoop3.test()
 module mtopoop4
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nshapes
-using MeshCore: Locations, boundedby2, skeleton, transpose
+using MeshCore: Locations, bbyedgets, skeleton, transpose
 using MeshCore: IncRel
 using Test
 function test()
@@ -306,7 +306,7 @@ function test()
     # fmesh = skeleton(mesh)
     vmesh = IncRel(ShapeColl(P1, 12), vrts, [[i] for i in 1:nshapes(vrts)] )
     # Test the bounded-by incidence relation
-    bbmesh = boundedby2(mesh, vmesh)
+    bbmesh = bbyedgets(mesh, vmesh)
     shouldget = Array{Int64,1}[[1, 2, 6, 5], [5, 6, 10, 9], [2, 3, 7, 6], [6, 7, 11, 10], [3, 4, 8, 7], [7, 8, 12, 11]]
     allmatch = true
     for j in 1:length(shouldget)
@@ -336,7 +336,7 @@ include("samplet4.jl")
 module mt4topo1
 using StaticArrays
 using MeshCore: P1, T4, ShapeColl,  manifdim, nvertices, nedgets, nshapes
-using MeshCore: boundedby2, skeleton, boundedby, nshifts, _sense
+using MeshCore: bbyedgets, skeleton, bbyfacets, nshifts, _sense
 using MeshCore: IncRel, Locations, transpose, nrelations, nentities, nlocations
 using ..samplet4: samplet4mesh
 using Test
@@ -384,7 +384,7 @@ function test()
 
     # Test the incidence relations 3 -> 2 & 2 -> 3
     ir20 = skeleton(ir30)
-    ir32 = boundedby(ir30, ir20)
+    ir32 = bbyfacets(ir30, ir20)
     # Check that the tetrahedra connectivity refers to all three vertices of the faces
     allmatch = true
     @test nrelations(ir30) == nrelations(ir32)

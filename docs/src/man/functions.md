@@ -58,10 +58,12 @@ nentities
 ### Relations below the diagonal
 
 ```@docs
-skeleton(mesh::IncRel; options...)
-boundary(mesh::IncRel)
-boundedby(mesh::IncRel, fmesh::IncRel)
-boundedby2(mesh::IncRel, emesh::IncRel)
+skeleton(ir::IncRel; options...)
+boundary(ir::IncRel)
+bbyfacets(ir::IncRel, fir::IncRel)
+bbyfacets(ir::IncRel, fir::IncRel, tfir::IncRel)
+bbyedgets(ir::IncRel, eir::IncRel)
+bbyedgets(ir::IncRel, eir::IncRel, teir::IncRel)
 ```
 
 ### Relations above the diagonal
