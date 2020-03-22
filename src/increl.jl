@@ -44,22 +44,40 @@ Number of individual entities in the `j`-th relation in the incidence relation.
 """
 nentities(ir::IncRel, j::Int64) = length(ir._v[j])
 
+# """
+#     (ir::IncRel)(j::IT, k::IT) where {IT}
+#
+# Retrieve the incidence relation for `j`-th relation, k-th entity.
+# """
+# function (ir::IncRel{LEFT, RIGHT, T})(j::Int64, k::Int64) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
+# 	ir._v[j][k]
+# end
+#
+# """
+#     (ir::IncRel)(j::IT) where {IT}
+#
+# Retrieve the row of the incidence relation for `j`-th relation.
+# """
+# function (ir::IncRel{LEFT, RIGHT, T})(j::Int64) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
+# 	ir._v[j]
+# end
+
 """
-    (ir::IncRel)(j::IT, k::IT) where {IT}
+    retrieve(ir::IncRel{LEFT, RIGHT, T}, j::Int64, k::Int64) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
 
 Retrieve the incidence relation for `j`-th relation, k-th entity.
 """
-function (ir::IncRel{LEFT, RIGHT, T})(j::Int64, k::Int64) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
-	ir._v[j][k]
+function retrieve(ir::IncRel{LEFT, RIGHT, T}, j::Int64, k::Int64) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
+	return ir._v[j][k]
 end
 
 """
-    (ir::IncRel)(j::IT) where {IT}
+    retrieve(ir::IncRel{LEFT, RIGHT, T}, j::Int64) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
 
 Retrieve the row of the incidence relation for `j`-th relation.
 """
-function (ir::IncRel{LEFT, RIGHT, T})(j::Int64) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
-	ir._v[j]
+function retrieve(ir::IncRel{LEFT, RIGHT, T}, j::Int64) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
+	return ir._v[j]
 end
 
 """
@@ -81,7 +99,7 @@ function transpose(ir::IncRel)
 	nvmax = 0
 	for j in 1:nrelations(ir)
 		for k in 1:nentities(ir, j)
-			nvmax = max(nvmax, ir(j, k))
+			nvmax = max(nvmax, retrieve(ir, j, k))
 		end
 	end
 	# pre-allocate relations vector
@@ -94,7 +112,7 @@ function transpose(ir::IncRel)
 	# Build the transpose relations
     for j in 1:nrelations(ir)
 		for k in 1:nentities(ir, j)
-			c = abs(ir(j, k)) # this could be an oriented entity: remove the sign
+			c = abs(retrieve(ir, j, k)) # this could be an oriented entity: remove the sign
 			push!(_v[c], j)
 		end
 	end
@@ -104,7 +122,7 @@ end
 function _asmatrix(ir)
     c = fill(0, nshapes(ir.left), nvertices(shapedesc(ir.left)))
     for i in 1:nshapes(ir.left)
-        c[i, :] = ir(i)
+        c[i, :] = retrieve(ir, i)
     end
     return c
 end
@@ -280,12 +298,12 @@ function bbyfacets(ir::IncRel, fir::IncRel, tfir::IncRel)
 	# Sweep through the relations of d -> 0, and use the 0 -> d-1 tfir
 	_c = fill(0, nrelations(ir), nfacets(ir.left))
 	for i in 1:nrelations(ir) # Sweep through the relations of d -> 0
-		sv = ir(i)
+		sv = retrieve(ir, i)
 		c = Int64[] # this will be the list of facets at the vertices of this entity
 		for j in 1:nentities(ir, i) # for all vertices
-			fv = ir(i, j)
+			fv = retrieve(ir, i, j)
 			for k in 1:nentities(tfir, fv)
-				push!(c, tfir(fv, k))
+				push!(c, retrieve(tfir, fv, k))
 			end # k
 		end
 		c = _selectrepeating(c, nvertices(tfir.right)) # keep the repeats
@@ -295,7 +313,7 @@ function bbyfacets(ir::IncRel, fir::IncRel, tfir::IncRel)
 			fc = sv[facetconnectivity(ir.left, k)]
 			sfc = sort(fc)
 			for j in 1:length(c)
-				oc = fir(c[j])
+				oc = retrieve(fir, c[j])
 				if sfc == sort(oc)
 					sgn = _sense(fc[1:n1st], oc, nshif)
 					_c[i, k] = sgn * c[j]
@@ -316,7 +334,7 @@ Compute the incidence relation `d -> d-1` for `d`-dimensional shapes.
 Convenience function where the transpose of the incidence relation on the right
 is computed on the fly.
 
-# See also: [bbyfacets(ir::IncRel, fir::IncRel, tfir::IncRel](@ref)
+# See also: [`bbyfacets(ir::IncRel, fir::IncRel, tfir::IncRel)`](@ref)
 """
 function bbyfacets(ir::IncRel, fir::IncRel)
 	return bbyfacets(ir, fir, transpose(fir))
@@ -354,12 +372,12 @@ function bbyedgets(ir::IncRel, eir::IncRel, teir::IncRel)
 	# Sweep through the relations of d -> 0, and use the 0 -> d-1 teir
 	_c = fill(0, nrelations(ir), nedgets(ir.left))
 	for i in 1:nrelations(ir) # Sweep through the relations of d -> 0
-		sv = ir(i)
+		sv = retrieve(ir, i)
 		c = Int64[] # this will be the list of facets at the vertices of this entity
 		for j in 1:nentities(ir, i) # for all vertices
-			fv = ir(i, j)
+			fv = retrieve(ir, i, j)
 			for k in 1:nentities(teir, fv)
-				push!(c, teir(fv, k))
+				push!(c, retrieve(teir, fv, k))
 			end # k
 		end
 		c = _selectrepeating(c, nvertices(teir.right)) # keep the repeats
@@ -369,7 +387,7 @@ function bbyedgets(ir::IncRel, eir::IncRel, teir::IncRel)
 			fc = sv[edgetconnectivity(ir.left, k)]
 			sfc = sort(fc)
 			for j in 1:length(c)
-				oc = eir(c[j])
+				oc = retrieve(eir, c[j])
 				if sfc == sort(oc)
 					sgn = _sense(fc[1:n1st], oc, nshif)
 					_c[i, k] = sgn * c[j]
@@ -390,7 +408,7 @@ Compute the incidence relation `d -> d-2` for `d`-dimensional shapes.
 Convenience function where the transpose of the incidence relation on the right
 is computed on the fly.
 
-# See also: [bbyedgets(ir::IncRel, eir::IncRel, efir::IncRel)](@ref)
+# See also: [`bbyedgets(ir::IncRel, eir::IncRel, efir::IncRel)`](@ref)
 """
 function bbyedgets(ir::IncRel, eir::IncRel)
 	return bbyedgets(ir, eir, transpose(eir))

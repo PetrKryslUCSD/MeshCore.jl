@@ -90,11 +90,20 @@ function locations(la::LocAccess{N, T}) where {N, T}
     return la.locs
 end
 
+# """
+#     (la::LocAccess{N, T})(j::Int64) where {N, T}
+#
+# Access the coordinate of the `j`-th vertex.
+# """
+# function (la::LocAccess{N, T})(j::Int64) where {N, T}
+#     return coordinates(la.locs, j)
+# end
+
 """
-    (la::LocAccess{N, T})(j::Int64) where {N, T}
+    coordinates(la::LocAccess{N, T}, j::Int64) where {N, T}
 
 Access the coordinate of the `j`-th vertex.
 """
-function (la::LocAccess{N, T})(j::Int64) where {N, T}
+function coordinates(la::LocAccess{N, T}, j::Int64) where {N, T}
     return coordinates(la.locs, j)
 end

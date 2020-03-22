@@ -19,8 +19,8 @@ coordinates(loc::Locations{N, T}, I::SVector) where {N, T}
 
 
 ```@docs
-(la::LocAccess)(j::Int64)
-locations(la::LocAccess)
+locations(la::LocAccess{N, T}) where {N, T}
+coordinates
 ```
 
 ## Shapes
@@ -41,7 +41,7 @@ nedgets
 edgetconnectivity
 n1storderv
 nshifts
-attribute(shapes::ShapeColl, s::Symbol)
+attribute
 ```
 
 ## Incidence relations
@@ -51,19 +51,16 @@ IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, v::Vector{T}) where {LEFT
 IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, data::Matrix{MT}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, MT}
 nrelations
 nentities
-(ir::IncRel)(j::IT, k::IT) where {IT}
-(ir::IncRelFixed)(j::IT) where {IT}
+retrieve
 ```
 
 ### Relations below the diagonal
 
 ```@docs
-skeleton(ir::IncRel; options...)
-boundary(ir::IncRel)
-bbyfacets(ir::IncRel, fir::IncRel)
-bbyfacets(ir::IncRel, fir::IncRel, tfir::IncRel)
-bbyedgets(ir::IncRel, eir::IncRel)
-bbyedgets(ir::IncRel, eir::IncRel, teir::IncRel)
+skeleton
+boundary
+bbyfacets
+bbyedgets
 ```
 
 ### Relations above the diagonal

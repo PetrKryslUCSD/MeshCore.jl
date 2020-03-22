@@ -8,6 +8,7 @@ CurrentModule = MeshCore
 
 ```@docs
 Locations{N, T<:AbstractFloat}
+LocAccess
 ```
 
 ## Shape descriptors
@@ -21,6 +22,7 @@ Q4ShapeDesc
 H8ShapeDesc
 T3ShapeDesc
 T4ShapeDesc
+SHAPE_DESC
 ```
 
 ## Shape collections
@@ -33,7 +35,7 @@ ShapeColl{S <: AbsShapeDesc}
 
 ```@docs
 AbsAttrib
-Attrib{F}<:AbsAttrib
+Attrib{F} <: AbsAttrib
 ```
 
 

@@ -77,7 +77,7 @@ module mtest3
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nlocations, nfacets, facetdesc, nshapes
 using MeshCore: Q4ShapeDesc, shapedesc, n1storderv, nedgets, nshifts, nvertices
-using MeshCore: IncRel
+using MeshCore: IncRel, retrieve
 using Test
 function test()
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
@@ -100,9 +100,9 @@ function test()
     @test nedgets(shapedesc(q4s)) == 4
     @test n1storderv(shapedesc(q4s)) == 4
     @test nshifts(shapedesc(q4s)) == 4
-    @test ir(3, 3) == 7
-    @test ir(1, 4) == 5
-    @test ir(6, 1) == 7
+    @test retrieve(ir, 3, 3) == 7
+    @test retrieve(ir, 1, 4) == 5
+    @test retrieve(ir, 6, 1) == 7
 
     true
 end
@@ -135,7 +135,7 @@ module mtest6
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nrelations, facetconnectivity
 using MeshCore: Locations, IncRel
-using MeshCore: skeleton, coordinates
+using MeshCore: skeleton, coordinates, retrieve
 using Test
 function test()
     xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
@@ -150,10 +150,10 @@ function test()
     @test nrelations(facemesh) == 17
     # @show facemeshx
     for i in 1:nrelations(facemesh)
-        x = coordinates(locs, facemesh(i))
+        x = coordinates(locs, retrieve(facemesh, i))
     end #
-    @test coordinates(locs, facemesh(17)) == StaticArrays.SArray{Tuple{2},Float64,1,2}[[1900.0, 800.0], [1266.6666666666667, 800.0]]
-    @test coordinates(locs, facemesh(17)[1]) == [1900.0, 800.0]
+    @test coordinates(locs, retrieve(facemesh, 17)) == StaticArrays.SArray{Tuple{2},Float64,1,2}[[1900.0, 800.0], [1266.6666666666667, 800.0]]
+    @test coordinates(locs, retrieve(facemesh, 17)[1]) == [1900.0, 800.0]
     true
 end
 end
@@ -189,7 +189,7 @@ mtest7.test()
 module mtopoop1
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nshapes
-using MeshCore: IncRel, Locations, transpose, nshapes
+using MeshCore: IncRel, Locations, transpose, nshapes, retrieve
 using Test
 function test()
     xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
@@ -205,7 +205,7 @@ function test()
     allmatch = true
     for j in 1:length(shouldget)
         for k in 1:length(shouldget[j])
-            allmatch = allmatch && (tmesh(j, k) == shouldget[j][k])
+            allmatch = allmatch && (retrieve(tmesh, j, k) == shouldget[j][k])
         end
     end
     @test allmatch
@@ -219,7 +219,7 @@ module mtopoop2
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nshapes
 using MeshCore: Locations, bbyfacets, skeleton, transpose
-using MeshCore: IncRel
+using MeshCore: IncRel, retrieve
 using Test
 function test()
     xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
@@ -237,7 +237,7 @@ function test()
     allmatch = true
     for j in 1:length(shouldget)
         for k in 1:length(shouldget[j])
-            allmatch = allmatch && (tmesh(j, k) == shouldget[j][k])
+            allmatch = allmatch && (retrieve(tmesh, j, k) == shouldget[j][k])
         end
     end
     @test allmatch
@@ -251,7 +251,7 @@ module mtopoop3
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nshapes
 using MeshCore: Locations, bbyfacets, skeleton, transpose
-using MeshCore: IncRel
+using MeshCore: IncRel, retrieve
 using Test
 function test()
     xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
@@ -268,7 +268,7 @@ function test()
     allmatch = true
     for j in 1:length(shouldget)
         for k in 1:length(shouldget[j])
-            allmatch = allmatch && (bbmesh(j, k) == shouldget[j][k])
+            allmatch = allmatch && (retrieve(bbmesh, j, k) == shouldget[j][k])
         end
     end
     @test allmatch
@@ -279,7 +279,7 @@ function test()
     allmatch = true
     for j in 1:length(shouldget)
         for k in 1:length(shouldget[j])
-            allmatch = allmatch && (tbbmesh(j, k) == shouldget[j][k])
+            allmatch = allmatch && (retrieve(tbbmesh, j, k) == shouldget[j][k])
         end
     end
     @test allmatch
@@ -293,7 +293,7 @@ module mtopoop4
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nshapes
 using MeshCore: Locations, bbyedgets, skeleton, transpose
-using MeshCore: IncRel
+using MeshCore: IncRel, retrieve
 using Test
 function test()
     xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
@@ -311,7 +311,7 @@ function test()
     allmatch = true
     for j in 1:length(shouldget)
         for k in 1:length(shouldget[j])
-            allmatch = allmatch && (bbmesh(j, k) == shouldget[j][k])
+            allmatch = allmatch && (retrieve(bbmesh, j, k) == shouldget[j][k])
         end
     end
     @test allmatch
@@ -321,7 +321,7 @@ function test()
     allmatch = true
     for j in 1:length(shouldget)
         for k in 1:length(shouldget[j])
-            allmatch = allmatch && (tbbmesh(j, k) == shouldget[j][k])
+            allmatch = allmatch && (retrieve(tbbmesh, j, k) == shouldget[j][k])
         end
     end
     @test allmatch
@@ -336,7 +336,7 @@ include("samplet4.jl")
 module mt4topo1
 using StaticArrays
 using MeshCore: P1, T4, ShapeColl,  manifdim, nvertices, nedgets, nshapes
-using MeshCore: bbyedgets, skeleton, bbyfacets, nshifts, _sense
+using MeshCore: bbyedgets, skeleton, bbyfacets, nshifts, _sense, retrieve
 using MeshCore: IncRel, Locations, transpose, nrelations, nentities, nlocations
 using ..samplet4: samplet4mesh
 using Test
@@ -352,8 +352,8 @@ function test()
     allmatch = true
     for j in 1:nrelations(ir03)
         for k in 1:nentities(ir03, j)
-            f = ir03(j, k)
-            allmatch = allmatch && (j in ir30(f))
+            f = retrieve(ir03, j, k)
+            allmatch = allmatch && (j in retrieve(ir30, f))
         end # k
     end # j
     @test allmatch
@@ -364,8 +364,8 @@ function test()
     allmatch = true
     for j in 1:nrelations(ir02)
         for k in 1:nentities(ir02, j)
-            f = ir02(j, k)
-            allmatch = allmatch && (j in ir20(f))
+            f = retrieve(ir02, j, k)
+            allmatch = allmatch && (j in retrieve(ir20, f))
         end # k
     end # j
     @test allmatch
@@ -376,8 +376,8 @@ function test()
     allmatch = true
     for j in 1:nrelations(ir01)
         for k in 1:nentities(ir01, j)
-            f = ir01(j, k)
-            allmatch = allmatch && (j in ir10(f))
+            f = retrieve(ir01, j, k)
+            allmatch = allmatch && (j in retrieve(ir10, f))
         end # k
     end # j
     @test allmatch
@@ -390,9 +390,9 @@ function test()
     @test nrelations(ir30) == nrelations(ir32)
     for j in 1:nrelations(ir32)
         for k in 1:nentities(ir32, j)
-            f = ir32(j, k)
+            f = retrieve(ir32, j, k)
             for m in 1:3
-                allmatch = allmatch && (ir20(abs(f), m) in ir30(j))
+                allmatch = allmatch && (retrieve(ir20, abs(f), m) in retrieve(ir30, j))
             end # m
         end # k
     end # j
@@ -402,13 +402,13 @@ function test()
     @test nrelations(ir30) == nrelations(ir32)
     for j in 1:nrelations(ir32)
         for k in 1:nentities(ir32, j)
-            for f in ir32(j)
+            for f in retrieve(ir32, j)
                 orientation = sign(f)
                 f = abs(f)
-                fc = ir20(f)
+                fc = retrieve(ir20, f)
                 matchone = false
                 for m in 1:4
-                    oc = ir30(j)[ir30.left.shapedesc.facets[m, :]]
+                    oc = retrieve(ir30, j)[ir30.left.shapedesc.facets[m, :]]
                     if length(intersect(fc, oc)) == 3
                         s = _sense(fc, oc, nshifts(ir20.left.shapedesc))
                         matchone = (s == orientation)
@@ -427,8 +427,8 @@ function test()
     allmatch = true
     for j in 1:nrelations(ir23)
         for k in 1:nentities(ir23, j)
-            e = ir23(j, k)
-            allmatch = allmatch && (j in abs.(ir32(e)))
+            e = retrieve(ir23, j, k)
+            allmatch = allmatch && (j in abs.(retrieve(ir32, e)))
         end # k
     end # j
     @test allmatch
@@ -458,17 +458,17 @@ function test()
 
     la = LocAccess(locs)
     a = Attrib(la)
-    @test a.val(10) == [633.3333333333334, 800.0]
+    @test coordinates(a.val, 10) == [633.3333333333334, 800.0]
 
     la = LocAccess(locs)
     a = Attrib(la, "geom")
     # @show typeof(Dict(a.name=>a))
     vertices = ShapeColl(P1, size(xyz, 1), Dict(a.name=>a))
     a = vertices.attributes["geom"]
-    @test a.val(10) == [633.3333333333334, 800.0]
+    @test coordinates(a.val, 10) == [633.3333333333334, 800.0]
 
     a = attribute(vertices, "geom")
-    @test a.val(10) == [633.3333333333334, 800.0]
+    @test coordinates(a.val, 10) == [633.3333333333334, 800.0]
     # @btime $a.val(10)
     # @btime a.val(10)
 
