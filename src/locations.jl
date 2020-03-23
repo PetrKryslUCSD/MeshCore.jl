@@ -68,13 +68,24 @@ end
 
 Data structure to access the locations of vertices.
 
+The access to the coordinates may be either through a function `coordinates`, or
+through a "callable object" interface as
+```
+(la::LocAccess{N, T})(j::Int64) where {N, T}
+```
+Refer to the example below.
+
 # Example
 The use is intended for the data stored in an attribute:
 ```
+using MeshCore: Locations, LocAccess, Attrib, coordinates
+xyz = [30.0 3.0; 633.3 800.0]
 locs =  Locations(xyz)
 la = LocAccess(locs)
 a = Attrib(la)
-@test a.val(10) == [633.3333333333334, 800.0]
+using Test
+@test a.val(2) == [633.3, 800.0]
+@test coordinates(a.val, 2) == [633.3, 800.0]
 ```
 """
 struct LocAccess{N, T}
@@ -90,14 +101,17 @@ function locations(la::LocAccess{N, T}) where {N, T}
     return la.locs
 end
 
-# """
-#     (la::LocAccess{N, T})(j::Int64) where {N, T}
-#
-# Access the coordinate of the `j`-th vertex.
-# """
-# function (la::LocAccess{N, T})(j::Int64) where {N, T}
-#     return coordinates(la.locs, j)
-# end
+"""
+    (la::LocAccess{N, T})(j::Int64) where {N, T}
+
+Access the coordinate of the `j`-th vertex.
+
+This is to provide uniformity with any other attribute, which may be a function.
+A functor provides uniform UI.
+"""
+function (la::LocAccess{N, T})(j::Int64) where {N, T}
+    return coordinates(la.locs, j)
+end
 
 """
     coordinates(la::LocAccess{N, T}, j::Int64) where {N, T}
