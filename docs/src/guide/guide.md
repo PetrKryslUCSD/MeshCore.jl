@@ -120,7 +120,7 @@ composed of triangles will start from the incidence relation ``2 \rightarrow
 0``. No other incidence relation from the table will exist at that point.
 
 | Manif. dim.      |   0   |   1   |   2   |  3   |
-|:--------|:--------|:--------|:--------|:--------|
+|:---: | :---: | :---: | :---: | :---: |
 | 0     | 0 -> 0 |------ | ------ | ------ |
 | 1     | 1 -> 0 |------ | ------ | ------ |
 | 2     | 2 -> 0 |------ | ------ | ------ |
@@ -139,7 +139,7 @@ incidence relations in the rest of the table. Some of these relations are
 defined for meshes derived from the initial mesh.
 
 | Manif. dim.      |   0   |   1   |   2   |  3   |
-|:--------|:--------|:--------|:--------|:--------|
+|:---: | :---: | :---: | :---: | :---: |
 | 0     | 0 -> 0 | 0 -> 1 | 0 -> 2 | 0 -> 3 |
 | 1     | 1 -> 0 | ------ | 1 -> 2 | 1 -> 3 |
 | 2     | 2 -> 0 | 2 -> 1 | ------ | 2 -> 3 |
@@ -162,7 +162,7 @@ are bounded by a face: so either 2 or 1 cells.
 The table below summarizes the incidence relations that represent  the initial meshes.
 
 | Manif. dim. |   0   |   1   |   2   |  3   |
-|:--------|:--------|:--------|:--------|:--------|
+|:---: | :---: | :---: | :---: | :---: |
 | 0     | 0 -> 0 |------ | ------ | ------ |
 | 1     | 1 -> 0 |------ | ------ | ------ |
 | 2     | 2 -> 0 |------ | ------ | ------ |
@@ -184,7 +184,7 @@ triangular face (manifold dimension 2), the relationship would state the global
 numbers of edges (manifold dimension 1) by which the triangle face is bounded.
 
 | Manif. dim.  |   0   |   1   |   2   |  3   |
-|:--------|:--------|:--------|:--------|:--------|
+|:---: | :---: | :---: | :---: | :---: |
 |   0     | ------ | ------ | ------ | ------ |
 |   1     | 1 -> 0 | ------ | ------ | ------ |
 |   2     | ------ | 2 -> 1 | ------ | ------ |
@@ -212,7 +212,7 @@ edges (``3 \rightarrow 1``). Again, the incidence relation is very leaky in that
 it provides cover for the edges of the tetrahedron.
 
 | Manif. dim.      |   0   |   1   |   2   |  3   |
-|:--------|:--------|:--------|:--------|:--------|
+|:---: | :---: | :---: | :---: | :---: |
 | 0     | ------ | ------ | ------ | ------ |
 | 1     | ------ | ------ | ------ | ------ |
 | 2     | 2 -> 0 | ------ | ------ | ------ |
@@ -231,7 +231,7 @@ on lower-dimension shapes. These are computed from the incidence relations from
 the lower triangle of the table by the function `increl_transpose`.
 
 | Manif. dim.      |   0   |   1   |   2   |  3   |
-|:--------|:--------|:--------|:--------|:--------|
+|:---: | :---: | :---: | :---: | :---: |
 |   0     | ------ | 0 -> 1 | 0 -> 2 | 0 -> 3 |
 |   1     | ------ | ------ | 1 -> 2 | 1 -> 3 |
 |   2     | ------ | ------ | ------ | 2 -> 3 |
@@ -260,8 +260,8 @@ For definiteness here we assume that the initial mesh (i. e. the incidence relat
 is ``3 \rightarrow 0``.
 
 | Manif. dim.      |   0   |   1   |   2   |  3   |
-|:------------------|:------------------|:------------------|:------------------|:------------------|
-|   0     | 0 -> 0: sk(1 -> 0) | 0 -> 1: tr(1 -> 0) | 0 -> 2: tr(2 -> 0) | 0 -> 3: tr(3 -> 0) |
-|   1     | 1 -> 0: sk(2 -> 0) | ------ | 1 -> 2: tr(2 -> 1) | 1 -> 3: tr(3 -> 1) |
-|   2     | 2 -> 0: sk(3 -> 0) | 2 -> 1: bf(2 -> 0, 1 -> 0, 0 -> 1) | ------ | 2 -> 3: tr(3 -> 2) |
-|   3     | 3 -> 0 | 3 -> 1: be(3 -> 0, 1 -> 0, 0 -> 1) | 3 -> 2: bf(3 -> 0, 2 -> 0, 0 -> 2)| ------ |
+|:---:  | :---:  | :---:  | :---:  | :---:  |
+|   0     | sk(1 -> 0) |  tr(1 -> 0) | tr(2 -> 0) |  tr(3 -> 0) |
+|   1     | sk(2 -> 0) | ------ | tr(2 -> 1) | tr(3 -> 1) |
+|   2     | sk(3 -> 0) | bf(2 -> 0, 1 -> 0, 0 -> 1) | ------ | tr(3 -> 2) |
+|   3     | 3 -> 0 | be(3 -> 0, 1 -> 0, 0 -> 1) | bf(3 -> 0, 2 -> 0, 0 -> 2)| ------ |
