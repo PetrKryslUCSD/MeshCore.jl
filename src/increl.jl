@@ -38,45 +38,27 @@ Number of individual relations in the incidence relation.
 nrelations(ir::IncRel)  = length(ir._v)
 
 """
-    nentities(ir::IncRel, j::Int64)
+    nentities(ir::IncRel, j::IT) where {IT}
 
 Number of individual entities in the `j`-th relation in the incidence relation.
 """
-nentities(ir::IncRel, j::Int64) = length(ir._v[j])
-
-# """
-#     (ir::IncRel)(j::IT, k::IT) where {IT}
-#
-# Retrieve the incidence relation for `j`-th relation, k-th entity.
-# """
-# function (ir::IncRel{LEFT, RIGHT, T})(j::Int64, k::Int64) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
-# 	ir._v[j][k]
-# end
-#
-# """
-#     (ir::IncRel)(j::IT) where {IT}
-#
-# Retrieve the row of the incidence relation for `j`-th relation.
-# """
-# function (ir::IncRel{LEFT, RIGHT, T})(j::Int64) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
-# 	ir._v[j]
-# end
+nentities(ir::IncRel, j::IT) where {IT} = length(ir._v[j])
 
 """
-    retrieve(ir::IncRel{LEFT, RIGHT, T}, j::Int64, k::Int64) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
+    retrieve(ir::IncRel{LEFT, RIGHT, T}, j::IT, k::IT) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T, IT}
 
 Retrieve the incidence relation for `j`-th relation, k-th entity.
 """
-function retrieve(ir::IncRel{LEFT, RIGHT, T}, j::Int64, k::Int64) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
+function retrieve(ir::IncRel{LEFT, RIGHT, T}, j::IT, k::IT) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T, IT}
 	return ir._v[j][k]
 end
 
 """
-    retrieve(ir::IncRel{LEFT, RIGHT, T}, j::Int64) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
+    retrieve(ir::IncRel{LEFT, RIGHT, T}, j::IT) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T, IT}
 
 Retrieve the row of the incidence relation for `j`-th relation.
 """
-function retrieve(ir::IncRel{LEFT, RIGHT, T}, j::Int64) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
+function retrieve(ir::IncRel{LEFT, RIGHT, T}, j::IT) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T, IT}
 	return ir._v[j]
 end
 
@@ -95,7 +77,8 @@ shape collection are swapped in the output relative to the input.
 """
 function transpose(ir::IncRel)
 	@_check (manifdim(ir.left) >= manifdim(ir.right))
-	# Find out how many of the transpose incidence relations there are
+	inttype = eltype(ir._v[1])
+    # Find out how many of the transpose incidence relations there are
 	nvmax = 0
 	for j in 1:nrelations(ir)
 		for k in 1:nentities(ir, j)
@@ -103,11 +86,11 @@ function transpose(ir::IncRel)
 		end
 	end
 	# pre-allocate relations vector
-    _v = Vector{Int64}[];
+	_v = Vector{inttype}[];
 	sizehint!(_v, nvmax)
 	# Initialize the relations to empty
     for i in 1:nvmax
-        push!(_v, Int64[])  # initially empty arrays
+        push!(_v, inttype[])  # initially empty arrays
     end
 	# Build the transpose relations
     for j in 1:nrelations(ir)
@@ -200,6 +183,7 @@ the same as for the input.
 function skeleton(ir::IncRel; options...)
 	@_check (manifdim(ir.right) == 0)
 	@_check (manifdim(ir.left) > 0)
+	inttype = eltype(ir._v[1])
     boundaryonly = false
     if :boundaryonly in keys(options)
         boundaryonly = options[:boundaryonly];
@@ -293,13 +277,14 @@ function bbyfacets(ir::IncRel, fir::IncRel, tfir::IncRel)
 	@_check (manifdim(ir.right) == 0) && (manifdim(tfir.left) == 0)
 	@_check manifdim(ir.left) == manifdim(tfir.right)+1
 	@_check manifdim(tfir.right) == manifdim(fir.left)
+	inttype = eltype(ir._v[1])
 	n1st = n1storderv(fir.left.shapedesc)
 	nshif = nshifts(fir.left.shapedesc)
 	# Sweep through the relations of d -> 0, and use the 0 -> d-1 tfir
 	_c = fill(0, nrelations(ir), nfacets(ir.left))
 	for i in 1:nrelations(ir) # Sweep through the relations of d -> 0
 		sv = retrieve(ir, i)
-		c = Int64[] # this will be the list of facets at the vertices of this entity
+		c = inttype[] # this will be the list of facets at the vertices of this entity
 		for j in 1:nentities(ir, i) # for all vertices
 			fv = retrieve(ir, i, j)
 			for k in 1:nentities(tfir, fv)
@@ -367,13 +352,14 @@ function bbyedgets(ir::IncRel, eir::IncRel, teir::IncRel)
 	@_check (manifdim(ir.right) == 0) && (manifdim(teir.left) == 0)
 	@_check manifdim(ir.left) == manifdim(teir.right)+2
 	@_check manifdim(teir.right) == manifdim(eir.left)
+	inttype = eltype(ir._v[1])
 	n1st = n1storderv(eir.left.shapedesc)
 	nshif = nshifts(eir.left.shapedesc)
 	# Sweep through the relations of d -> 0, and use the 0 -> d-1 teir
 	_c = fill(0, nrelations(ir), nedgets(ir.left))
 	for i in 1:nrelations(ir) # Sweep through the relations of d -> 0
 		sv = retrieve(ir, i)
-		c = Int64[] # this will be the list of facets at the vertices of this entity
+		c = inttype[] # this will be the list of facets at the vertices of this entity
 		for j in 1:nentities(ir, i) # for all vertices
 			fv = retrieve(ir, i, j)
 			for k in 1:nentities(teir, fv)
