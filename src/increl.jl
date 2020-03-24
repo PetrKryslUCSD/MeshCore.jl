@@ -45,11 +45,11 @@ Number of individual entities in the `j`-th relation in the incidence relation.
 nentities(ir::IncRel, j::IT) where {IT} = length(ir._v[j])
 
 """
-    retrieve(ir::IncRel{LEFT, RIGHT, T}, j::IT, k::IT) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T, IT}
+    retrieve(ir::IncRel{LEFT, RIGHT, T}, j::IT1, k::IT2) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T, IT1, IT2}
 
 Retrieve the incidence relation for `j`-th relation, k-th entity.
 """
-function retrieve(ir::IncRel{LEFT, RIGHT, T}, j::IT, k::IT) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T, IT}
+function retrieve(ir::IncRel{LEFT, RIGHT, T}, j::IT1, k::IT2) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T, IT1, IT2}
 	return ir._v[j][k]
 end
 
@@ -282,7 +282,7 @@ function bbyfacets(ir::IncRel, fir::IncRel, tfir::IncRel)
 	nshif = nshifts(fir.left.shapedesc)
 	# Sweep through the relations of d -> 0, and use the 0 -> d-1 tfir
 	_c = fill(inttype(0), nrelations(ir), nfacets(ir.left))
-	for i in 1:nrelations(ir) # Sweep through the relations of d -> 0
+    for i in 1:nrelations(ir) # Sweep through the relations of d -> 0
 		sv = retrieve(ir, i)
 		c = inttype[] # this will be the list of facets at the vertices of this entity
 		for j in 1:nentities(ir, i) # for all vertices
