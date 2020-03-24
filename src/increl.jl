@@ -281,7 +281,7 @@ function bbyfacets(ir::IncRel, fir::IncRel, tfir::IncRel)
 	n1st = n1storderv(fir.left.shapedesc)
 	nshif = nshifts(fir.left.shapedesc)
 	# Sweep through the relations of d -> 0, and use the 0 -> d-1 tfir
-	_c = fill(0, nrelations(ir), nfacets(ir.left))
+	_c = fill(inttype(0), nrelations(ir), nfacets(ir.left))
 	for i in 1:nrelations(ir) # Sweep through the relations of d -> 0
 		sv = retrieve(ir, i)
 		c = inttype[] # this will be the list of facets at the vertices of this entity
@@ -356,7 +356,7 @@ function bbyedgets(ir::IncRel, eir::IncRel, teir::IncRel)
 	n1st = n1storderv(eir.left.shapedesc)
 	nshif = nshifts(eir.left.shapedesc)
 	# Sweep through the relations of d -> 0, and use the 0 -> d-1 teir
-	_c = fill(0, nrelations(ir), nedgets(ir.left))
+	_c = fill(inttype(0), nrelations(ir), nedgets(ir.left))
 	for i in 1:nrelations(ir) # Sweep through the relations of d -> 0
 		sv = retrieve(ir, i)
 		c = inttype[] # this will be the list of facets at the vertices of this entity
