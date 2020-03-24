@@ -102,8 +102,8 @@ function transpose(ir::IncRel)
     return IncRel(ir.right, ir.left, _v)
 end
 
-function _asmatrix(ir)
-    c = fill(0, nshapes(ir.left), nvertices(shapedesc(ir.left)))
+function _asmatrix(ir, inttype)
+    c = fill(inttype(0), nshapes(ir.left), nvertices(shapedesc(ir.left)))
     for i in 1:nshapes(ir.left)
         c[i, :] = retrieve(ir, i)
     end
@@ -188,7 +188,7 @@ function skeleton(ir::IncRel; options...)
     if :boundaryonly in keys(options)
         boundaryonly = options[:boundaryonly];
     end
-    c = _asmatrix(ir) # incidence as a 2D array
+    c = _asmatrix(ir, inttype) # incidence as a 2D array
     # construct a 2D array of the hyperface incidences
     hfc = c[:, facetconnectivity(ir.left, 1)]
     for i in 2:nfacets(shapedesc(ir.left))
