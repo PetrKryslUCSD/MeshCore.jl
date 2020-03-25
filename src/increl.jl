@@ -399,3 +399,10 @@ is computed on the fly.
 function bbyedgets(ir::IncRel, eir::IncRel)
 	return bbyedgets(ir, eir, transpose(eir))
 end
+
+# Provide abbreviations:
+
+sk = skeleton
+tr = transpose
+bf = bbyfacets
+be = bbyedgets
