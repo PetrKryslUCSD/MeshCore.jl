@@ -12,7 +12,7 @@ Contents:
 
 - *Incidence relation*: Map from one shape collection to another shape
   collection. For instance, three-dimensional finite elements (cells) are typically linked to the vertices by
-  the incidence relation ``3 \rightarrow 0``, i. e. for each tetrahedron the
+  the incidence relation ``(3,0)``, i. e. for each tetrahedron the
   four vertices are listed. Some incidence relations link a shape to a fixed
   number of other shapes, other incidence relations are of variable arity.
   This is what is usually understood as a "mesh".
@@ -95,23 +95,22 @@ right.
 
 ## Topology of meshes
 
-Meshes are understood here simply as incidence relations. For instance, at the simplest level
-meshes are defined by the *connectivity*. The connectivity is the incidence
-relation linking the shape (``d``-dimensional manifold, where ``d \ge 0``) to
-the set of vertices.  The number of vertices connected by the shapes is a fixed
-number, for instance 4 for linear tetrahedra.
+Meshes are understood here simply as incidence relations. For instance, at the
+simplest level meshes are defined by the *connectivity*. The connectivity is
+the incidence relation linking the shape (``d``-dimensional manifold, where ``d
+\ge 0``) to the set of vertices.  The number of vertices connected by the
+shapes is a fixed number, for instance 4 for linear tetrahedra.
 
 
 
 The collection of ``d``-dimensional shapes is thus defined by the connectivity
-``d \rightarrow 0``. The starting point for the processing of  the mesh is
+``(d,0)``. The starting point for the processing of  the mesh is
 typically a two-dimensional or three-dimensional mesh. Let us say we start with
 a three dimensional mesh, so the basic data structure consists of the incidence
-relation ``3 \rightarrow 0``. The incidence relation ``2 \rightarrow 0`` can be
+relation ``(3,0)``. The incidence relation ``(2,0)`` can be
 derived by application of the method `skeleton`. Repeated application of the
-`skeleton` method will yield the relation ``1 \rightarrow 0``, and finally ``0
-\rightarrow 0``. Note that at difference to other definitions of the incidence
-relation ``0 \rightarrow 0`` (Logg 2008) this relation is one-to-one, not
+`skeleton` method will yield the relation ``(1,0)``, and finally ``(0,0)``. Note that at difference to other definitions of the incidence
+relation ``(0,0)`` (Logg 2008) this relation is one-to-one, not
 one-to-many.
 
 The table below shows the incidence relations (connectivity) that are the basic
@@ -121,12 +120,12 @@ composed of triangles will start from the incidence relation ``2 \rightarrow
 
 | Manif. dim.      |   0   |   1   |   2   |  3   |
 |:---: | :---: | :---: | :---: | :---: |
-| 0     | 0 -> 0 |------ | ------ | ------ |
-| 1     | 1 -> 0 |------ | ------ | ------ |
-| 2     | 2 -> 0 |------ | ------ | ------ |
-| 3     | 3 -> 0 |------ | ------ | ------ |
+| 0     | ``(0,0)`` |------ | ------ | ------ |
+| 1     | ``(1,0)`` |------ | ------ | ------ |
+| 2     | ``(2,0)`` |------ | ------ | ------ |
+| 3     | ``(3,0)`` |------ | ------ | ------ |
 
-The relation ``0 \rightarrow 0`` is trivial: Vertex is incident upon itself.
+The relation ``(0,0)`` is trivial: Vertex is incident upon itself.
 Hence it may not be worthwhile  to actually create a shape collection for this
 relation. It is included for completeness only, really.
 
@@ -140,43 +139,43 @@ defined for meshes derived from the initial mesh.
 
 | Manif. dim.      |   0   |   1   |   2   |  3   |
 |:---: | :---: | :---: | :---: | :---: |
-| 0     | 0 -> 0 | 0 -> 1 | 0 -> 2 | 0 -> 3 |
-| 1     | 1 -> 0 | ------ | 1 -> 2 | 1 -> 3 |
-| 2     | 2 -> 0 | 2 -> 1 | ------ | 2 -> 3 |
-| 3     | 3 -> 0 | 3 -> 1 | 3 -> 2 | ------ |
+| 0     | ``(0,0)`` | ``(0,1)`` | ``(0,2)`` | ``(0,3)`` |
+| 1     | ``(1,0)`` | ------ | ``(1,2)`` | ``(1,3)`` |
+| 2     | ``(2,0)`` | ``(2,1)`` | ------ | ``(2,3)`` |
+| 3     | ``(3,0)`` | ``(3,1)`` | ``(3,2)`` | ------ |
 
 In general the relations below the diagonal require the calculation of derived
 meshes. The relations above the diagonal are obtained by the so-called transpose
 operation, and do not require the construction of new meshes. Also, the
 relations below the diagonal are of fixed size. That is the number of entities
 incident on a given entity is a fixed number that can be determined beforehand.
-An example is  the relation ``3 \rightarrow 2``, where for the ``j``-th cell the
+An example is  the relation ``(3,2)``, where for the ``j``-th cell the
 list consists of the faces bounding the cell.
 
 On the other hand, the relations above the diagonal are in general of variable
-length. For example the relation ``2 \rightarrow 3`` represents the cells which
+length. For example the relation ``(2,3)`` represents the cells which
 are bounded by a face: so either 2 or 1 cells.
 
-### Incidence relations ``d \rightarrow 0``
+### Incidence relations ``(d,0)``
 
 The table below summarizes the incidence relations that represent  the initial meshes.
 
 | Manif. dim. |   0   |   1   |   2   |  3   |
 |:---: | :---: | :---: | :---: | :---: |
-| 0     | 0 -> 0 |------ | ------ | ------ |
-| 1     | 1 -> 0 |------ | ------ | ------ |
-| 2     | 2 -> 0 |------ | ------ | ------ |
-| 3     | 3 -> 0 |------ | ------ | ------ |
+| 0     | ``(0,0)`` |------ | ------ | ------ |
+| 1     | ``(1,0)`` |------ | ------ | ------ |
+| 2     | ``(2,0)`` |------ | ------ | ------ |
+| 3     | ``(3,0)`` |------ | ------ | ------ |
 
-For instance, for a surface mesh the relation ``2 \rightarrow 0`` is defined initially.
+For instance, for a surface mesh the relation ``(2,0)`` is defined initially.
 The relations *above* that can be calculated with the `skeleton` function.
 So,  the skeleton of the surface mesh would consist of all the edges
-in the mesh, expressible as the incidence relation  ``1 \rightarrow 0``.
+in the mesh, expressible as the incidence relation  ``(1,0)``.
 
 Note that the `skeleton` method constructs a derived mesh: the incidence relations
 in the column of the above table are therefore defined for related, but separate, meshes.
 
-### Incidence relations ``d \rightarrow d-1``
+### Incidence relations ``(d,d-1)``
 
 This incidence relation provides for each shape the list of shapes by which the
 shape is bounded of manifold dimension lower by one. For example, for each
@@ -186,19 +185,18 @@ numbers of edges (manifold dimension 1) by which the triangle face is bounded.
 | Manif. dim.  |   0   |   1   |   2   |  3   |
 |:---: | :---: | :---: | :---: | :---: |
 |   0     | ------ | ------ | ------ | ------ |
-|   1     | 1 -> 0 | ------ | ------ | ------ |
-|   2     | ------ | 2 -> 1 | ------ | ------ |
-|   3     | ------ | ------ | 3 -> 2 | ------ |
+|   1     | ``(1,0)`` | ------ | ------ | ------ |
+|   2     | ------ | ``(2,1)`` | ------ | ------ |
+|   3     | ------ | ------ | ``(3,2)`` | ------ |
 
-The incidence  relation ``d \rightarrow d-1`` may be derived with the function
+The incidence  relation ``(d,d-1)`` may be derived with the function
 `bbyfacets`, which operates on two shape collections: the shapes of dimension ``d``
 and the facet shapes of dimension ``d-1``.
 
-The relationship ``1  \rightarrow 0`` can be derived in two ways: from the incidence relation ``2
-\rightarrow  0`` by the `skeleton` function, or by the `bbyfacets` function applied
+The relationship ``(1 ,0)`` can be derived in two ways: from the incidence relation ``(2,0)`` by the `skeleton` function, or by the `bbyfacets` function applied
 to a shape collection of edges and  a shape collection of the vertices.
 
-### Incidence relations ``d \rightarrow d-2``
+### Incidence relations ``(d,d-2)``
 
 This incidence relation provides for each shape the list of shapes by which the
 shape is "bounded" of manifold dimension lower by two. For example, for each
@@ -208,23 +206,23 @@ numbers of vertices (manifold dimension 0) by which the triangle face is
 is very leaky: Clearly we do not cover most of the boundary, only the vertices.
 
 Similar relationship can be derived for instance between tetrahedra and the
-edges (``3 \rightarrow 1``). Again, the incidence relation is very leaky in that
+edges (``3,1``). Again, the incidence relation is very leaky in that
 it provides cover for the edges of the tetrahedron.
 
 | Manif. dim.      |   0   |   1   |   2   |  3   |
 |:---: | :---: | :---: | :---: | :---: |
 | 0     | ------ | ------ | ------ | ------ |
 | 1     | ------ | ------ | ------ | ------ |
-| 2     | 2 -> 0 | ------ | ------ | ------ |
-| 3     | ------ | 3 -> 1 | ------ | ------ |
+| 2     | ``(2,0)`` | ------ | ------ | ------ |
+| 3     | ------ | ``(3,1)`` | ------ | ------ |
 
-The relationship ``2  \rightarrow 0`` can be derived in two ways: from the
-incidence relation ``3 \rightarrow  0`` by the `skeleton` function, or by the
+The relationship ``(2 ,0)`` can be derived in two ways: from the
+incidence relation ``(3, 0)`` by the `skeleton` function, or by the
 `bbyfacets` function applied to a shape collection of cells and  a shape
 collection of the edges.
 
 
-### Incidence relations ``d_1 \rightarrow d_2``, where ``d_1 \lt d_2``
+### Incidence relations ``(d_1,d_2)``, where ``d_1 \lt d_2``
 
 The relations above the diagonal of the table below are lists of shapes incident
 on lower-dimension shapes. These are computed from the incidence relations from
@@ -232,36 +230,34 @@ the lower triangle of the table by the function `increl_transpose`.
 
 | Manif. dim.      |   0   |   1   |   2   |  3   |
 |:---: | :---: | :---: | :---: | :---: |
-|   0     | ------ | 0 -> 1 | 0 -> 2 | 0 -> 3 |
-|   1     | ------ | ------ | 1 -> 2 | 1 -> 3 |
-|   2     | ------ | ------ | ------ | 2 -> 3 |
+|   0     | ------ | ``(0,1)`` | ``(0,2)`` | ``(0,3)`` |
+|   1     | ------ | ------ | ``(1,2)`` | ``(1,3)`` |
+|   2     | ------ | ------ | ------ | ``(2,3)`` |
 |   3     | ------ | ------ | ------ | ------ |
 
-No new meshes are needed to construct the upper triangle  of the incidence
-relations table. However, constructing the incidence relation  will still take a
-pass through the entire mesh. The incidence relations in the upper triangle of
-the table are all of variable arity: for instance the incidence relation ``1
-\rightarrow 3`` is the list of three-dimensional cells that share a given edge.
+The incidence relations in the upper triangle
+of the table are all of variable arity: for instance the incidence relation
+``(1,3)`` is the list of three-dimensional cells that share a given edge.
 Clearly the number of cells varies from edge to edge.
 
-### Incidence relations ``d \rightarrow d``, where ``d \gt 1``
+### Incidence relations ``(d,d)``, where ``d \gt 1``
 
 These incidence relations do not fit the table referenced many times above. The
-definition of such a relation is not unique:  It needs to refer to a connecting shape. For
-instance, the relationship between faces,   ``2 \rightarrow 2``, needs to state
-through which shape the incidence occurs: is it through the common vertex? Is it
-through a common edge? Similarly, for cells the incidence relationship ``3
-\rightarrow 3`` will be different for the incidence to follow from a common
-vertex, a common edge, or a common face.
+definition of such a relation is not unique:  It needs to refer to a connecting
+shape. For instance, the relationship between faces,   ``(2,2)``, needs to
+state through which shape the incidence occurs: is it through the common
+vertex? Is it through a common edge? Similarly, for cells the incidence
+relationship ``(3,3)`` will be different for the incidence to follow from a
+common vertex, a common edge, or a common face.
 
 ### How incidence relations are computed
 
 For definiteness here we assume that the initial mesh (i. e. the incidence relation)
-is ``3 \rightarrow 0``.
+is ``3,0``.
 
 | Manif. dim.      |   0   |   1   |   2   |  3   |
 |:---:  | :---:  | :---:  | :---:  | :---:  |
-|   0     | sk(1 -> 0) |  tr(1 -> 0) | tr(2 -> 0) |  tr(3 -> 0) |
-|   1     | sk(2 -> 0) | ------ | tr(2 -> 1) | tr(3 -> 1) |
-|   2     | sk(3 -> 0) | bf(2 -> 0, 1 -> 0, 0 -> 1) | ------ | tr(3 -> 2) |
-|   3     | 3 -> 0 | be(3 -> 0, 1 -> 0, 0 -> 1) | bf(3 -> 0, 2 -> 0, 0 -> 2)| ------ |
+|   0     | sk(``(1,0)``) |  tr(``(1,0)``) | tr(``(2,0)``) |  tr(``(3,0)``) |
+|   1     | sk(``(2,0)``) | ------ | tr(``(2,1)``) | tr(``(3,1)``) |
+|   2     | sk(``(3,0)``) | bf(``(2,0, ``(1,0)``, ``(0,1)``) | ------ | tr(``(3,2)``) |
+|   3     | ``(3,0)`` | be(``(3,0)``, ``(1,0)``, ``(0,1)``) | bf(``(3,0)``, ``(2,0)``, ``(0,2)``)| ------ |
