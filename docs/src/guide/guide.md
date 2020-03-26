@@ -252,12 +252,12 @@ common vertex, a common edge, or a common face.
 
 ### How incidence relations are computed
 
-For definiteness here we assume that the initial mesh (i. e. the incidence relation)
-is ``3,0``.
+For definiteness here we assume that the initial mesh (i. e. the incidence
+relation) is ``3,0``. The other 12 relations in the table below can be computed by applying the four procedures: skeleton (`sk`), bounded-by-facet (`bf`), bounded-by-edgets (`be`), and transpose (`tr`).
 
 | Manif. dim.      |   0   |   1   |   2   |  3   |
 |:---:  | :---:  | :---:  | :---:  | :---:  |
-|   0     | sk(``(1,0)``) |  tr(``(1,0)``) | tr(``(2,0)``) |  tr(``(3,0)``) |
-|   1     | sk(``(2,0)``) | ------ | tr(``(2,1)``) | tr(``(3,1)``) |
-|   2     | sk(``(3,0)``) | bf(``(2,0, ``(1,0)``, ``(0,1)``) | ------ | tr(``(3,2)``) |
+|   0     | `sk`(``(1,0)``) |  tr(``(1,0)``) | tr(``(2,0)``) |  tr(``(3,0)``) |
+|   1     | `sk`(``(2,0)``) | ------ | tr(``(2,1)``) | tr(``(3,1)``) |
+|   2     | `sk`(``(3,0)``) | bf(``(2,0, ``(1,0)``, ``(0,1)``) | ------ | tr(``(3,2)``) |
 |   3     | ``(3,0)`` | be(``(3,0)``, ``(1,0)``, ``(0,1)``) | bf(``(3,0)``, ``(2,0)``, ``(0,2)``)| ------ |
