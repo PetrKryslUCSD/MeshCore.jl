@@ -21,3 +21,6 @@ Perhaps these should be computed and cached my `skeleton`?
 
 Mesh has a number of shape collections and a number of incidence relations.
 Geometry is an attribute of the shape collection of vertices.
+
+- Boundary faces: Should we use the skeleton and simply mark the boundary faces (creating an attribute) rather than extracting only the faces that are on the boundary?
+
