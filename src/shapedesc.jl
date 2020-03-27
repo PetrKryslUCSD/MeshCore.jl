@@ -9,21 +9,31 @@ covering the usual element shapes: point, line segment, quadrilateral,
 hexahedron, and a similar hierarchy for the simplex elements: point, line
 segment, triangle, tetrahedron.
 
-The concrete types of the shape descriptor will provide access to
-`manifdim` = manifold dimension of the shape (0, 1, 2, or 3),
-`nvertices` = number of vertices of the shape,
-`n1storderv` = number of first-order vertices for the shape, for instance
+The concrete types of the shape descriptor will provide access to the following
+properties of the shape S:
+- `manifdim` = manifold dimension of the shape S (i. e. 0, 1, 2, or 3),
+- `nvertices` = number of vertices of the shape S,
+- `n1storderv` = number of first-order vertices for the shape S, for instance
     a 6-node triangle has 3 first-order vertices,
-`nfacets` = number of shapes on the boundary of this shape,
-`facetdesc` = shape descriptor of the shapes on the boundary of this shape,
-`facets` = definitions of the shapes on the boundary of this shape in terms
+- `nfacets` = number of shapes on the boundary of the shape S,
+- `facetdesc` = shape descriptor of the shapes on the boundary of the shape S,
+- `facets` = definitions of the shapes on the boundary of the shape S in terms
     of local connectivity
+- `edgetdesc` = shape descriptor of the shapes on the boundary of the boundary
+  of the shape S (which we call edgets here),
+- `edgets` = definitions of the shapes on the boundary of the boundary of the
+  shape S in terms of local connectivity
 
 The bit-type values are defined with the type parameters:
-`MD` is the manifold dimension, `NV` is the
-number of connected vertices, `NF` is the number of boundary facets, `N1OV`
-number of first-order vertices, `FD` is the descriptor of the facet
-(boundary shape).
+- `MD` is the manifold dimension, 
+- `NV` is the number of connected vertices, 
+- `NF` is the number of boundary facets, 
+- `FD` is the descriptor of the facet (boundary shape).
+- `NE` is the number of boundary edgets, 
+- `ED` is the descriptor of the edget (boundary shape).
+- `N1OV` is number of first-order vertices, 
+- `NSHIFTS` is the number of shifts that should be attempted when matching
+  shapes to determine orientation.
 """
 abstract type AbsShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
 end
