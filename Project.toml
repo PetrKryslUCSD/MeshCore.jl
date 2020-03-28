@@ -1,7 +1,7 @@
 name = "MeshCore"
 uuid = "43a99bba-f459-4d0e-8139-f3df11d847d4"
 authors = ["Petr Krysl <pkrysl@ucsd.edu>"]
-version = "0.4.1"
+version = "0.4.2"
 
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
