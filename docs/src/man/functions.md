@@ -36,9 +36,9 @@ nvertices
 facetdesc
 nfacets
 facetconnectivity
-edgetdesc
-nedgets
-edgetconnectivity
+ridgedesc
+nridges
+ridgeconnectivity
 n1storderv
 nshifts
 attribute
@@ -60,7 +60,7 @@ retrieve
 skeleton
 boundary
 bbyfacets
-bbyedgets
+bbyridges
 ```
 
 ### Relations above the diagonal

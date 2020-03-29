@@ -19,17 +19,17 @@ Contents:
 - *Shape*: topological shape of any manifold dimension, ``0`` for vertices,
   ``1`` for edges, ``2`` for faces, and ``3`` for cells.
 - *Shape descriptor*: description of the type of the shape, such as the number
-  of vertices, facets, edgets, and so on.
+  of vertices, facets, ridges, and so on.
 - *Shape collection*: set of shapes of a particular shape description.
 - *Facet*: shape bounding another shape. A shape is bounded by facets.
-- *Edget*: shape one manifold dimension lower than the facet. For instance a
+- *Ridge*: shape one manifold dimension lower than the facet. For instance a
   tetrahedron is bounded by facets, which in turn are bounded by edges. These
-  edges are the "edgets" of the tetrahedron.  The edgets can also be thought of
+  edges are the "ridges" of the tetrahedron.  The ridges can also be thought of
   as a "leaky" bounding shapes of 3-D cells.
 - *Mesh topology*: The mesh topology can be understood as an incidence relation
   between two shape collections.
 - *Incidence relation operations*: The operations defined in the
-  library are the *skeleton*, the *transpose*, the *bounded-by for facets*, and *bounded-by for edgets*.
+  library are the *skeleton*, the *transpose*, the *bounded-by for facets*, and *bounded-by for ridges*.
 
 ## Example
 
@@ -253,7 +253,7 @@ common vertex, a common edge, or a common face.
 ### How incidence relations are computed
 
 For definiteness here we assume that the initial mesh (i. e. the incidence
-relation) is ``3,0``. The other 12 relations in the table below can be computed by applying the four procedures: skeleton (`sk`), bounded-by-facet (`bf`), bounded-by-edgets (`be`), and transpose (`tr`).
+relation) is ``3,0``. The other 12 relations in the table below can be computed by applying the four procedures: skeleton (`sk`), bounded-by-facet (`bf`), bounded-by-ridges (`be`), and transpose (`tr`).
 
 | Manif. dim.      |   0   |   1   |   2   |  3   |
 |:---:  | :---:  | :---:  | :---:  | :---:  |
