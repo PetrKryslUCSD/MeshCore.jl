@@ -1,6 +1,6 @@
 module mtest1
 using MeshCore: NoSuchShape, P1, L2, ShapeColl, manifdim, nfacets, SHAPE_DESC
-using MeshCore: shapedesc, nshapes, manifdim, nvertices, facetdesc, nfacets, edgetdesc, nedgets
+using MeshCore: shapedesc, nshapes, manifdim, nvertices, facetdesc, nfacets, ridgedesc, nridges
 using Test
 function test()
     @test manifdim(P1) == 0
@@ -13,8 +13,8 @@ function test()
     @test nvertices(lines) == nvertices(L2)
     @test facetdesc(lines) == P1
     @test nfacets(lines) == nfacets(L2)
-    @test edgetdesc(lines) == NoSuchShape
-    @test nedgets(lines) == 0
+    @test ridgedesc(lines) == NoSuchShape
+    @test nridges(lines) == 0
     @test SHAPE_DESC["P1"].name == "P1"
     @test SHAPE_DESC["L2"].name == "L2"
     @test SHAPE_DESC["T3"].name == "T3"
@@ -76,7 +76,7 @@ mtest2.test()
 module mtest3
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nlocations, nfacets, facetdesc, nshapes
-using MeshCore: Q4ShapeDesc, shapedesc, n1storderv, nedgets, nshifts, nvertices
+using MeshCore: Q4ShapeDesc, shapedesc, n1storderv, nridges, nshifts, nvertices
 using MeshCore: IncRel, retrieve
 using Test
 function test()
@@ -97,7 +97,7 @@ function test()
     @test manifdim(shapedesc(q4s)) == 2
     @test nvertices(shapedesc(q4s)) == 4
     @test nfacets(shapedesc(q4s)) == 4
-    @test nedgets(shapedesc(q4s)) == 4
+    @test nridges(shapedesc(q4s)) == 4
     @test n1storderv(shapedesc(q4s)) == 4
     @test nshifts(shapedesc(q4s)) == 4
     @test retrieve(ir, 3, 3) == 7
@@ -292,7 +292,7 @@ mtopoop3.test()
 module mtopoop4
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nshapes
-using MeshCore: Locations, bbyedgets, skeleton, transpose
+using MeshCore: Locations, bbyridges, skeleton, transpose
 using MeshCore: IncRel, retrieve
 using Test
 function test()
@@ -306,7 +306,7 @@ function test()
     # fmesh = skeleton(mesh)
     vmesh = IncRel(ShapeColl(P1, 12), vrts, [[i] for i in 1:nshapes(vrts)] )
     # Test the bounded-by incidence relation
-    bbmesh = bbyedgets(mesh, vmesh)
+    bbmesh = bbyridges(mesh, vmesh)
     shouldget = Array{Int64,1}[[1, 2, 6, 5], [5, 6, 10, 9], [2, 3, 7, 6], [6, 7, 11, 10], [3, 4, 8, 7], [7, 8, 12, 11]]
     allmatch = true
     for j in 1:length(shouldget)
@@ -335,8 +335,8 @@ include("samplet4.jl")
 
 module mt4topo1
 using StaticArrays
-using MeshCore: P1, T4, ShapeColl,  manifdim, nvertices, nedgets, nshapes
-using MeshCore: bbyedgets, skeleton, bbyfacets, nshifts, _sense, retrieve
+using MeshCore: P1, T4, ShapeColl,  manifdim, nvertices, nridges, nshapes
+using MeshCore: bbyridges, skeleton, bbyfacets, nshifts, _sense, retrieve
 using MeshCore: IncRel, Locations, transpose, nrelations, nentities, nlocations
 using ..samplet4: samplet4mesh
 using Test

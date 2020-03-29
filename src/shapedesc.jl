@@ -19,9 +19,9 @@ properties of the shape S:
 - `facetdesc` = shape descriptor of the shapes on the boundary of the shape S,
 - `facets` = definitions of the shapes on the boundary of the shape S in terms
     of local connectivity
-- `edgetdesc` = shape descriptor of the shapes on the boundary of the boundary
-  of the shape S (which we call edgets here),
-- `edgets` = definitions of the shapes on the boundary of the boundary of the
+- `ridgedesc` = shape descriptor of the shapes on the boundary of the boundary
+  of the shape S (which we call ridges here),
+- `ridges` = definitions of the shapes on the boundary of the boundary of the
   shape S in terms of local connectivity
 
 The bit-type values are defined with the type parameters:
@@ -29,8 +29,8 @@ The bit-type values are defined with the type parameters:
 - `NV` is the number of connected vertices, 
 - `NF` is the number of boundary facets, 
 - `FD` is the descriptor of the facet (boundary shape).
-- `NE` is the number of boundary edgets, 
-- `ED` is the descriptor of the edget (boundary shape).
+- `NE` is the number of boundary ridges, 
+- `ED` is the descriptor of the ridge (boundary shape).
 - `N1OV` is number of first-order vertices, 
 - `NSHIFTS` is the number of shifts that should be attempted when matching
   shapes to determine orientation.
@@ -60,11 +60,11 @@ How many facets bound the shape?
 nfacets(sd::AbsShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}) where {MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} = NF
 
 """
-    nedgets(sd::AbsShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}) where {MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
+    nridges(sd::AbsShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}) where {MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
 
-How many edgets bound the shape?
+How many ridges bound the shape?
 """
-nedgets(sd::AbsShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}) where {MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} = NE
+nridges(sd::AbsShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}) where {MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} = NE
 
 """
     n1storderv(sd::AbsShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}) where {MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
@@ -109,8 +109,8 @@ Shape descriptor of a point shape.
 struct P1ShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} <: AbsShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
     facetdesc::FD
     facets::SMatrix{NF, 0, Int64, 0}
-    edgetdesc::ED
-    edgets::SMatrix{NE, 0, Int64, 0}
+    ridgedesc::ED
+    ridges::SMatrix{NE, 0, Int64, 0}
     name::String
 end
 
@@ -133,8 +133,8 @@ Shape descriptor of a line segment shape.
 struct L2ShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} <: AbsShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
     facetdesc::FD
     facets::SMatrix{NF, 1, Int64, 2}
-    edgetdesc::ED
-    edgets::SMatrix{NE, 0, Int64, 0}
+    ridgedesc::ED
+    ridges::SMatrix{NE, 0, Int64, 0}
     name::String
 end
 
@@ -157,8 +157,8 @@ Shape descriptor of a quadrilateral shape.
 struct Q4ShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} <: AbsShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
     facetdesc::FD
     facets::SMatrix{NF, 2, Int64, 4*2}
-    edgetdesc::ED
-    edgets::SMatrix{NE, 1, Int64, 4*1}
+    ridgedesc::ED
+    ridges::SMatrix{NE, 1, Int64, 4*1}
     name::String
 end
 
@@ -181,8 +181,8 @@ Shape descriptor of a hexahedral shape.
 struct H8ShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} <: AbsShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
     facetdesc::FD
     facets::SMatrix{NF, 4, Int64, 6*4}
-    edgetdesc::ED
-    edgets::SMatrix{NE, 2, Int64, 12*2}
+    ridgedesc::ED
+    ridges::SMatrix{NE, 2, Int64, 12*2}
     name::String
 end
 
@@ -211,8 +211,8 @@ Shape descriptor of a triangular shape.
 struct T3ShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} <: AbsShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
     facetdesc::FD
     facets::SMatrix{NF, 2, Int64, 3*2}
-    edgetdesc::ED
-    edgets::SMatrix{NE, 1, Int64, 3*1}
+    ridgedesc::ED
+    ridges::SMatrix{NE, 1, Int64, 3*1}
     name::String
 end
 
@@ -234,8 +234,8 @@ Shape descriptor of a tetrahedral shape.
 struct T4ShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS} <: AbsShapeDesc{MD, NV, NF, FD, NE, ED, N1OV, NSHIFTS}
     facetdesc::FD
     facets::SMatrix{NF, 3, Int64, 4*3}
-    edgetdesc::ED
-    edgets::SMatrix{NE, 2, Int64, 6*2}
+    ridgedesc::ED
+    ridges::SMatrix{NE, 2, Int64, 6*2}
     name::String
 end
 

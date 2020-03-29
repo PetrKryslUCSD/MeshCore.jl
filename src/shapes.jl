@@ -91,26 +91,26 @@ function facetconnectivity(shapes::ShapeColl, j::Int64)
 end
 
 """
-    edgetdesc(shapes::ShapeColl)
+    ridgedesc(shapes::ShapeColl)
 
-Retrieve the shape type of the boundary edget.
+Retrieve the shape type of the boundary ridge.
 """
-edgetdesc(shapes::ShapeColl) = shapes.shapedesc.edgetdesc
-
-"""
-    nedgets(shapes::ShapeColl)
-
-Retrieve the number of boundary edgets per shape.
-"""
-nedgets(shapes::ShapeColl) = nedgets(shapes.shapedesc)
+ridgedesc(shapes::ShapeColl) = shapes.shapedesc.ridgedesc
 
 """
-    edgetconnectivity(shapes::ShapeColl, j::Int64)
+    nridges(shapes::ShapeColl)
 
-Retrieve connectivity of the `j`-th edget shape of the `i`-th shape from the collection.
+Retrieve the number of boundary ridges per shape.
 """
-function edgetconnectivity(shapes::ShapeColl, j::Int64)
-    return shapes.shapedesc.edgets[j, :]
+nridges(shapes::ShapeColl) = nridges(shapes.shapedesc)
+
+"""
+    ridgeconnectivity(shapes::ShapeColl, j::Int64)
+
+Retrieve connectivity of the `j`-th ridge shape of the `i`-th shape from the collection.
+"""
+function ridgeconnectivity(shapes::ShapeColl, j::Int64)
+    return shapes.shapedesc.ridges[j, :]
 end
 
 """

@@ -326,12 +326,12 @@ function bbyfacets(ir::IncRel, fir::IncRel)
 end
 
 """
-    bbyedgets(ir::IncRel, eir::IncRel)
+    bbyridges(ir::IncRel, eir::IncRel)
 
 Compute the incidence relation `d -> d-2` for `d`-dimensional shapes.
 
 In other words, this is the incidence between shapes and the shapes that "bound"
-the boundaries of these shapes (i. e. edgets). For tetrahedra as the shapes, the
+the boundaries of these shapes (i. e. ridges). For tetrahedra as the shapes, the
 incidence relation lists the numbers of the edges that "bound" each individual
 tetrahedron. The resulting shape is of the same shape description as the
 `shapes` on input.
@@ -339,16 +339,16 @@ tetrahedron. The resulting shape is of the same shape description as the
 # Returns
 The incidence relation for the "bounded by" relationship between shape
 collections. The left shape collection is the same as for the `ir`, the right
-shape collection is for the edgets (shapes of manifold dimension two less than
+shape collection is for the ridges (shapes of manifold dimension two less than
 the manifold dimension of the shapes themselves).
 
 !!! note
-    The numbers of the edgets are signed: positive when the edget bounds the shape
+    The numbers of the ridges are signed: positive when the ridge bounds the shape
     in the sense in which it is defined by the shape as oriented with an outer
     normal; negative otherwise. The sense is defined by the numbering of the
-    1st-order vertices of the edget shape.
+    1st-order vertices of the ridge shape.
 """
-function bbyedgets(ir::IncRel, eir::IncRel, teir::IncRel)
+function bbyridges(ir::IncRel, eir::IncRel, teir::IncRel)
 	@_check (manifdim(ir.right) == 0) && (manifdim(teir.left) == 0)
 	@_check manifdim(ir.left) == manifdim(teir.right)+2
 	@_check manifdim(teir.right) == manifdim(eir.left)
@@ -356,7 +356,7 @@ function bbyedgets(ir::IncRel, eir::IncRel, teir::IncRel)
 	n1st = n1storderv(eir.left.shapedesc)
 	nshif = nshifts(eir.left.shapedesc)
 	# Sweep through the relations of d -> 0, and use the 0 -> d-1 teir
-	_c = fill(inttype(0), nrelations(ir), nedgets(ir.left))
+	_c = fill(inttype(0), nrelations(ir), nridges(ir.left))
 	for i in 1:nrelations(ir) # Sweep through the relations of d -> 0
 		sv = retrieve(ir, i)
 		c = inttype[] # this will be the list of facets at the vertices of this entity
@@ -367,10 +367,10 @@ function bbyedgets(ir::IncRel, eir::IncRel, teir::IncRel)
 			end # k
 		end
 		c = _selectrepeating(c, nvertices(teir.right)) # keep the repeats
-		@_check length(c) == nedgets(ir.left)
+		@_check length(c) == nridges(ir.left)
 		# Now figure out the orientations
-		for k in 1:nedgets(ir.left)
-			fc = sv[edgetconnectivity(ir.left, k)]
+		for k in 1:nridges(ir.left)
+			fc = sv[ridgeconnectivity(ir.left, k)]
 			sfc = sort(fc)
 			for j in 1:length(c)
 				oc = retrieve(eir, c[j])
@@ -382,22 +382,22 @@ function bbyedgets(ir::IncRel, eir::IncRel, teir::IncRel)
 			end # j
 		end
 	end
-	bedgets = ShapeColl(eir.left.shapedesc, size(_c, 1))
-	return IncRel(ir.left, bedgets, _c)
+	bridges = ShapeColl(eir.left.shapedesc, size(_c, 1))
+	return IncRel(ir.left, bridges, _c)
 end
 
 """
-    bbyedgets(ir::IncRel, eir::IncRel)
+    bbyridges(ir::IncRel, eir::IncRel)
 
 Compute the incidence relation `d -> d-2` for `d`-dimensional shapes.
 
 Convenience function where the transpose of the incidence relation on the right
 is computed on the fly.
 
-# See also: [`bbyedgets(ir::IncRel, eir::IncRel, efir::IncRel)`](@ref)
+# See also: [`bbyridges(ir::IncRel, eir::IncRel, efir::IncRel)`](@ref)
 """
-function bbyedgets(ir::IncRel, eir::IncRel)
-	return bbyedgets(ir, eir, transpose(eir))
+function bbyridges(ir::IncRel, eir::IncRel)
+	return bbyridges(ir, eir, transpose(eir))
 end
 
 # Provide abbreviations:
@@ -405,4 +405,4 @@ end
 sk = skeleton
 tr = transpose
 bf = bbyfacets
-be = bbyedgets
+be = bbyridges
