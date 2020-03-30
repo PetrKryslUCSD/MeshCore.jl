@@ -402,7 +402,7 @@ end
 
 # Provide abbreviations:
 
-sk = skeleton
-tr = transpose
-bf = bbyfacets
-be = bbyridges
+skt = skeleton
+trp = transpose
+bbf = bbyfacets
+bbr = bbyridges
