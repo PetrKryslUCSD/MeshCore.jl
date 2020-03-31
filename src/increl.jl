@@ -9,6 +9,17 @@ struct IncRel{LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
 	right::ShapeColl{RIGHT}
 	_v::Vector{T} # vector of vectors of shape numbers
     name::String # name of the incidence relation
+    function IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, v::Vector{T}, name::String) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
+        @_check (nshapes(left) == length(v))
+        minn = typemax(eltype(v[1]))
+        maxn = typemin(eltype(v[1]))
+        for i in 1:length(v)
+            minn = min(minn, minimum(abs.(v[i])))
+            maxn = max(maxn, maximum(abs.(v[i])))
+        end
+        @_check (nshapes(right) >= maxn)
+        return new{LEFT, RIGHT, T}(left, right, v, name)
+    end
 end
 
 """
@@ -17,7 +28,7 @@ end
 Convenience constructor with a vector of vectors and a default name.
 """
 function IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, v::Vector{T}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
-    IncRel(left, right, deepcopy(v), left.name * " -> " * right.name)
+    IncRel(left, right, deepcopy(v), "(" * left.name * ", " * right.name * ")")
 end
 
 """
@@ -26,8 +37,8 @@ end
 Convenience constructor supplying a matrix instead of a vector of vectors and a default name.
 """
 function IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, data::Matrix{MT}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, MT}
-	_v = [SVector{nvertices(left.shapedesc)}(data[idx, :]) for idx in 1:size(data, 1)]
-	IncRel(left, right, _v, left.name * " -> " * right.name)
+    _v = [SVector{nvertices(left.shapedesc)}(data[idx, :]) for idx in 1:size(data, 1)]
+	IncRel(left, right, _v, "(" * left.name * ", " * right.name * ")")
 end
 
 """
@@ -274,7 +285,9 @@ manifold dimension of the shapes themselves).
     1st-order vertices of the facet shape.
 """
 function bbyfacets(ir::IncRel, fir::IncRel, tfir::IncRel)
-	@_check (manifdim(ir.right) == 0) && (manifdim(tfir.left) == 0)
+	@_check (manifdim(ir.right) == 0)
+    @_check (manifdim(fir.right) == 0)
+    @_check (manifdim(tfir.left) == 0)
 	@_check manifdim(ir.left) == manifdim(tfir.right)+1
 	@_check manifdim(tfir.right) == manifdim(fir.left)
 	inttype = eltype(ir._v[1])
@@ -307,7 +320,7 @@ function bbyfacets(ir::IncRel, fir::IncRel, tfir::IncRel)
 			end # j
 		end
 	end
-	bfacets = ShapeColl(fir.left.shapedesc, size(_c, 1))
+	bfacets = ShapeColl(fir.left.shapedesc, nshapes(tfir.right))
 	return IncRel(ir.left, bfacets, _c)
 end
 
@@ -382,7 +395,7 @@ function bbyridges(ir::IncRel, eir::IncRel, teir::IncRel)
 			end # j
 		end
 	end
-	bridges = ShapeColl(eir.left.shapedesc, size(_c, 1))
+	bridges = ShapeColl(eir.left.shapedesc, nshapes(teir.right))
 	return IncRel(ir.left, bridges, _c)
 end
 

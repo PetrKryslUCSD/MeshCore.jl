@@ -88,7 +88,7 @@ function test()
     q4s = ShapeColl(Q4, 6, "q4s")
     vrts = ShapeColl(P1, 12, "vrts")
     ir = IncRel(q4s, vrts, cc)
-    @test ir.name == "q4s -> vrts"
+    @test ir.name == "(q4s, vrts)"
     @test manifdim(q4s) == 2
     @test nvertices(q4s) == 4
     @test facetdesc(q4s) == L2
