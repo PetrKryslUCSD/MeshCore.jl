@@ -41,6 +41,15 @@ function IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, data::Matrix{MT}
 	IncRel(left, right, _v, "(" * left.name * ", " * right.name * ")")
 end
 
+
+"""
+    indextype(ir::IncRel)
+
+Provide type of the incidence index (entity number).
+Presumably some type of integer.
+"""
+indextype(ir::IncRel) = eltype(eltype(ir._v))  
+
 """
     nrelations(ir::IncRel)
 
