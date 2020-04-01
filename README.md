@@ -13,3 +13,17 @@ Small package for operating on the topology of meshes for the Finite Element Met
 - 03/18/2020: The library was completely redesigned around incidence relations. Much simpler than before!
 - 03/16/2020: Note: The coverage appears low, but that seems to be a bug in the computation of the coverage
   when applied to one-line functions defined for multiple types.
+
+## Usage
+
+
+The package is registered: doing
+```
+]add MeshCore
+using MeshCore
+```
+is enough. 
+
+## Publications
+
+A paper is in preparation. The package [PaperMeshTopo](https://github.com/PetrKryslUCSD/PaperMeshTopo.jl.git) gives an example of the construction of a complex (full one-level) topological representation of a tetrahedral mesh.
