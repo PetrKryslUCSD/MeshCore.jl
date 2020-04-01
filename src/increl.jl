@@ -96,7 +96,7 @@ Incidence relation for the transposed incidence relation. The left and right
 shape collection are swapped in the output relative to the input.
 """
 function transpose(ir::IncRel)
-	@_check (manifdim(ir.left) >= manifdim(ir.right))
+    @_check (manifdim(ir.left) >= manifdim(ir.right))
 	inttype = eltype(ir._v[1])
     # Find out how many of the transpose incidence relations there are
 	nvmax = 0
