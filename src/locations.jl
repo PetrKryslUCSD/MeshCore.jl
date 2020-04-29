@@ -23,7 +23,7 @@ end
 """
     nlocations(loc::Locations{N, T}) where {N, T}
 
-Retrieve number of Locations.
+Retrieve number of locations.
 """
 nlocations(loc::Locations{N, T}) where {N, T} = length(loc._v)
 
