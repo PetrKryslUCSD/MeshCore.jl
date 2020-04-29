@@ -5,10 +5,10 @@ This is the type of a homogeneous collection of finite element shapes.
 
 - `S` = shape descriptor: subtype of AbsShapeDesc.
 """
-struct ShapeColl{S <: AbsShapeDesc}
+struct ShapeColl{S <: AbsShapeDesc, T <: AbsAttrib}
     shapedesc::S # Shape descriptor
 	nshapes::Int64 # Number of shapes in the collection
-	attributes::Dict # dictionary of attributes
+	attributes::Dict{String, T} # dictionary of attributes
     name::String # name of the shape collection
 end
 
@@ -18,7 +18,7 @@ end
 Set up new shape collection with an empty dictionary of attributes and a default name.
 """
 function ShapeColl(shapedesc::S, nshapes::Int64) where {S <: AbsShapeDesc}
-	ShapeColl(shapedesc::S, nshapes::Int64, Dict(), "shapes")
+	ShapeColl(shapedesc::S, nshapes::Int64, Dict{String, Attrib}(), "shapes")
 end
 
 """
@@ -36,7 +36,7 @@ end
 Set up new shape collection with an empty dictionary of attributes.
 """
 function ShapeColl(shapedesc::S, nshapes::Int64, s::String) where {S <: AbsShapeDesc}
-    ShapeColl(shapedesc::S, nshapes::Int64, Dict(), s)
+    ShapeColl(shapedesc::S, nshapes::Int64, Dict{String, Attrib}(), s)
 end
 
 """
