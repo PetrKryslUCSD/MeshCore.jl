@@ -3,6 +3,10 @@
 
 Incidence relation expressing connectivity between an entity of the shape on the
 left and a list of entities of the shape on the right.
+
+The incidence relation may be referred to by its code: `(d1, d2)`, where `d1` is
+the manifold dimension of the shape collection on the left, and `d2` is the
+manifold dimension of the shape collection on the right.
 """
 struct IncRel{LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
 	left::ShapeColl{LEFT}
@@ -83,10 +87,17 @@ function retrieve(ir::IncRel{LEFT, RIGHT, T}, j::IT) where {LEFT<:AbsShapeDesc, 
 end
 
 """
+    code(ir::IncRel{LEFT, RIGHT, T}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T} 
+
+Formulate the code of the incidence relation.
+"""
+code(ir::IncRel{LEFT, RIGHT, T}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T} = (manifdim(shapedesc(ir.left)), manifdim(shapedesc(ir.right)))
+
+"""
     transpose(ir::IncRel)
 
-Compute the incidence relation `d1 -> d2`, where `d2 >= d1`.
-
+Compute the incidence relation `(d1, d2)`, where `d2 >= d1`.
+  
 This only makes sense for `d2 >= 0`. For `d2=1` we get for each vertex the list
 of edges connected to the vertex, and analogously faces and cells for `d=2` and
 `d=3`.
@@ -269,7 +280,7 @@ end
 """
     bbyfacets(ir::IncRel, fir::IncRel, tfir::IncRel)
 
-Compute the incidence relation `d -> d-1` for `d`-dimensional shapes.
+Compute the incidence relation `(d, d-1)` for `d`-dimensional shapes.
 
 In other words, this is the incidence relation between shapes and the shapes
 that bound these shapes (facets). For tetrahedra as the shapes, the incidence
@@ -277,9 +288,9 @@ relation lists the numbers of the faces that bound each individual tetrahedron.
 The resulting left shape is of the same shape description as in the `ir`.
 
 # Arguments
-- `ir` = incidence relation `d -> 0`,
-- `fir` = incidence relation `d-1 -> 0`,
-- `tfir` = transpose of the above, incidence relation `0 -> d-1`.
+- `ir` = incidence relation `(d, 0)`,
+- `fir` = incidence relation `(d-1, 0)`,
+- `tfir` = transpose of the above, incidence relation `(0, d-1)`.
 
 # Returns
 Incidence relation for the bounded-by relationship between shape collections.
@@ -302,9 +313,9 @@ function bbyfacets(ir::IncRel, fir::IncRel, tfir::IncRel)
 	inttype = eltype(ir._v[1])
 	n1st = n1storderv(fir.left.shapedesc)
 	nshif = nshifts(fir.left.shapedesc)
-	# Sweep through the relations of d -> 0, and use the 0 -> d-1 tfir
+	# Sweep through the relations of (d, 0,) and use the (0, d-1) tfir
 	_c = fill(inttype(0), nrelations(ir), nfacets(ir.left))
-    for i in 1:nrelations(ir) # Sweep through the relations of d -> 0
+    for i in 1:nrelations(ir) # Sweep through the relations of (d, 0)
 		sv = retrieve(ir, i)
 		c = inttype[] # this will be the list of facets at the vertices of this entity
 		for j in 1:nentities(ir, i) # for all vertices
@@ -336,7 +347,7 @@ end
 """
     bbyfacets(ir::IncRel, fir::IncRel)
 
-Compute the incidence relation `d -> d-1` for `d`-dimensional shapes.
+Compute the incidence relation `(d, d-1)` for `d`-dimensional shapes.
 
 Convenience function where the transpose of the incidence relation on the right
 is computed on the fly.
@@ -350,7 +361,7 @@ end
 """
     bbyridges(ir::IncRel, eir::IncRel)
 
-Compute the incidence relation `d -> d-2` for `d`-dimensional shapes.
+Compute the incidence relation `(d, d-2)` for `d`-dimensional shapes.
 
 In other words, this is the incidence between shapes and the shapes that "bound"
 the boundaries of these shapes (i. e. ridges). For tetrahedra as the shapes, the
@@ -377,9 +388,9 @@ function bbyridges(ir::IncRel, eir::IncRel, teir::IncRel)
 	inttype = eltype(ir._v[1])
 	n1st = n1storderv(eir.left.shapedesc)
 	nshif = nshifts(eir.left.shapedesc)
-	# Sweep through the relations of d -> 0, and use the 0 -> d-1 teir
+	# Sweep through the relations of (d, 0), and use the (0, d-2) teir
 	_c = fill(inttype(0), nrelations(ir), nridges(ir.left))
-	for i in 1:nrelations(ir) # Sweep through the relations of d -> 0
+	for i in 1:nrelations(ir) # Sweep through the relations of (d, 0)
 		sv = retrieve(ir, i)
 		c = inttype[] # this will be the list of facets at the vertices of this entity
 		for j in 1:nentities(ir, i) # for all vertices
@@ -411,7 +422,7 @@ end
 """
     bbyridges(ir::IncRel, eir::IncRel)
 
-Compute the incidence relation `d -> d-2` for `d`-dimensional shapes.
+Compute the incidence relation `(d, d-2)` for `d`-dimensional shapes.
 
 Convenience function where the transpose of the incidence relation on the right
 is computed on the fly.
