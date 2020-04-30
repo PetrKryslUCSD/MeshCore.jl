@@ -10,6 +10,7 @@ Small package for operating on the topology of meshes for the Finite Element Met
 
 ## News
 
+- 04/17/2020: The paper describing the library has been submitted.
 - 03/21/2020: The implementation of the topology operations has been improved in speed and simplicity.
 - 03/18/2020: The library was completely redesigned around incidence relations. Much simpler than before!
 - 03/16/2020: Note: The coverage appears low, but that seems to be a bug in the computation of the coverage
@@ -27,4 +28,4 @@ is enough.
 
 ## Publications
 
-A paper is in preparation. The package [PaperMeshTopo](https://github.com/PetrKryslUCSD/PaperMeshTopo.jl.git) gives an example of the construction of a complex (full one-level) topological representation of a tetrahedral mesh.
+A paper is under review. The package [PaperMeshTopo](https://github.com/PetrKryslUCSD/PaperMeshTopo.jl.git) gives an example of the construction of a complex (full one-level) topological representation of a tetrahedral mesh.
