@@ -93,6 +93,13 @@ struct LocAccess{N, T}
 end
 
 """
+    nlocations(la::LocAccess{N, T}) where {N, T}
+
+Return number of locations.
+"""
+nlocations(la::LocAccess{N, T}) where {N, T} = nlocations(la.locs)
+
+"""
     locations(la::LocAccess)
 
 Retrieve the data structure of the locations.

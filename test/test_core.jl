@@ -439,7 +439,7 @@ using .mt4topo1
 mt4topo1.test()
 
 module mtestattr1
-using MeshCore: Locations, coordinates, Attrib, LocAccess, P1, ShapeColl, attribute
+using MeshCore: Locations, coordinates, Attrib, LocAccess, P1, ShapeColl, attribute, nlocations
 using Test
 # using BenchmarkTools
 
@@ -466,6 +466,8 @@ function test()
     vertices = ShapeColl(P1, size(xyz, 1), Dict(a.name=>a))
     a = vertices.attributes["geom"]
     @test coordinates(a.val, 10) == [633.3333333333334, 800.0]
+    @test nlocations(la) == 12
+    @test nlocations(la) == nlocations(locs)
 
     a = attribute(vertices, "geom")
     @test coordinates(a.val, 10) == [633.3333333333334, 800.0]
