@@ -233,21 +233,16 @@ function skeleton(ir::IncRel; options...)
     shfc = hfc[idx, :]
     s2hfc = s2hfc[idx, :]
     rep = _countrepeats(s2hfc) # find the repeats of the rows
-    if boundaryonly
-        isunq = falses(length(rep))
-        for i in 1:length(rep)-1
-            # The hyperface is boundary if it has no repeats
-            isunq[i] = (rep[i] == 1) && (rep[i+1] == 1)
-        end
-        isunq[end] = (rep[end] == 1)
-        unq = findall(a -> a == true, isunq) # all not-repeated rows are unique
-        unqhfc = shfc[unq, :] # unique hyper faces
-    else
-        # unique rows are obtained by ignoring the repeats
-        unq = findall(a -> a == 1, rep)
-        unqhfc = shfc[unq, :] # unique hyper faces
-    end
-    return IncRel(ShapeColl(facetdesc(ir.left), size(unqhfc, 1)), ir.right, unqhfc)
+    # identify boundary facets: the hyperface is boundary if it has no repeats
+    isunq = [(rep[i] == 1) && (rep[i+1] == 1) for i in 1:length(rep)-1] 
+    push!(isunq,  (rep[end] == 1)) # and the last one
+    # unique rows are obtained by ignoring the repeats
+    unq = findall(a -> a == 1, rep)
+    unqhfc = shfc[unq, :] # unique hyper faces
+    dw = AttribDataWrapper(isunq[unq]) # store the boundary flag
+    sir = IncRel(ShapeColl(facetdesc(ir.left), size(unqhfc, 1)), ir.right, unqhfc)
+    sir.left.attributes["isboundary"] = Attrib(dw) # store the is-boundary attribute
+    return sir
 end
 
 """
@@ -255,10 +250,14 @@ end
 
 Compute the incidence relation for the boundary of the incidence relation on input.
 
-This is a convenience version of the `skeleton` function.
+The `skeleton` function.
 """
 function boundary(ir::IncRel)
-    return skeleton(ir; boundaryonly = true)
+    sir = skeleton(ir)
+    isboundary = sir.left.attributes["isboundary"]
+    ind = [i for i in 1:nvals(isboundary.co) if isboundary.co(i)] 
+    lft = ShapeColl(shapedesc(sir.left), length(ind))
+    return IncRel(lft, sir.right, sir._v[ind])
 end
 
 function _selectrepeating(v, nrepeats)
