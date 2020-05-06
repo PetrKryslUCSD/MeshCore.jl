@@ -54,19 +54,19 @@ mtest1a1.test()
 
 module mtest2
 using StaticArrays
-using MeshCore: Locations, nlocations, coordinates, nspacedims, coordinatetype
-using MeshCore: LocAccess, locations
+using MeshCore: nvals, AttribDataWrapper, val
 using Test
 function test()
     xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
-    v =  Locations(xyz)
-    @test nlocations(v) == 12
-    x = coordinates(v, SVector{2}([2, 4]))
+    N, T = size(xyz, 2), eltype(xyz)
+    v =  AttribDataWrapper([SVector{N, T}(xyz[i, :]) for i in 1:size(xyz, 1)])
+
+    @test nvals(v) == 12
+    x = val(v, SVector{2}([2, 4]))
     @test x[1] == SVector{2}([633.3333333333334 0.0])
-    @test nspacedims(v) == 2
-    @test coordinatetype(v) == Float64
-    la = LocAccess(v)
-    @test locations(la) == v
+    @test length(v(1)) == 2
+    @test eltype(v(1)) == Float64
+   
     true
 end
 end
@@ -75,7 +75,7 @@ mtest2.test()
 
 module mtest3
 using StaticArrays
-using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nlocations, nfacets, facetdesc, nshapes
+using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nfacets, facetdesc, nshapes
 using MeshCore: Q4ShapeDesc, shapedesc, n1storderv, nridges, nshifts, nvertices
 using MeshCore: IncRel, retrieve
 using Test
@@ -134,12 +134,13 @@ mtest5.test()
 module mtest6
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nrelations, facetconnectivity
-using MeshCore: Locations, IncRel
-using MeshCore: skeleton, coordinates, retrieve
+using MeshCore: AttribDataWrapper, val, IncRel
+using MeshCore: skeleton, retrieve
 using Test
 function test()
     xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
-    locs =  Locations(xyz)
+    N, T = size(xyz, 2), eltype(xyz)
+    locs =  AttribDataWrapper([SVector{N, T}(xyz[i, :]) for i in 1:size(xyz, 1)])
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
     cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
     q4s = ShapeColl(Q4, 6)
@@ -150,10 +151,10 @@ function test()
     @test nrelations(facemesh) == 17
     # @show facemeshx
     for i in 1:nrelations(facemesh)
-        x = coordinates(locs, retrieve(facemesh, i))
+        x = val(locs, retrieve(facemesh, i))
     end #
-    @test coordinates(locs, retrieve(facemesh, 17)) == StaticArrays.SArray{Tuple{2},Float64,1,2}[[1900.0, 800.0], [1266.6666666666667, 800.0]]
-    @test coordinates(locs, retrieve(facemesh, 17)[1]) == [1900.0, 800.0]
+    @test val(locs, retrieve(facemesh, 17)) == StaticArrays.SArray{Tuple{2},Float64,1,2}[[1900.0, 800.0], [1266.6666666666667, 800.0]]
+    @test val(locs, retrieve(facemesh, 17)[1]) == [1900.0, 800.0]
     true
 end
 end
@@ -163,12 +164,13 @@ mtest6.test()
 module mtest7
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nrelations, facetconnectivity
-using MeshCore: Locations, IncRel
-using MeshCore: skeleton, coordinates, boundary, nshapes
+using MeshCore: AttribDataWrapper, IncRel
+using MeshCore: skeleton, boundary, nshapes
 using Test
 function test()
     xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
-    locs =  Locations(xyz)
+    N, T = size(xyz, 2), eltype(xyz)
+    locs =  AttribDataWrapper([SVector{N, T}(xyz[i, :]) for i in 1:size(xyz, 1)])
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
     cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
     q4s = ShapeColl(Q4, 6)
@@ -189,11 +191,12 @@ mtest7.test()
 module mtopoop1
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nshapes
-using MeshCore: IncRel, Locations, transpose, nshapes, retrieve
+using MeshCore: IncRel, transpose, nshapes, retrieve, AttribDataWrapper
 using Test
 function test()
     xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
-    locs =  Locations(xyz)
+    N, T = size(xyz, 2), eltype(xyz)
+    locs =  AttribDataWrapper([SVector{N, T}(xyz[i, :]) for i in 1:size(xyz, 1)])
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
     cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
     q4s = ShapeColl(Q4, 6)
@@ -218,12 +221,13 @@ mtopoop1.test()
 module mtopoop2
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nshapes
-using MeshCore: Locations, bbyfacets, skeleton, transpose
-using MeshCore: IncRel, retrieve
+using MeshCore: bbyfacets, skeleton, transpose
+using MeshCore: IncRel, retrieve, AttribDataWrapper
 using Test
 function test()
     xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
-    locs =  Locations(xyz)
+    N, T = size(xyz, 2), eltype(xyz)
+        locs =  AttribDataWrapper([SVector{N, T}(xyz[i, :]) for i in 1:size(xyz, 1)])
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
     cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
     q4s = ShapeColl(Q4, 6)
@@ -250,12 +254,13 @@ mtopoop2.test()
 module mtopoop3
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nshapes
-using MeshCore: Locations, bbyfacets, skeleton, transpose
-using MeshCore: IncRel, retrieve
+using MeshCore: bbyfacets, skeleton, transpose
+using MeshCore: IncRel, retrieve, AttribDataWrapper
 using Test
 function test()
     xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
-    locs =  Locations(xyz)
+    N, T = size(xyz, 2), eltype(xyz)
+        locs =  AttribDataWrapper([SVector{N, T}(xyz[i, :]) for i in 1:size(xyz, 1)])
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
     cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
     q4s = ShapeColl(Q4, 6)
@@ -292,12 +297,13 @@ mtopoop3.test()
 module mtopoop4
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nshapes
-using MeshCore: Locations, bbyridges, skeleton, transpose
-using MeshCore: IncRel, retrieve
+using MeshCore: bbyridges, skeleton, transpose
+using MeshCore: IncRel, retrieve, AttribDataWrapper
 using Test
 function test()
     xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
-    locs =  Locations(xyz)
+    N, T = size(xyz, 2), eltype(xyz)
+        locs =  AttribDataWrapper([SVector{N, T}(xyz[i, :]) for i in 1:size(xyz, 1)])
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
     cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
     q4s = ShapeColl(Q4, 6)
@@ -337,14 +343,15 @@ module mt4topo1
 using StaticArrays
 using MeshCore: P1, T4, ShapeColl,  manifdim, nvertices, nridges, nshapes
 using MeshCore: bbyridges, skeleton, bbyfacets, nshifts, _sense, retrieve
-using MeshCore: IncRel, Locations, transpose, nrelations, nentities, nlocations
+using MeshCore: IncRel, transpose, nrelations, nentities, nvals, AttribDataWrapper
 using ..samplet4: samplet4mesh
 using Test
 function test()
     xyz, cc = samplet4mesh()
     # Construct the initial incidence relation
-    locs = Locations(xyz)
-    vrts = ShapeColl(P1, nlocations(locs))
+    N, T = size(xyz, 2), eltype(xyz)
+        locs =  AttribDataWrapper([SVector{N, T}(xyz[i, :]) for i in 1:size(xyz, 1)])
+    vrts = ShapeColl(P1, nvals(locs))
     tets = ShapeColl(T4, size(cc, 1))
     ir30 = IncRel(tets, vrts, cc)
     # Test the incidence relations 3 -> 0 & 0 -> 3
@@ -439,43 +446,64 @@ using .mt4topo1
 mt4topo1.test()
 
 module mtestattr1
-using MeshCore: Locations, coordinates, Attrib, LocAccess, P1, ShapeColl, attribute, nlocations
+using StaticArrays
+using MeshCore: Attrib, P1, ShapeColl, attribute, nvals, AttribDataWrapper, val
 using Test
 # using BenchmarkTools
 
 function test()
     xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
-    locs =  Locations(xyz)
+    N, T = size(xyz, 2), eltype(xyz)
+    locs =  AttribDataWrapper([SVector{N, T}(xyz[i, :]) for i in 1:size(xyz, 1)])
 
-    # la = LocAccess(locs)
-    # a = Attrib(la)
-    # @btime $a.val(10)
-    # @btime coordinates($locs, 10)
-    #
-    # a = Attrib(j -> coordinates(locs, j))
-    # @btime $a.val(10)
-    # @btime coordinates($locs, 10)
+    a = Attrib(locs)
+    @test val(a.co, 10) == [633.3333333333334, 800.0]
 
-    la = LocAccess(locs)
-    a = Attrib(la)
-    @test coordinates(a.val, 10) == [633.3333333333334, 800.0]
-
-    la = LocAccess(locs)
-    a = Attrib(la, "geom")
+    a = Attrib(locs, "geom")
     # @show typeof(Dict(a.name=>a))
     vertices = ShapeColl(P1, size(xyz, 1), Dict(a.name=>a))
     a = vertices.attributes["geom"]
-    @test coordinates(a.val, 10) == [633.3333333333334, 800.0]
-    @test nlocations(la) == 12
-    @test nlocations(la) == nlocations(locs)
+    @test val(a.co, 10) == [633.3333333333334, 800.0]
+    @test nvals(a.co) == 12
+    @test nvals(a.co) == nvals(locs)
 
     a = attribute(vertices, "geom")
-    @test coordinates(a.val, 10) == [633.3333333333334, 800.0]
-    # @btime $a.val(10)
-    # @btime a.val(10)
+    @test val(a.co, 10) == [633.3333333333334, 800.0]
 
     true
 end
 end
 using .mtestattr1
 mtestattr1.test()
+
+module m113651
+using Test
+using StaticArrays
+using MeshCore: AttribDataWrapper, Attrib, ShapeColl, P1, attribute
+function test()
+	xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0]
+	N, T = size(xyz, 2), eltype(xyz)
+	locs =  AttribDataWrapper([SVector{N, T}(xyz[i, :]) for i in 1:size(xyz, 1)])
+	a = Attrib(locs)
+	vertices = ShapeColl(P1, size(xyz, 1), Dict("geom"=>a))
+	a = attribute(vertices, "geom")
+	@test a.co(2) == [633.3333333333334, 0.0]
+end
+end
+using .m113651
+m113651.test()
+
+module m1136193
+using Test
+using StaticArrays
+using MeshCore: AttribDataWrapper, Attrib, ShapeColl, P1, attribute
+function test()
+	xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0]
+	a = Attrib(i -> 1)
+	vertices = ShapeColl(P1, size(xyz, 1), Dict("label"=>a))
+	a = attribute(vertices, "label")
+	@test a.co(3) == 1
+end
+end
+using .m1136193
+m1136193.test()
