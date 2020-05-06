@@ -1,6 +1,5 @@
 module samplet4
 using StaticArrays
-using MeshCore: Locations, nvertices, coordinates, ShapeColl, T4
 function samplet4mesh()
     xyz = [
     0.0 0.0 0.0
