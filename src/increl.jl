@@ -241,7 +241,7 @@ function skeleton(ir::IncRel; options...)
     unqhfc = shfc[unq, :] # unique hyper faces
     dw = AttribDataWrapper(isunq[unq]) # store the boundary flag
     sir = IncRel(ShapeColl(facetdesc(ir.left), size(unqhfc, 1)), ir.right, unqhfc)
-    sir.left.attributes["isboundary"] = Attrib(dw) # store the is-boundary attribute
+    sir.left.attributes["isboundary"] = Attrib(dw, "isboundary") # store the is-boundary attribute
     return sir
 end
 
@@ -256,7 +256,7 @@ function boundary(ir::IncRel)
     sir = skeleton(ir)
     isboundary = sir.left.attributes["isboundary"]
     ind = [i for i in 1:nvals(isboundary.co) if isboundary.co(i)] 
-    lft = ShapeColl(shapedesc(sir.left), length(ind))
+    lft = ShapeColl(shapedesc(sir.left), length(ind), "facets")
     return IncRel(lft, sir.right, sir._v[ind])
 end
 
