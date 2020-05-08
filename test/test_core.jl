@@ -507,3 +507,43 @@ end
 end
 using .m1136193
 m1136193.test()
+
+module mtest3a1
+using StaticArrays
+using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nfacets, facetdesc, nshapes
+using MeshCore: Q4ShapeDesc, shapedesc, n1storderv, nridges, nshifts, nvertices
+using MeshCore: IncRel, retrieve
+using Test
+function test()
+    c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
+    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
+    q4s = ShapeColl(Q4, 6)
+    vrts = ShapeColl(P1, 12)
+    ir = IncRel(q4s, vrts, cc)
+    q4s = ShapeColl(Q4, 6, "q4s")
+    vrts = ShapeColl(P1, 12, "vrts")
+    ir = IncRel(q4s, vrts, cc)
+    @test ir.name == "(q4s, vrts)"
+    @test manifdim(q4s) == 2
+    @test nvertices(q4s) == 4
+    @test facetdesc(q4s) == L2
+    @test nfacets(q4s) == 4
+    @test nshapes(q4s) == 6
+    @test manifdim(shapedesc(q4s)) == 2
+    @test nvertices(shapedesc(q4s)) == 4
+    @test nfacets(shapedesc(q4s)) == 4
+    @test nridges(shapedesc(q4s)) == 4
+    @test n1storderv(shapedesc(q4s)) == 4
+    @test nshifts(shapedesc(q4s)) == 4
+    @test retrieve(ir, 3, 3) == 7
+    @test retrieve(ir, 1, 4) == 5
+    @test retrieve(ir, 6, 1) == 7
+
+    ir = IncRel(q4s, vrts, cc, "vertices")
+    @test ir.name == "vertices"
+    
+    true
+end
+end
+using .mtest3a1
+mtest3a1.test()
