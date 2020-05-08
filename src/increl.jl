@@ -13,7 +13,7 @@ struct IncRel{LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
 	right::ShapeColl{RIGHT}
 	_v::Vector{T} # vector of vectors of shape numbers
     name::String # name of the incidence relation
-    function IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, v::Vector{T}, name::String) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
+    function IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, v::Vector{T}, name::String, internal) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
         @_check (nshapes(left) == length(v))
         minn = typemax(eltype(v[1]))
         maxn = typemin(eltype(v[1]))
@@ -32,7 +32,16 @@ end
 Convenience constructor with a vector of vectors and a default name.
 """
 function IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, v::Vector{T}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
-    IncRel(left, right, deepcopy(v), "(" * left.name * ", " * right.name * ")")
+    IncRel(left, right, deepcopy(v), "(" * left.name * ", " * right.name * ")", true)
+end
+
+"""
+    IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, v::Vector{T}, name::String) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
+
+Convenience constructor with a vector of vectors and a name.
+"""
+function IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, v::Vector{T}, name::String) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
+    IncRel(left, right, deepcopy(v), name, true)
 end
 
 """
@@ -42,7 +51,7 @@ Convenience constructor supplying a matrix instead of a vector of vectors and a 
 """
 function IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, data::Matrix{MT}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, MT}
     _v = [SVector{nvertices(left.shapedesc)}(data[idx, :]) for idx in 1:size(data, 1)]
-	IncRel(left, right, _v, "(" * left.name * ", " * right.name * ")")
+	IncRel(left, right, _v, "(" * left.name * ", " * right.name * ")", true)
 end
 
 """
@@ -52,7 +61,7 @@ Convenience constructor supplying a matrix instead of a vector of vectors and a 
 """
 function IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, data::Matrix{MT}, name::String) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, MT}
     _v = [SVector{nvertices(left.shapedesc)}(data[idx, :]) for idx in 1:size(data, 1)]
-    IncRel(left, right, _v, name)
+    IncRel(left, right, _v, name, true)
 end
 
 """
