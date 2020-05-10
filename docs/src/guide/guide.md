@@ -33,39 +33,7 @@ Contents:
 
 ## Example
 
-Let us begin with a simple example of the use of the library. (The next step relies on a related package, `MeshPorter`.) First import the mesh from a file:
-```
-mesh = import_NASTRAN("trunc_cyl_shell_0.nas")
-```
-The mesh data structure can be now queried as to the incidence relations.
-The `:connectivity` is the incidence relation that defines the connectivity of the tetrahedral mesh that was read in:
-```
-connectivity = increl(mesh, :connectivity)
-@test (nshapes(connectivity.right), nshapes(connectivity.left)) == (376, 996)
-```
-The incidence relation connects the shape collection on the left (tetrahedra), with the shape collection on the right (vertices). We can check that the correct number of entities
-were imported:
-```
-@test (nshapes(connectivity.right), nshapes(connectivity.left)) == (376, 996)
-```
-We can now extract the shape collection of the vertices from the mesh, retrieve the geometry attribute, and pass these quantities to the export function:
-```
-vertices = shapecoll(mesh, :vertices)
-geom = attribute(vertices, :geom)
-vtkwrite("trunc_cyl_shell_0", geom.val.locs, connectivity)
-```
-Extract zero-dimensional entities (points) by a triple application of the
-`skeleton` function. Check that the number of shapes in the skeleton is equal
-to the number of the vertices (in this particular skeleton they correspond
-one-to-one).
-```
-ir00 = skeleton(skeleton(skeleton(connectivity)))
-@test (nshapes(ir00.right), nshapes(ir00.left)) == (376, 376)
-```
-Export the mesh for visualization (requires the use of the `MeshPorter` package).
-```
-vtkwrite("trunc_cyl_shell_0-boundary-skeleton", geom.val.locs, ir00)
-```
+Please refer to the [`MeshTutor.jl`](https://github.com/PetrKryslUCSD/MeshTutor.jl.git) package for a tutorial on the use of the library.
 
 ## Basic objects
 

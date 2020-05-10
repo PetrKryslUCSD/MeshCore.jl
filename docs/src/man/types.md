@@ -4,13 +4,6 @@
 CurrentModule = MeshCore
 ```
 
-## Geometry
-
-```@docs
-Locations{N, T<:AbstractFloat}
-LocAccess
-```
-
 ## Shape descriptors
 
 ```@docs
@@ -36,6 +29,7 @@ ShapeColl{S <: AbsShapeDesc}
 ```@docs
 AbsAttrib
 Attrib{F}
+AttribDataWrapper{T}
 ```
 
 

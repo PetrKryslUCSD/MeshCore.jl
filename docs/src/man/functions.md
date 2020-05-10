@@ -4,25 +4,6 @@
 CurrentModule = MeshCore
 ```
 
-## Geometry
-
-```@docs
-Locations(xyz::Array{T, 2}) where {T}
-nlocations(loc::Locations{N, T}) where {N, T}
-nspacedims(loc::Locations{N, T}) where {N, T}
-coordinatetype(loc::Locations{N, T}) where {N, T}
-coordinates(loc::Locations{N, T}, i::Int64) where {N, T}
-coordinates(loc::Locations{N, T}, I::SVector) where {N, T}
-```
-
-## Access to geometry from an attribute
-
-
-```@docs
-locations(la::LocAccess{N, T}) where {N, T}
-coordinates
-```
-
 ## Shapes
 
 ```@docs
@@ -69,6 +50,15 @@ bbyridges
 ```@docs
 transpose(mesh::IncRel)
 ```
+
+### Attributes
+
+```@docs
+nvals(d::AttribDataWrapper{T}) where {T} 
+val(d::AttribDataWrapper{T}, j::Int64) where {T}
+(d::AttribDataWrapper{T})(j::Int64) where {T}
+```
+
 
 ## Index
 
