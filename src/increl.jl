@@ -446,6 +446,18 @@ function bbyridges(ir::IncRel, eir::IncRel, name = "bbr")
 	return bbyridges(ir, eir, transpose(eir), name)
 end
 
+"""
+    subset(ir::IncRel, list)
+
+Compute the incidence relation representing a subset of the shape collection
+on the left.
+"""
+function subset(ir::IncRel, list)
+    ssl = ShapeColl(ir.left.shapedesc, length(list))
+    return IncRel(ssl, ir.right, ir.left._v[list], ir.left.name * "subset")
+end
+
+
 # Provide abbreviations:
 
 skt = skeleton
