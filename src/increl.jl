@@ -454,7 +454,7 @@ on the left.
 """
 function subset(ir::IncRel, list)
     ssl = ShapeColl(ir.left.shapedesc, length(list))
-    return IncRel(ssl, ir.right, ir.left._v[list], ir.left.name * "subset")
+    return IncRel(ssl, ir.right, ir._v[list], ir.left.name * "subset")
 end
 
 
