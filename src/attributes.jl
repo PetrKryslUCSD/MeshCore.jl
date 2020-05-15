@@ -1,10 +1,18 @@
 """
     AbsAttrib
 
-Abstract type of attribute.
+Abstract type of attribute. It is a subtype of AbstractArray.
 """
-abstract type AbsAttrib
+abstract type AbsAttrib{T}<:AbstractArray{T, 1}
 end
+
+
+Base.IndexStyle(::Type{<:AbsAttrib}) = IndexLinear()
+Base.size(a::A) where {A<:AbsAttrib} =  (length(a.v), )
+Base.getindex(a::A, i::Int) where {A<:AbsAttrib} = a.v[i]
+Base.getindex(a::A, I::Vararg{Int, N}) where {A<:AbsAttrib, N}  = a.v[I...]
+Base.setindex!(a::A, v, i::Int) where {A<:AbsAttrib} =  (a.v[i] = v)  
+Base.setindex!(a::A, v, I::Vararg{Int, N}) where {A<:AbsAttrib, N} = a.v[I...]  
 
 """
     Attrib{F}<:AbsAttrib
@@ -37,64 +45,7 @@ a = attribute(vertices, "label")
 @test a.co(10) == 1
 ```
 """
-struct Attrib{F}<:AbsAttrib
-    co::F # function or a callable object
-    name::String # name of the attribute
-end
-
-"""
-    Attrib(co::F) where {F}
-
-Construct attribute with the callable object `co`, and with default name.
-"""
-function Attrib(co::F) where {F}
-    Attrib(co, "attrib")
-end
-
-"""
-    AttribDataWrapper{T}
-
-Simple type to store a vector of data with a shape collection.
-"""
-struct AttribDataWrapper{T}
+struct VecAttrib{T}<:AbsAttrib{T}
     v::Vector{T}
 end
 
-"""
-    (d::AttribDataWrapper{T})(j::Int64) where {T}
-
-Retrieve the value stored in the data wrapper at index `j`.
-"""
-function (d::AttribDataWrapper{T})(j::Int64) where {T}
-    return d.v[j]
-end
-
-"""
-    val(d::AttribDataWrapper{T}, I::SVector) where {N, T}
-
-Retrieve values stored in the data wrapper for all indexes in `I`.
-"""
-@generated function val(d::AttribDataWrapper{T}, I::SVector) where {N, T}
-    nidx = length(I)
-    expr = :(())
-    for i in 1:nidx
-        push!(expr.args, :(d.v[I[$i]]))
-    end
-    return :(SVector($expr))
-end
-
-"""
-    val(d::AttribDataWrapper{T}, j::Int64) where {T}
-
-Access the `j`-th value of the wrapper.
-"""
-function val(d::AttribDataWrapper{T}, j::Int64) where {T}
-    return d.v[j]
-end
-
-"""
-    nvals(d::AttribDataWrapper{T})
-
-How many values are there stored in this wrapper?
-"""
-nvals(d::AttribDataWrapper{T}) where {T} = length(d.v)

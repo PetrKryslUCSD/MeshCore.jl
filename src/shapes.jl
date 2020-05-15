@@ -18,7 +18,7 @@ end
 Set up new shape collection with an empty dictionary of attributes and a default name.
 """
 function ShapeColl(shapedesc::S, nshapes::Int64) where {S <: AbsShapeDesc}
-	ShapeColl(shapedesc::S, nshapes::Int64, Dict{String, Attrib}(), "shapes")
+	ShapeColl(shapedesc::S, nshapes::Int64, Dict{String, AbsAttrib}(), "shapes")
 end
 
 """
@@ -36,7 +36,7 @@ end
 Set up new shape collection with an empty dictionary of attributes.
 """
 function ShapeColl(shapedesc::S, nshapes::Int64, s::String) where {S <: AbsShapeDesc}
-    ShapeColl(shapedesc::S, nshapes::Int64, Dict{String, Attrib}(), s)
+    ShapeColl(shapedesc::S, nshapes::Int64, Dict{String, AbsAttrib}(), s)
 end
 
 """

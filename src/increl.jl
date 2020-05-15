@@ -253,9 +253,8 @@ function skeleton(ir::IncRel, name = "skt")
     # unique rows are obtained by ignoring the repeats
     unq = findall(a -> a == 1, rep)
     unqhfc = shfc[unq, :] # unique hyper faces
-    dw = AttribDataWrapper(isunq[unq]) # store the boundary flag
     sir = IncRel(ShapeColl(facetdesc(ir.left), size(unqhfc, 1)), ir.right, unqhfc, name)
-    sir.left.attributes["isboundary"] = Attrib(dw, "isboundary") # store the is-boundary attribute
+    sir.left.attributes["isboundary"] = VecAttrib(isunq[unq]) # store the is-boundary attribute
     return sir
 end
 
@@ -269,7 +268,7 @@ The `skeleton` function.
 function boundary(ir::IncRel, name = "bdr")
     sir = skeleton(ir)
     isboundary = sir.left.attributes["isboundary"]
-    ind = [i for i in 1:nvals(isboundary.co) if isboundary.co(i)] 
+    ind = [i for i in 1:length(isboundary) if isboundary[i]] 
     lft = ShapeColl(shapedesc(sir.left), length(ind), "facets")
     return IncRel(lft, sir.right, sir._v[ind], name)
 end
