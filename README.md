@@ -10,6 +10,7 @@ Small package for operating on the topology of meshes for the Finite Element Met
 
 ## News
 
+– 05/14/2020: Changed storage of attribute data.
 - 05/07/2020: Simplified management of attributes.
 - 04/17/2020: The paper describing the library has been submitted.
 - 03/21/2020: The implementation of the topology operations has been improved in speed and simplicity.
