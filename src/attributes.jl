@@ -6,7 +6,6 @@ Abstract type of attribute. It is a subtype of AbstractArray.
 abstract type AbsAttrib{T}<:AbstractArray{T, 1}
 end
 
-
 Base.IndexStyle(::Type{<:AbsAttrib}) = IndexLinear()
 Base.size(a::A) where {A<:AbsAttrib} =  (length(a.v), )
 Base.getindex(a::A, i::Int) where {A<:AbsAttrib} = a.v[i]

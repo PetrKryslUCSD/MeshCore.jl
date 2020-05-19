@@ -477,7 +477,9 @@ function test()
     @test locs[10] == [633.3333333333334, 800.0]
 
     # @show typeof(Dict(a.name=>a))
-    vertices = ShapeColl(P1, size(xyz, 1), Dict("geom"=>locs))
+    # @show typeof(Dict("geom"=>locs))
+    vertices = ShapeColl(P1, size(xyz, 1))
+    vertices.attributes["geom"] = locs
     locs = vertices.attributes["geom"]
     @test locs[10] == [633.3333333333334, 800.0]
     @test length(locs) == 12
@@ -499,9 +501,16 @@ function test()
 	xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0]
 	N, T = size(xyz, 2), eltype(xyz)
 	locs =  VecAttrib([SVector{N, T}(xyz[i, :]) for i in 1:size(xyz, 1)])
-	vertices = ShapeColl(P1, size(xyz, 1), Dict("geom"=>locs))
+	vertices = ShapeColl(P1, size(xyz, 1))
+    vertices.attributes["geom"] = locs
 	a = attribute(vertices, "geom")
 	@test a[2] == [633.3333333333334, 0.0]
+
+    dofn =  VecAttrib([i for i in 1:size(xyz, 1)])
+    vertices.attributes["dofn"] = dofn
+    # @show keys(vertices.attributes)
+    @test "geom" in keys(vertices.attributes)
+    @test "dofn" in keys(vertices.attributes)
 end
 end
 using .m113651

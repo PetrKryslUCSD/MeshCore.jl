@@ -5,10 +5,10 @@ This is the type of a homogeneous collection of finite element shapes.
 
 - `S` = shape descriptor: subtype of AbsShapeDesc.
 """
-struct ShapeColl{S <: AbsShapeDesc, T <: AbsAttrib}
+struct ShapeColl{S <: AbsShapeDesc}
     shapedesc::S # Shape descriptor
 	nshapes::Int64 # Number of shapes in the collection
-	attributes::Dict{String, T} # dictionary of attributes
+	attributes::Dict{String, AbsAttrib} # dictionary of attributes
     name::String # name of the shape collection
 end
 
@@ -18,25 +18,16 @@ end
 Set up new shape collection with an empty dictionary of attributes and a default name.
 """
 function ShapeColl(shapedesc::S, nshapes::Int64) where {S <: AbsShapeDesc}
-	ShapeColl(shapedesc::S, nshapes::Int64, Dict{String, AbsAttrib}(), "shapes")
+	ShapeColl(shapedesc::S, nshapes, Dict{String, AbsAttrib}(), "shapes")
 end
 
 """
-    ShapeColl(shapedesc::S, nshapes::Int64, d::Dict{Symbol, Any}) where {S <: AbsShapeDesc}
-
-Set up new shape collection with a default name.
-"""
-function ShapeColl(shapedesc::S, nshapes::Int64, d::Dict) where {S <: AbsShapeDesc}
-    ShapeColl(shapedesc::S, nshapes::Int64, d, "shapes")
-end
-
-"""
-    ShapeColl(shapedesc::S, nshapes::Int64, d::Dict{Symbol, Any}) where {S <: AbsShapeDesc}
+    ShapeColl(shapedesc::S, nshapes::Int64, s::String) where {S <: AbsShapeDesc}
 
 Set up new shape collection with an empty dictionary of attributes.
 """
 function ShapeColl(shapedesc::S, nshapes::Int64, s::String) where {S <: AbsShapeDesc}
-    ShapeColl(shapedesc::S, nshapes::Int64, Dict{String, AbsAttrib}(), s)
+    ShapeColl(shapedesc::S, nshapes, Dict{String, AbsAttrib}(), s)
 end
 
 """
