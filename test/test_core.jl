@@ -594,3 +594,49 @@ end
 using .mtest3a2
 mtest3a2.test()
 
+module mfeat1
+using StaticArrays
+using MeshCore: P1, L2, Q4, H8, T3, T4
+using MeshCore: nfeatofdim
+# using BenchmarkTools
+using Test
+function test()
+    @test nfeatofdim(P1, 0) == 1
+    @test nfeatofdim(P1, 1) == 0
+    @test nfeatofdim(P1, 2) == 0
+    @test nfeatofdim(P1, 3) == 0
+    
+    @test nfeatofdim(L2, 0) == 2
+    @test nfeatofdim(L2, 1) == 1
+    @test nfeatofdim(L2, 2) == 0
+    @test nfeatofdim(L2, 3) == 0
+
+    @test nfeatofdim(T3, 0) == 3
+    @test nfeatofdim(T3, 1) == 3
+    @test nfeatofdim(T3, 2) == 1
+    @test nfeatofdim(T3, 3) == 0
+
+    @test nfeatofdim(T4, 0) == 4
+    @test nfeatofdim(T4, 1) == 6
+    @test nfeatofdim(T4, 2) == 4
+    @test nfeatofdim(T4, 3) == 1
+
+    @test nfeatofdim(Q4, 0) == 4
+    @test nfeatofdim(Q4, 1) == 4
+    @test nfeatofdim(Q4, 2) == 1
+    @test nfeatofdim(Q4, 3) == 0
+
+    @test nfeatofdim(H8, 0) == 8
+    @test nfeatofdim(H8, 1) == 12
+    @test nfeatofdim(H8, 2) == 6
+    @test nfeatofdim(H8, 3) == 1
+
+    # @btime nfeatofdim($H8, 0)
+    # @btime nfeatofdim($H8, 1)
+    # @btime nfeatofdim($H8, 2)
+    # @btime nfeatofdim($H8, 3)
+    true
+end
+end
+using .mfeat1
+mfeat1.test()

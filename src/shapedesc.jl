@@ -255,3 +255,27 @@ L2ShapeDesc, # RD
 Dictionary of all the descriptors.
 """
 const SHAPE_DESC = Dict("P1"=>P1, "L2"=>L2, "T3"=>T3, "T4"=>T4, "Q4"=>Q4, "H8"=>H8)
+
+"""
+    nfeatofdim(sd::AbsShapeDesc{MD, NV, NF, FD, NR, RD, NFOV, NSHIFTS}, m) where {MD, NV, NF, FD, NR, RD, NFOV, NSHIFTS}
+
+Compute number of manifold features of given dimension.
+
+For instance, a tetrahedron with four vertices has 1 feature of manifold
+dimension 3, four features of manifold dimension 2, six features of manifold
+dimension 1, and four features of manifold dimension 0.
+"""
+function nfeatofdim(sd::SD, m) where {SD}
+    if m > manifdim(sd)
+        return 0
+    end
+    if m == manifdim(sd)
+        return 1
+    elseif m == manifdim(sd) - 1
+        return nfacets(sd)
+    elseif m == manifdim(sd) - 2
+        return nridges(sd)
+    else
+        return nvertices(sd)
+    end
+end
