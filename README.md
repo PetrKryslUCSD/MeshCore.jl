@@ -10,15 +10,18 @@ Small package for operating on the topology of meshes for the Finite Element Met
 
 ## News
 
-– 05/14/2020: Changed storage of attribute data.
+- 05/14/2020: Changed storage of attribute data.
 - 05/07/2020: Simplified management of attributes.
 - 04/17/2020: The paper describing the library has been submitted.
-- 03/21/2020: The implementation of the topology operations has been improved in speed and simplicity.
-- 03/18/2020: The library was completely redesigned around incidence relations. Much simpler than before!
-- 03/16/2020: Note: The coverage appears low, but that seems to be a bug in the computation of the coverage when applied to one-line functions defined for multiple types.
+- 03/21/2020: The implementation of the topology operations has been improved in
+  speed and simplicity.
+- 03/18/2020: The library was completely redesigned around incidence relations.
+  Much simpler than before!
+- 03/16/2020: Note: The coverage appears low, but that seems to be a bug in the
+  computation of the coverage when applied to one-line functions defined for
+  multiple types.
 
 ## Usage
-
 
 The package is registered: doing
 ```
