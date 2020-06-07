@@ -14,9 +14,9 @@ Base.setindex!(a::A, v, i::Int) where {A<:AbsAttrib} =  (a.v[i] = v)
 Base.setindex!(a::A, v, I::Vararg{Int, N}) where {A<:AbsAttrib, N} = a.v[I...]  
 
 """
-    Attrib{F}<:AbsAttrib
+    VecAttrib{T}<:AbsAttrib{T}
 
-Attribute: `F` is either a function type, or type of a callable object.
+Attribute stores a quantity of type `T`, one value per shape.
 The value is linked to the serial number of the object.
 
 # Example
