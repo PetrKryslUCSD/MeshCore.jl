@@ -446,6 +446,22 @@ function bbyridges(ir::IncRel, eir::IncRel, name = "bbr")
 end
 
 """
+    identty(ir::IncRel, side = :left)
+
+Compute the identity incidence relation `(d, d)`.
+
+Either the left (side = :left) or the right (side = :right) shape is mapped
+to itself.
+"""
+function identty(ir::IncRel, side = :left)
+    if side == :left
+        return IncRel(ir.left, ir.left, [SVector{1, Int64}([idx]) for idx in 1:nshapes(ir.left)])
+    else
+        return IncRel(ir.right, ir.right, [SVector{1, Int64}([idx]) for idx in 1:nshapes(ir.right)])
+    end
+end
+
+"""
     subset(ir::IncRel, list)
 
 Compute the incidence relation representing a subset of the shape collection
