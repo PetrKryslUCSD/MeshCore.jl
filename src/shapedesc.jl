@@ -153,6 +153,11 @@ NoSuchShapeDesc,  # RD
     Q4ShapeDesc{MD, NV, NF, FD, NR, RD, NFOV, NSHIFTS}
 
 Shape descriptor of a quadrilateral shape.
+
+Facets: First the two orthogonal to xi, then the two orthogonal to eta. The
+coordinate along the edge increases.
+
+Ridges: Counterclockwise.
 """
 struct Q4ShapeDesc{MD, NV, NF, FD, NR, RD, NFOV, NSHIFTS} <: AbsShapeDesc{MD, NV, NF, FD, NR, RD, NFOV, NSHIFTS}
     facetdesc::FD
@@ -171,12 +176,19 @@ L2ShapeDesc, # FD
 P1ShapeDesc,  # RD
 4,  # NFOV
 4 # NSHIFTS
-}(L2, SMatrix{4, 2}([1 2; 2 3; 3 4; 4 1]), P1, SMatrix{4, 1}([1; 2; 3; 4]), "Q4")
+}(L2, SMatrix{4, 2}([1 4; 2 3; 1 2; 4 3]), P1, SMatrix{4, 1}([1; 2; 3; 4]), "Q4")
 
 """
     H8ShapeDesc{MD, NV, NF, FD, NR, RD, NFOV, NSHIFTS}
 
 Shape descriptor of a hexahedral shape.
+
+Facets: First the two faces orthogonal to xi, then the two orthogonal to eta,
+finally the two orthogonal to zeta. The vertices are given counterclockwise when
+looking from the outside.
+
+Ridges: First the four edges parallel to xi, then the four parallel to eta, and
+finally the four parallel to zeta.
 """
 struct H8ShapeDesc{MD, NV, NF, FD, NR, RD, NFOV, NSHIFTS} <: AbsShapeDesc{MD, NV, NF, FD, NR, RD, NFOV, NSHIFTS}
     facetdesc::FD
@@ -196,17 +208,17 @@ L2ShapeDesc, # RD
 8, # NFOV
 0 # NSHIFTS
 }(Q4, SMatrix{6, 4}(
-[1 4 3 2;
-1 2 6 5;
-2 3 7 6;
-3 4 8 7;
-4 1 5 8;
-6 7 8 5]), L2, SMatrix{12, 2}([1 2; 2 3; 3 4; 4 1; 5 6; 6 7; 7 8; 8 5; 1 5; 2 6; 3 7; 4 8;];), "H8")
+[8 4 1 5; 7 6 2 3; 6 5 1 2; 7 3 4 8; 3 2 1 4; 7 8 5 6]), L2, SMatrix{12, 2}([8 7; 5 6; 1 2; 4 3; 6 7; 5 8; 1 4; 2 3; 3 7; 4 8; 1 5; 2 6];), "H8")
 
 """
     T3ShapeDesc{MD, NV, NF, FD, NR, RD, NFOV, NSHIFTS}
 
 Shape descriptor of a triangular shape.
+
+Facets: We start with the edge opposite to vertex 1, then the edge opposite to
+vertex 2 and so on. The vertices define counterclockwise orientation.
+
+Ridges: The vertices in counterclockwise order.
 """
 struct T3ShapeDesc{MD, NV, NF, FD, NR, RD, NFOV, NSHIFTS} <: AbsShapeDesc{MD, NV, NF, FD, NR, RD, NFOV, NSHIFTS}
     facetdesc::FD
@@ -224,12 +236,21 @@ L2ShapeDesc, # FD
 P1ShapeDesc, # RD
 3, # NFOV
 3 # NSHIFTS
-}(L2, SMatrix{3, 2}([1 2; 2 3; 3 1]), P1, SMatrix{3, 1}([1; 2; 3]), "T3")
+}(L2, SMatrix{3, 2}([2 3; 3 1; 1 2]), P1, SMatrix{3, 1}([1; 2; 3]), "T3")
 
 """
     T4ShapeDesc{MD, NV, NF, FD, NR, RD, NFOV, NSHIFTS}
 
 Shape descriptor of a tetrahedral shape.
+
+Facets: We start with the face opposite to vertex 1, then the face opposite to
+vertex 2 and so on. The vertices define counterclockwise orientation when viewed
+from outside of the shape.
+
+Ridges: The vertices of the edges are defined in the order based on the
+right-hand side rotation rule: rotate about an edge (ridge) as if it was a
+rotation vector  with positive orientation. The vertices on the edge opposite
+across the tetrahedron are traversed in the order given by the rotation.
 """
 struct T4ShapeDesc{MD, NV, NF, FD, NR, RD, NFOV, NSHIFTS} <: AbsShapeDesc{MD, NV, NF, FD, NR, RD, NFOV, NSHIFTS}
     facetdesc::FD
@@ -247,7 +268,7 @@ T3ShapeDesc, # FD
 L2ShapeDesc, # RD
 4, # NFOV
 0 # NSHIFTS
-}(T3, SMatrix{4, 3}([1 3 2; 1 2 4; 2 3 4; 1 4 3]), L2, SMatrix{6, 2}([1  2; 2  3; 3  1; 4  1; 4  2; 4  3]), "T4")
+}(T3, SMatrix{4, 3}([2 3 4; 1 4 3; 4 1 2; 3 2 1]), L2, SMatrix{6, 2}([1 4; 2 3; 1 2; 3 4; 4 2; 1 3]), "T4")
 
 """
     SHAPE_DESC

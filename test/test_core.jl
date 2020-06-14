@@ -171,8 +171,8 @@ function test()
     for i in 1:nrelations(facemesh)
         x = locs[retrieve(facemesh, i)]
     end #
-    @test locs[retrieve(facemesh, 17)] == StaticArrays.SArray{Tuple{2},Float64,1,2}[[1900.0, 800.0], [1266.6666666666667, 800.0]]
-    @test locs[retrieve(facemesh, 17)[1]] == [1900.0, 800.0]
+    @test locs[retrieve(facemesh, 17)] == StaticArrays.SArray{Tuple{2},Float64,1,2}[[1266.6666666666667, 800.0], [1900.0, 800.0], ]
+    @test locs[retrieve(facemesh, 17)[1]] == [1266.6666666666667, 800.0]
     true
 end
 end
@@ -254,8 +254,13 @@ function test()
     fmesh = skeleton(mesh)
     # Test the transpose incidence relation
     tmesh = bbyfacets(mesh, fmesh)
-    shouldget = StaticArrays.SArray{Tuple{4},Int64,1,4}[[1, 4, -8,
-2], [8, 11, 15, 9], [3, 6, -10, -4], [10, 13, 16, -11], [5, 7, -12, -6], [12, 14, 17, -13                    ]]
+    shouldget = StaticArrays.SArray{Tuple{4},Int64,1,4}[
+    [2, 4, 1, 8],                                                            
+    [9, 11, 8, 15],                                                          
+    [4, 6, 3, 10],                                                           
+    [11, 13, 10, 16],                                                        
+    [6, 7, 5, 12],                                                          
+    [13, 14, 12, 17]   ]
     allmatch = true
     for j in 1:length(shouldget)
         for k in 1:length(shouldget[j])
@@ -287,7 +292,13 @@ function test()
     fmesh = skeleton(mesh)
     # Test the bounded-by incidence relation
     bbmesh = bbyfacets(mesh, fmesh)
-    shouldget = StaticArrays.SArray{Tuple{4},Int64,1,4}[[1, 4, -8, 2], [8, 11, 15, 9], [3, 6, -10, -4], [10, 13, 16, -11], [5, 7, -12, -6], [12, 14, 17, -13]]
+    shouldget = StaticArrays.SArray{Tuple{4},Int64,1,4}[
+    [2, 4, 1, 8],                                                           
+    [9, 11, 8, 15],                                                         
+    [4, 6, 3, 10],                                                          
+    [11, 13, 10, 16],                                                       
+    [6, 7, 5, 12],                                                          
+    [13, 14, 12, 17]    ]
     allmatch = true
     for j in 1:length(shouldget)
         for k in 1:length(shouldget[j])
