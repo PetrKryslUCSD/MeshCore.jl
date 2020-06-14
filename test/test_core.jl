@@ -1,5 +1,6 @@
 module mtest1
-using MeshCore: NoSuchShape, P1, L2, ShapeColl, manifdim, nfacets, SHAPE_DESC
+using MeshCore: NoSuchShape, P1, L2, L3, SHAPE_DESC
+using MeshCore: NoSuchShape, ShapeColl, manifdim, nfacets
 using MeshCore: shapedesc, nshapes, manifdim, nvertices, facetdesc, nfacets, ridgedesc, nridges
 using Test
 function test()
@@ -15,12 +16,23 @@ function test()
     @test nfacets(lines) == nfacets(L2)
     @test ridgedesc(lines) == NoSuchShape
     @test nridges(lines) == 0
+
+    lines3 = ShapeColl(L3, 13)
+    @test nvertices(lines3) == nvertices(L3)
+    @test nvertices(lines3) == 3
+    @test facetdesc(lines3) == P1
+    @test nfacets(lines3) == nfacets(L3)
+    @test ridgedesc(lines3) == NoSuchShape
+    @test nridges(lines3) == 0
+    @test manifdim(lines3) == 1
+
     @test SHAPE_DESC["P1"].name == "P1"
     @test SHAPE_DESC["L2"].name == "L2"
     @test SHAPE_DESC["T3"].name == "T3"
     @test SHAPE_DESC["T4"].name == "T4"
     @test SHAPE_DESC["Q4"].name == "Q4"
     @test SHAPE_DESC["H8"].name == "H8"
+    @test SHAPE_DESC["L3"].name == "L3"
     true
 end
 end
@@ -676,3 +688,100 @@ end
 end
 using .mtest4a5
 mtest4a5.test()
+
+module mtest1q
+using MeshCore: NoSuchShape, P1, L3, T6, SHAPE_DESC
+using MeshCore: NoSuchShape, ShapeColl, manifdim, nfacets
+using MeshCore: shapedesc, nshapes, manifdim, nvertices, facetdesc, nfacets, ridgedesc, nridges, n1storderv
+using Test
+function test()
+    @test manifdim(P1) == 0
+    @test nfacets(L3) == 2
+    @test nvertices(L3) == 3
+    @test n1storderv(L3) == 2
+    @test nfacets(T6) == 3
+    
+    vrts = ShapeColl(P1, 12)
+    lines = ShapeColl(L3, 32)
+    @test shapedesc(vrts) == P1
+    @test nshapes(vrts) == 12
+    @test manifdim(vrts) == manifdim(P1)
+    @test nvertices(lines) == nvertices(L3)
+    @test facetdesc(lines) == P1
+    @test nfacets(lines) == nfacets(L3)
+    @test ridgedesc(lines) == NoSuchShape
+    @test nridges(lines) == 0
+
+    tris6 = ShapeColl(T6, 13)
+    @test nvertices(tris6) == nvertices(T6)
+    @test nvertices(tris6) == 6
+    @test n1storderv(T6) == 3
+    @test facetdesc(tris6) == L3
+    @test nfacets(tris6) == nfacets(T6)
+    @test ridgedesc(tris6) == P1
+    @test nridges(tris6) == 3
+    @test manifdim(tris6) == 2
+
+    @test SHAPE_DESC["P1"].name == "P1"
+    @test SHAPE_DESC["L2"].name == "L2"
+    @test SHAPE_DESC["T3"].name == "T3"
+    @test SHAPE_DESC["T6"].name == "T6"
+    @test SHAPE_DESC["T4"].name == "T4"
+    @test SHAPE_DESC["Q4"].name == "Q4"
+    @test SHAPE_DESC["H8"].name == "H8"
+    @test SHAPE_DESC["L3"].name == "L3"
+    true
+end
+end
+using .mtest1q
+mtest1q.test()
+
+
+module mtest2q
+using MeshCore: NoSuchShape, P1, L3, Q8, SHAPE_DESC
+using MeshCore: NoSuchShape, ShapeColl, manifdim, nfacets
+using MeshCore: shapedesc, nshapes, manifdim, nvertices, facetdesc, nfacets, ridgedesc, nridges, n1storderv
+using Test
+function test()
+    @test manifdim(P1) == 0
+    @test nfacets(L3) == 2
+    @test nvertices(L3) == 3
+    @test n1storderv(L3) == 2
+    @test nfacets(Q8) == 4
+    @test nridges(Q8) == 4
+    
+    vrts = ShapeColl(P1, 12)
+    lines = ShapeColl(L3, 32)
+    @test shapedesc(vrts) == P1
+    @test nshapes(vrts) == 12
+    @test manifdim(vrts) == manifdim(P1)
+    @test nvertices(lines) == nvertices(L3)
+    @test facetdesc(lines) == P1
+    @test nfacets(lines) == nfacets(L3)
+    @test ridgedesc(lines) == NoSuchShape
+    @test nridges(lines) == 0
+
+    q8s = ShapeColl(Q8, 13)
+    @test nvertices(q8s) == nvertices(Q8)
+    @test nvertices(q8s) == 8
+    @test n1storderv(Q8) == 4
+    @test facetdesc(q8s) == L3
+    @test nfacets(q8s) == nfacets(Q8)
+    @test ridgedesc(q8s) == P1
+    @test nridges(q8s) == 4
+    @test manifdim(q8s) == 2
+
+    @test SHAPE_DESC["P1"].name == "P1"
+    @test SHAPE_DESC["L2"].name == "L2"
+    @test SHAPE_DESC["T3"].name == "T3"
+    @test SHAPE_DESC["T6"].name == "T6"
+    @test SHAPE_DESC["T4"].name == "T4"
+    @test SHAPE_DESC["Q4"].name == "Q4"
+    @test SHAPE_DESC["Q8"].name == "Q8"
+    @test SHAPE_DESC["H8"].name == "H8"
+    @test SHAPE_DESC["L3"].name == "L3"
+    true
+end
+end
+using .mtest2q
+mtest2q.test()

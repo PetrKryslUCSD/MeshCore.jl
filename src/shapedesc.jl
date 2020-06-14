@@ -271,11 +271,92 @@ L2ShapeDesc, # RD
 }(T3, SMatrix{4, 3}([2 3 4; 1 4 3; 4 1 2; 3 2 1]), L2, SMatrix{6, 2}([1 4; 2 3; 1 2; 3 4; 4 2; 1 3]), "T4")
 
 """
+    L3ShapeDesc{MD, NV, NF, FD, NR, RD, NFOV, NSHIFTS}
+
+Shape descriptor of a quadratic line segment shape.
+"""
+struct L3ShapeDesc{MD, NV, NF, FD, NR, RD, NFOV, NSHIFTS} <: AbsShapeDesc{MD, NV, NF, FD, NR, RD, NFOV, NSHIFTS}
+    facetdesc::FD
+    facets::SMatrix{NF, 1, Int64, 2}
+    ridgedesc::RD
+    ridges::SMatrix{NR, 0, Int64, 0}
+    name::String
+end
+
+const L3 = L3ShapeDesc{
+1,  # MD
+3,  # NV
+2,  # NF
+P1ShapeDesc,  # FD
+0,  # NR
+NoSuchShapeDesc,  # RD
+2, # NFOV
+0 # NSHIFTS
+}(P1, SMatrix{2, 1}([1; 2]), NoSuchShape, SMatrix{0, 0}(Int64[]), "L3")
+
+"""
+    T6ShapeDesc{MD, NV, NF, FD, NR, RD, NFOV, NSHIFTS}
+
+Shape descriptor of a quadratic triangular shape.
+
+Facets: We start with the edge opposite to vertex 1, then the edge opposite to
+vertex 2 and so on. The vertices define counterclockwise orientation.
+
+Ridges: The vertices in counterclockwise order.
+"""
+struct T6ShapeDesc{MD, NV, NF, FD, NR, RD, NFOV, NSHIFTS} <: AbsShapeDesc{MD, NV, NF, FD, NR, RD, NFOV, NSHIFTS}
+    facetdesc::FD
+    facets::SMatrix{NF, 3, Int64, 3*3}
+    ridgedesc::RD
+    ridges::SMatrix{NR, 1, Int64, 3*1}
+    name::String
+end
+
+const T6 = T6ShapeDesc{2, # MD
+6, # NV
+3, # NF
+L3ShapeDesc, # FD
+3, # NR
+P1ShapeDesc, # RD
+3, # NFOV
+3 # NSHIFTS
+}(L3, SMatrix{3, 3}([2 3 5; 3 1 6; 1 2 4]), P1, SMatrix{3, 1}([1; 2; 3]), "T6")
+
+"""
+    Q8ShapeDesc{MD, NV, NF, FD, NR, RD, NFOV, NSHIFTS}
+
+Shape descriptor of a quadrilateral shape.
+
+Facets: First the two orthogonal to xi, then the two orthogonal to eta. The
+coordinate along the edge increases.
+
+Ridges: Counterclockwise.
+"""
+struct Q8ShapeDesc{MD, NV, NF, FD, NR, RD, NFOV, NSHIFTS} <: AbsShapeDesc{MD, NV, NF, FD, NR, RD, NFOV, NSHIFTS}
+    facetdesc::FD
+    facets::SMatrix{NF, 3, Int64, 4*3}
+    ridgedesc::RD
+    ridges::SMatrix{NR, 1, Int64, 4*1}
+    name::String
+end
+
+const Q8 = Q8ShapeDesc{
+2,  # MD
+8,  # NV
+4,  # NF
+L3ShapeDesc, # FD
+4,  # NR
+P1ShapeDesc,  # RD
+4,  # NFOV
+4 # NSHIFTS
+}(L3, SMatrix{4, 3}([1 4 8; 2 3 6; 1 2 5; 4 3 7]), P1, SMatrix{4, 1}([1; 2; 3; 4]), "Q8")
+
+"""
     SHAPE_DESC
 
 Dictionary of all the descriptors.
 """
-const SHAPE_DESC = Dict("P1"=>P1, "L2"=>L2, "T3"=>T3, "T4"=>T4, "Q4"=>Q4, "H8"=>H8)
+const SHAPE_DESC = Dict("P1"=>P1, "L2"=>L2, "T3"=>T3, "T4"=>T4, "Q4"=>Q4, "H8"=>H8, "L3"=>L3, "T6"=>T6, "Q8"=>Q8)
 
 """
     nfeatofdim(sd::SD, m) where {SD <: AbsShapeDesc}
