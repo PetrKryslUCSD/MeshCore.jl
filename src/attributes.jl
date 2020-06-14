@@ -48,3 +48,10 @@ struct VecAttrib{T}<:AbsAttrib{T}
     v::Vector{T}
 end
 
+"""
+    datavaluetype(VecAttrib{T}) where {T} 
+
+Retrieve the type of the attribute  value.
+"""
+datavaluetype(VecAttrib{T}) where {T} = T
+
