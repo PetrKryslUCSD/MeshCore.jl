@@ -53,5 +53,5 @@ end
 
 Retrieve the type of the attribute  value.
 """
-datavaluetype(VecAttrib{T}) where {T} = T
+datavaluetype(a::VecAttrib{T}) where {T} = T
 
