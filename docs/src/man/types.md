@@ -31,7 +31,7 @@ ShapeColl{S <: AbsShapeDesc}
 
 ```@docs
 AbsAttrib{T}
-VecAttrib{T}<:AbsAttrib{T}
+VecAttrib{T}
 ```
 
 
