@@ -827,3 +827,31 @@ end
 end
 using .mtestattr6
 mtestattr6.test()
+
+
+module mtesat4a5
+using StaticArrays
+using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nfacets, facetdesc, nshapes
+using MeshCore: Q4ShapeDesc, shapedesc, n1storderv, nridges, nshifts, nvertices
+using MeshCore: IncRel, retrieve, subset, nrelations, identty, indextype, code
+using Test
+function test()
+    c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
+    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
+    q4s = ShapeColl(Q4, 6)
+    vrts = ShapeColl(P1, 12)
+    ir = IncRel(q4s, vrts, cc)
+    @test indextype(ir) == Int64
+    @test code(ir) == (2, 0)
+    sir = subset(ir, [1, 2])
+    @test nrelations(sir) == 2
+    @test isapprox(retrieve(sir, 1), [1, 2, 6, 5])
+    ir1 = identty(ir, :left)
+    @test nrelations(ir1) == 6 
+    @test nshapes(ir1.left) == 6 
+    @test nshapes(ir1.right) == 6 
+    true
+end
+end
+using .mtesat4a5
+mtesat4a5.test()
