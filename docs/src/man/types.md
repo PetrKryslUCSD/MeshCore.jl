@@ -11,9 +11,12 @@ AbsShapeDesc
 NoSuchShapeDesc
 P1ShapeDesc
 L2ShapeDesc
+L3ShapeDesc
 Q4ShapeDesc
+Q8ShapeDesc
 H8ShapeDesc
 T3ShapeDesc
+T6ShapeDesc
 T4ShapeDesc
 SHAPE_DESC
 ```
@@ -27,9 +30,8 @@ ShapeColl{S <: AbsShapeDesc}
 ## Attributes
 
 ```@docs
-AbsAttrib
-Attrib{F}
-AttribDataWrapper{T}
+AbsAttrib{T}
+VecAttrib{T}<:AbsAttrib{T}
 ```
 
 

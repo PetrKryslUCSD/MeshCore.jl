@@ -4,15 +4,27 @@
 CurrentModule = MeshCore
 ```
 
+## Shapes descriptors
+
+```@docs
+manifdim
+nvertices
+nfacets
+nridges
+n1storderv
+nshifts
+nfeatofdim
+```
+
 ## Shapes
 
 ```@docs
 ShapeColl(shapedesc::S, nshapes::Int64) where {S <: AbsShapeDesc}
-ShapeColl(shapedesc::S, nshapes::Int64, d::Dict) where {S <: AbsShapeDesc}
+ShapeColl(shapedesc::S, nshapes::Int64, s::String) where {S <: AbsShapeDesc}
 ShapeColl(shapedesc::S, nshapes::Int64, s::String) where {S <: AbsShapeDesc}
 shapedesc
 nshapes
-manifdim
+manifdim(shapes::ShapeColl)
 nvertices
 facetdesc
 nfacets
@@ -20,8 +32,6 @@ facetconnectivity
 ridgedesc
 nridges
 ridgeconnectivity
-n1storderv
-nshifts
 attribute
 ```
 
@@ -30,10 +40,12 @@ attribute
 ```@docs
 IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, v::Vector{T}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
 IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, data::Matrix{MT}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, MT}
+IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, data::Matrix{MT}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, MT}
 indextype
 nrelations
 nentities
 retrieve
+code
 ```
 
 ### Relations below the diagonal
@@ -51,12 +63,16 @@ bbyridges
 transpose(mesh::IncRel)
 ```
 
-### Attributes
+### Relations on the diagonal
 
 ```@docs
-nvals(d::AttribDataWrapper{T}) where {T} 
-val(d::AttribDataWrapper{T}, j::Int64) where {T}
-(d::AttribDataWrapper{T})(j::Int64) where {T}
+identty(ir::IncRel, side = :left)
+```
+
+### Utilities
+
+```@docs
+subset
 ```
 
 
