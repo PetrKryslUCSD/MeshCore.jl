@@ -1,9 +1,9 @@
 # MeshCore Documentation
 
 
-## Conceptual guide
+## How to guide
 
-The concepts and ideas are described.
+Guide to the use of the library.
 
 ```@contents
 Pages = [
@@ -12,7 +12,7 @@ Pages = [
 Depth = 1
 ```
 
-## Manual
+## Reference manual
 
 The description of the types and of the functions.
 
@@ -22,4 +22,15 @@ Pages = [
     "man/functions.md",
 ]
 Depth = 3
+```
+
+## Concepts
+
+Concepts and design of the library.
+
+```@contents
+Pages = [
+    "concepts/concepts.md",
+]
+Depth = 1
 ```

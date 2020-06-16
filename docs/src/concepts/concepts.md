@@ -44,7 +44,7 @@ shape collections (`ShapeColl`).
 
 ### Geometry
 
-The locations are points in space. They are defined for the vertices.
+The locations are points in space. They are defined as attributes for the vertices.
 
 ### Shape descriptors and shape collections
 
@@ -223,11 +223,11 @@ relationship ``(3,3)`` would be different for the incidences that followed from 
 ### How incidence relations are computed
 
 For definiteness here we assume that the initial mesh (i. e. the incidence
-relation) is ``3,0``. The other 12 relations in the table below can be computed by applying the four procedures: skeleton (`sk`), bounded-by-facet (`bf`), bounded-by-ridges (`be`), and transpose (`tr`).
+relation) is ``3,0``. The other 12 relations in the table below can be computed by applying the four procedures: skeleton (`sk`), bounded-by-facet (`bf`), bounded-by-ridges (`be`), and transpose (`tr`). In addition there is the identity-producing operation (`id`).
 
 | Manif. dim.      |   0   |   1   |   2   |  3   |
 |:---:  | :---:  | :---:  | :---:  | :---:  |
 |   0     | `sk`(``(1,0)``) |  `tr`(``(1,0)``) | `tr`(``(2,0)``) |  `tr`(``(3,0)``) |
 |   1     | `sk`(``(2,0)``) | `id`(``(1,1)``) | `tr`(``(2,1)``) | `tr`(``(3,1)``) |
-|   2     | `sk`(``(3,0)``) | `bf`(``(2,0, ``(1,0)``, ``(0,1)``) | `id`(``(2,2)``) | `tr`(``(3,2)``) |
+|   2     | `sk`(``(3,0)``) | `bf`(``(2,0)``, ``(1,0)``, ``(0,1)``) | `id`(``(2,2)``) | `tr`(``(3,2)``) |
 |   3     | ``(3,0)`` | `be`(``(3,0)``, ``(1,0)``, ``(0,1)``) | `bf`(``(3,0)``, ``(2,0)``, ``(0,2)``)| `id`(``(3,3)``) |
