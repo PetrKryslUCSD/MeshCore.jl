@@ -785,3 +785,21 @@ end
 end
 using .mtest2q
 mtest2q.test()
+
+module mtestbb1
+using MeshCore: @_check
+using Test
+function test()
+    @_check 1 == 1 "Really?"
+    @_check 1 == 1 "Why " * "not?"
+    a = 13
+    b = 13
+    @_check a == b "Why is $a " * "not equal to $b?"
+    a = 61
+    @_check a > b "Why is $a " * "not greater than $b?"
+    Test.@test_throws AssertionError @_check(a < b, "Why is $a " * "not greater than $b?")
+    true
+end
+end
+using .mtestbb1
+mtestbb1.test()
