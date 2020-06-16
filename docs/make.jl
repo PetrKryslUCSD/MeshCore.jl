@@ -7,13 +7,13 @@ makedocs(
 	authors = "Petr Krysl",
 	sitename = "MeshCore.jl",
 	pages = Any[
-	"Home" => "index.md",
-	"How to guide" => "guide/guide.md",
-	"Reference" => Any[
-		"man/types.md",
-		"man/functions.md"]
-		],
-	"Concepts" => "concepts/concepts.md",	
+		"Home" => "index.md",
+		"How to guide" => "guide/guide.md",
+		"Reference" => Any[
+			"man/types.md",
+			"man/functions.md"],
+		"Concepts" => "concepts/concepts.md"	
+	],
 	)
 
 deploydocs(
