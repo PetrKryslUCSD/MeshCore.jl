@@ -855,3 +855,28 @@ end
 end
 using .mtesat4a5
 mtesat4a5.test()
+
+
+module mfeatx1
+using StaticArrays
+using MeshCore: P1, L2, Q4, H8, T3, T4, T6, L3
+using MeshCore: nfeatofdim
+# using BenchmarkTools
+using Test
+function test()
+  
+    @test nfeatofdim(L3, 0) == 3
+    @test nfeatofdim(L3, 1) == 1
+    @test nfeatofdim(L3, 2) == 0
+    @test nfeatofdim(L3, 3) == 0
+
+    @test nfeatofdim(T6, 0) == 6
+    @test nfeatofdim(T6, 1) == 3
+    @test nfeatofdim(T6, 2) == 1
+    @test nfeatofdim(T6, 3) == 0
+
+    true
+end
+end
+using .mfeatx1
+mfeatx1.test()
