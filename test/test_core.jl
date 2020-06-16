@@ -803,3 +803,27 @@ end
 end
 using .mtestbb1
 mtestbb1.test()
+
+module mtestattr6
+using StaticArrays
+using MeshCore: VecAttrib, P1, ShapeColl, attribute
+using Test
+# using BenchmarkTools
+
+function test()
+    xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
+    N, T = size(xyz, 2), eltype(xyz)
+    locs =  VecAttrib([SVector{N, T}(xyz[i, :]) for i in 1:size(xyz, 1)])
+
+    @test locs[10] == [633.3333333333334, 800.0]
+    locs[10] = -locs[10]
+    @test locs[10] == [-633.3333333333334, -800.0]
+    @test isapprox(locs[8:10], StaticArrays.SArray{Tuple{2},Float64,1,2}[[1900.0, 400.0], [0.0, 800.0], [-633.3333333333334, -800.0]])
+    locs[8:10] .= StaticArrays.SArray{Tuple{2},Float64,1,2}[[1.0, 1.0], [1.0, 1.0], [1.0, 1.0]]
+    @test isapprox(locs[8:10], StaticArrays.SArray{Tuple{2},Float64,1,2}[[1.0, 1.0], [1.0, 1.0], [1.0, 1.0]])
+
+    true
+end
+end
+using .mtestattr6
+mtestattr6.test()
