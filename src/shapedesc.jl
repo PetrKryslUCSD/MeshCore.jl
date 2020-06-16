@@ -366,6 +366,11 @@ Compute number of manifold features of given dimension.
 For instance, a tetrahedron with four vertices has 1 feature of manifold
 dimension 3, four features of manifold dimension 2, six features of manifold
 dimension 1, and four features of manifold dimension 0.
+
+Quadratic or higher order elements may have more vertices than would correspond
+to the hierarchy of cells, facets, ridges. Internal vertices must be accounted
+for as well. For instance, L3 has two facets, but three vertices. T6 has three
+facets, three ridges, but six vertices.
 """
 function nfeatofdim(sd::SD, m) where {SD <: AbsShapeDesc}
     if m > manifdim(sd)
@@ -374,10 +379,12 @@ function nfeatofdim(sd::SD, m) where {SD <: AbsShapeDesc}
     if m == manifdim(sd)
         return 1
     elseif m == manifdim(sd) - 1
-        return nfacets(sd)
+        # There may be more vertices than facets: There may be internal vertices.
+        return m == 0 ? nvertices(sd) : nfacets(sd)
     elseif m == manifdim(sd) - 2
-        return nridges(sd)
-    else
+        # There may be more vertices than ridges: There may be internal vertices.
+        return m == 0 ? nvertices(sd) : nridges(sd)
+    else # m must be equal to 0
         return nvertices(sd)
     end
 end
