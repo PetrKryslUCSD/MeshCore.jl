@@ -108,9 +108,9 @@ defined for meshes derived from the initial mesh.
 | Manif. dim.      |   0   |   1   |   2   |  3   |
 |:---: | :---: | :---: | :---: | :---: |
 | 0     | ``(0,0)`` | ``(0,1)`` | ``(0,2)`` | ``(0,3)`` |
-| 1     | ``(1,0)`` | ------ | ``(1,2)`` | ``(1,3)`` |
-| 2     | ``(2,0)`` | ``(2,1)`` | ------ | ``(2,3)`` |
-| 3     | ``(3,0)`` | ``(3,1)`` | ``(3,2)`` | ------ |
+| 1     | ``(1,0)`` | ``(1,1)`` | ``(1,2)`` | ``(1,3)`` |
+| 2     | ``(2,0)`` | ``(2,1)`` | ``(2,2)`` | ``(2,3)`` |
+| 3     | ``(3,0)`` | ``(3,1)`` | ``(3,2)`` | ``(3,3)`` |
 
 In general the relations below the diagonal require the calculation of derived
 meshes. The relations above the diagonal are obtained by the so-called transpose
@@ -140,8 +140,9 @@ The relations *above* that can be calculated with the `skeleton` function.
 So,  the skeleton of the surface mesh would consist of all the edges
 in the mesh, expressible as the incidence relation  ``(1,0)``.
 
-Note that the `skeleton` method constructs a derived mesh: the incidence relations
-in the column of the above table are therefore defined for related, but separate, meshes.
+Note that the `skeleton` function constructs a derived mesh: the incidence
+relations in the column of the above table are therefore defined for related,
+but separate, meshes.
 
 ### Incidence relations ``(d,d-1)``
 
@@ -210,13 +211,14 @@ Clearly the number of cells varies from edge to edge.
 
 ### Incidence relations ``(d,d)``, where ``d \gt 1``
 
-These incidence relations do not fit the table referenced many times above. The
-definition of such a relation is not unique:  It needs to refer to a connecting
-shape. For instance, the relationship between faces,   ``(2,2)``, needs to
-state through which shape the incidence occurs: is it through the common
-vertex? Is it through a common edge? Similarly, for cells the incidence
-relationship ``(3,3)`` will be different for the incidence to follow from a
-common vertex, a common edge, or a common face.
+These incidence relations are mostly useful for uniformity to record an identity relation: an entity is mapped to itself. The operation is denoted here `id`(``(d,d)``).
+
+This defers starkly from the
+definitions of such relations that can be found in the literature.  Those are one-to-many, and don't fit the table above. They need to refer to a connecting
+shape. For instance, the relationship between faces,   ``(2,2)``, would need to
+state through which shape the incidence occured: was it through the common
+vertex? Was it through a common edge? Similarly, for cells the incidence
+relationship ``(3,3)`` would be different for the incidences that followed from a common vertex, a common edge, or a common face.
 
 ### How incidence relations are computed
 
@@ -225,7 +227,7 @@ relation) is ``3,0``. The other 12 relations in the table below can be computed 
 
 | Manif. dim.      |   0   |   1   |   2   |  3   |
 |:---:  | :---:  | :---:  | :---:  | :---:  |
-|   0     | `sk`(``(1,0)``) |  tr(``(1,0)``) | tr(``(2,0)``) |  tr(``(3,0)``) |
-|   1     | `sk`(``(2,0)``) | ------ | tr(``(2,1)``) | tr(``(3,1)``) |
-|   2     | `sk`(``(3,0)``) | bf(``(2,0, ``(1,0)``, ``(0,1)``) | ------ | tr(``(3,2)``) |
-|   3     | ``(3,0)`` | be(``(3,0)``, ``(1,0)``, ``(0,1)``) | bf(``(3,0)``, ``(2,0)``, ``(0,2)``)| ------ |
+|   0     | `sk`(``(1,0)``) |  `tr`(``(1,0)``) | `tr`(``(2,0)``) |  `tr`(``(3,0)``) |
+|   1     | `sk`(``(2,0)``) | `id`(``(1,1)``) | `tr`(``(2,1)``) | `tr`(``(3,1)``) |
+|   2     | `sk`(``(3,0)``) | `bf`(``(2,0, ``(1,0)``, ``(0,1)``) | `id`(``(2,2)``) | `tr`(``(3,2)``) |
+|   3     | ``(3,0)`` | `be`(``(3,0)``, ``(1,0)``, ``(0,1)``) | `bf`(``(3,0)``, ``(2,0)``, ``(0,2)``)| `id`(``(3,3)``) |
