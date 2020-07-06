@@ -8,7 +8,14 @@ include("shapedesc.jl")
 include("shapes.jl")
 include("increl.jl")
 
-# When we do using MeshCore.Exports, the symbols defined there are exported.
+# We can either use/import individual functions from MeshCore like so:
+# ```
+# using MeshCore: retrieve, nrelations, nentities
+# ```
+# or we can bring into our context all exported symbols as
+# ```
+# using MeshCore.Exports
+# ```
 include("Exports.jl")
 
 end # module
