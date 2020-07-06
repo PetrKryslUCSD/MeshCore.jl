@@ -880,3 +880,78 @@ end
 end
 using .mfeatx1
 mfeatx1.test()
+
+
+module mtest3y1
+using StaticArrays
+using MeshCore.Exports
+using Test
+function test()
+    c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
+    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
+    q4s = ShapeColl(Q4, 6)
+    vrts = ShapeColl(P1, 12)
+    ir = IncRel(q4s, vrts, cc)
+    q4s = ShapeColl(Q4, 6, "q4s")
+    vrts = ShapeColl(P1, 12, "vrts")
+    ir = IncRel(q4s, vrts, cc)
+    @test ir.name == "(q4s, vrts)"
+    @test manifdim(q4s) == 2
+    @test nvertices(q4s) == 4
+    @test facetdesc(q4s) == L2
+    @test nfacets(q4s) == 4
+    @test nshapes(q4s) == 6
+    @test manifdim(shapedesc(q4s)) == 2
+    @test nvertices(shapedesc(q4s)) == 4
+    @test nfacets(shapedesc(q4s)) == 4
+    @test nridges(shapedesc(q4s)) == 4
+    @test n1storderv(shapedesc(q4s)) == 4
+    @test nshifts(shapedesc(q4s)) == 4
+    @test retrieve(ir, 3, 3) == 7
+    @test retrieve(ir, 1, 4) == 5
+    @test retrieve(ir, 6, 1) == 7
+
+    true
+end
+end
+using .mtest3y1
+mtest3y1.test()
+
+module mtest1y2
+using MeshCore.Exports
+using Test
+function test()
+    @test manifdim(P1) == 0
+    @test nfacets(L2) == 2
+    vrts = ShapeColl(P1, 12)
+    lines = ShapeColl(L2, 32)
+    @test shapedesc(vrts) == P1
+    @test nshapes(vrts) == 12
+    @test manifdim(vrts) == manifdim(P1)
+    @test nvertices(lines) == nvertices(L2)
+    @test facetdesc(lines) == P1
+    @test nfacets(lines) == nfacets(L2)
+    @test ridgedesc(lines) == NoSuchShape
+    @test nridges(lines) == 0
+
+    lines3 = ShapeColl(L3, 13)
+    @test nvertices(lines3) == nvertices(L3)
+    @test nvertices(lines3) == 3
+    @test facetdesc(lines3) == P1
+    @test nfacets(lines3) == nfacets(L3)
+    @test ridgedesc(lines3) == NoSuchShape
+    @test nridges(lines3) == 0
+    @test manifdim(lines3) == 1
+
+    @test SHAPE_DESC["P1"].name == "P1"
+    @test SHAPE_DESC["L2"].name == "L2"
+    @test SHAPE_DESC["T3"].name == "T3"
+    @test SHAPE_DESC["T4"].name == "T4"
+    @test SHAPE_DESC["Q4"].name == "Q4"
+    @test SHAPE_DESC["H8"].name == "H8"
+    @test SHAPE_DESC["L3"].name == "L3"
+    true
+end
+end
+using .mtest1y2
+mtest1y2.test()
