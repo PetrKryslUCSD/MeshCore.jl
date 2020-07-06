@@ -31,7 +31,7 @@ using MeshCore
 ```
 is enough. 
 
-The user can either use/import individual functions from MeshCore like so:
+The user can either use/import individual functions from `MeshCore` like so:
 ```
 using MeshCore: retrieve, nrelations, nentities
 ```
