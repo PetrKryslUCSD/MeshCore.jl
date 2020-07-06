@@ -28,12 +28,12 @@ export shapedesc, nshapes, manifdim, nvertices, facetdesc, nfacets, facetconnect
 ###############################################################################
 using ..MeshCore: IncRel
 using ..MeshCore: indextype, nrelations, nentities, retrieve, code
-using ..MeshCore: transpose, skeleton, boundary, bbyfacets, bbyridges, identty, subset
-using ..MeshCore: skt, trp, bbf, bbr
+using ..MeshCore: boundary, subset
+using ..MeshCore: skt, trp, bbf, bbr, idt
 
 export IncRel
 export indextype, nrelations, nentities, retrieve, code
-export transpose, skeleton, boundary, bbyfacets, bbyridges, identty, subset
-export skt, trp, bbf, bbr
+export boundary, subset
+export skt, trp, bbf, bbr, idt
 
 end # module
