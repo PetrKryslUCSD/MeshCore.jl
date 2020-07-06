@@ -10,6 +10,7 @@ Small package for operating on the topology of meshes for the Finite Element Met
 
 ## News
 
+- 07/06/2020: Exports have been added to facilitate use of the library.
 - 05/14/2020: Changed storage of attribute data.
 - 05/07/2020: Simplified management of attributes.
 - 04/17/2020: The paper describing the library has been submitted.
@@ -29,6 +30,20 @@ The package is registered: doing
 using MeshCore
 ```
 is enough. 
+
+The user can either use/import individual functions from MeshCore like so:
+```
+using MeshCore: retrieve, nrelations, nentities
+```
+or all exported symbols maybe made available in the user's context as
+```
+using MeshCore.Exports
+```
+Using the library by itself is certainly possible. If you wish for a  more comprehensive mesh-handling package, check out [MeshSteward.jl](https://github.com/PetrKryslUCSD/MeshSteward.jl).
+
+## Learning
+
+Please refer to the tutorials in the package [`MeshTutor.jl`](https://github.com/PetrKryslUCSD/MeshTutor.jl).
 
 ## Publications
 
