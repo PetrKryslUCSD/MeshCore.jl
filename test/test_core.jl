@@ -144,7 +144,7 @@ module mtest5
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nrelations, facetconnectivity
 using MeshCore: IncRel
-using MeshCore: skeleton
+using MeshCore: ir_skeleton
 using Test
 function test()
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
@@ -153,7 +153,7 @@ function test()
     vrts = ShapeColl(P1, 12)
     mesh = IncRel(q4s, vrts, cc)
 
-    facemesh = skeleton(mesh)
+    facemesh = ir_skeleton(mesh)
     @test nrelations(facemesh) == 17
     true
 end
@@ -165,7 +165,7 @@ module mtest6
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nrelations, facetconnectivity
 using MeshCore: VecAttrib, IncRel
-using MeshCore: skeleton, retrieve
+using MeshCore: ir_skeleton, retrieve
 using Test
 function test()
     xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
@@ -177,7 +177,7 @@ function test()
     vrts = ShapeColl(P1, 12)
     mesh = IncRel(q4s, vrts, cc)
 
-    facemesh = skeleton(mesh)
+    facemesh = ir_skeleton(mesh)
     @test nrelations(facemesh) == 17
     # @show facemeshx
     for i in 1:nrelations(facemesh)
@@ -195,7 +195,7 @@ module mtest7
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nrelations, facetconnectivity
 using MeshCore: VecAttrib, IncRel
-using MeshCore: skeleton, boundary, nshapes
+using MeshCore: ir_skeleton, ir_boundary, nshapes
 using Test
 function test()
     xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
@@ -207,7 +207,7 @@ function test()
     vrts = ShapeColl(P1, 12)
     mesh = IncRel(q4s, vrts, cc)
 
-    bdrymesh = boundary(mesh)
+    bdrymesh = ir_boundary(mesh)
     @test nrelations(bdrymesh) == 10
     # @show bdrymesh.left, bdrymesh.right
     @test nshapes(bdrymesh.left) == 10
@@ -221,7 +221,7 @@ mtest7.test()
 module mtopoop1
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nshapes
-using MeshCore: IncRel, transpose, nshapes, retrieve, VecAttrib
+using MeshCore: IncRel, ir_transpose, nshapes, retrieve, VecAttrib
 using Test
 function test()
     xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
@@ -233,7 +233,7 @@ function test()
     vrts = ShapeColl(P1, 12)
     mesh = IncRel(q4s, vrts, cc)
     # Test the transpose incidence relation
-    tmesh = transpose(mesh)
+    tmesh = ir_transpose(mesh)
     shouldget = Array{Int64,1}[[1], [1, 3], [3, 5], [5], [1, 2], [1, 2, 3, 4], [3, 4, 5, 6], [5, 6], [2], [2, 4], [4, 6], [6]]
     allmatch = true
     for j in 1:length(shouldget)
@@ -251,7 +251,7 @@ mtopoop1.test()
 module mtopoop2
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nshapes
-using MeshCore: bbyfacets, skeleton, transpose
+using MeshCore: ir_bbyfacets, ir_skeleton, ir_transpose
 using MeshCore: IncRel, retrieve, VecAttrib
 using Test
 function test()
@@ -263,9 +263,9 @@ function test()
     q4s = ShapeColl(Q4, 6)
     vrts = ShapeColl(P1, 12)
     mesh = IncRel(q4s, vrts, cc)
-    fmesh = skeleton(mesh)
+    fmesh = ir_skeleton(mesh)
     # Test the transpose incidence relation
-    tmesh = bbyfacets(mesh, fmesh)
+    tmesh = ir_bbyfacets(mesh, fmesh)
     shouldget = StaticArrays.SArray{Tuple{4},Int64,1,4}[
     [2, 4, 1, 8],                                                            
     [9, 11, 8, 15],                                                          
@@ -289,7 +289,7 @@ mtopoop2.test()
 module mtopoop3
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nshapes
-using MeshCore: bbyfacets, skeleton, transpose
+using MeshCore: ir_bbyfacets, ir_skeleton, ir_transpose
 using MeshCore: IncRel, retrieve, VecAttrib
 using Test
 function test()
@@ -301,9 +301,9 @@ function test()
     q4s = ShapeColl(Q4, 6)
     vrts = ShapeColl(P1, 12)
     mesh = IncRel(q4s, vrts, cc)
-    fmesh = skeleton(mesh)
+    fmesh = ir_skeleton(mesh)
     # Test the bounded-by incidence relation
-    bbmesh = bbyfacets(mesh, fmesh)
+    bbmesh = ir_bbyfacets(mesh, fmesh)
     shouldget = StaticArrays.SArray{Tuple{4},Int64,1,4}[
     [2, 4, 1, 8],                                                           
     [9, 11, 8, 15],                                                         
@@ -319,7 +319,7 @@ function test()
     end
     @test allmatch
     # Now test the transposed incidence relation
-    tbbmesh = transpose(bbmesh)
+    tbbmesh = ir_transpose(bbmesh)
     shouldget = Array{Int64,1}[[1], [1], [3], [1, 3], [5], [3, 5], [5], [1, 2], [2], [3, 4], [2, 4], [5, 6],
     [4, 6], [6], [2], [4], [6]]
     allmatch = true
@@ -338,7 +338,7 @@ mtopoop3.test()
 module mtopoop4
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nshapes
-using MeshCore: bbyridges, skeleton, transpose
+using MeshCore: ir_bbyridges, ir_skeleton, ir_transpose
 using MeshCore: IncRel, retrieve, VecAttrib
 using Test
 function test()
@@ -353,7 +353,7 @@ function test()
     # fmesh = skeleton(mesh)
     vmesh = IncRel(ShapeColl(P1, 12), vrts, [[i] for i in 1:nshapes(vrts)] )
     # Test the bounded-by incidence relation
-    bbmesh = bbyridges(mesh, vmesh)
+    bbmesh = ir_bbyridges(mesh, vmesh)
     shouldget = Array{Int64,1}[[1, 2, 6, 5], [5, 6, 10, 9], [2, 3, 7, 6], [6, 7, 11, 10], [3, 4, 8, 7], [7, 8, 12, 11]]
     allmatch = true
     for j in 1:length(shouldget)
@@ -363,7 +363,7 @@ function test()
     end
     @test allmatch
     # Now test the transposed incidence relation
-    tbbmesh = transpose(bbmesh)
+    tbbmesh = ir_transpose(bbmesh)
     shouldget = Array{Int64,1}[[1], [1, 3], [3, 5], [5], [1, 2], [1, 2, 3, 4], [3, 4, 5, 6], [5, 6], [2], [2, 4], [4, 6], [6]]
     allmatch = true
     for j in 1:length(shouldget)
@@ -383,8 +383,8 @@ include("samplet4.jl")
 module mt4topo1
 using StaticArrays
 using MeshCore: P1, T4, ShapeColl,  manifdim, nvertices, nridges, nshapes
-using MeshCore: bbyridges, skeleton, bbyfacets, nshifts, _sense, retrieve
-using MeshCore: IncRel, transpose, nrelations, nentities, VecAttrib
+using MeshCore: ir_bbyridges, ir_skeleton, ir_bbyfacets, nshifts, _sense, retrieve
+using MeshCore: IncRel, ir_transpose, nrelations, nentities, VecAttrib
 using ..samplet4: samplet4mesh
 using Test
 function test()
@@ -396,7 +396,7 @@ function test()
     tets = ShapeColl(T4, size(cc, 1))
     ir30 = IncRel(tets, vrts, cc)
     # Test the incidence relations 3 -> 0 & 0 -> 3
-    ir03 = transpose(ir30)
+    ir03 = ir_transpose(ir30)
     allmatch = true
     for j in 1:nrelations(ir03)
         for k in 1:nentities(ir03, j)
@@ -407,8 +407,8 @@ function test()
     @test allmatch
 
     # Test the incidence relations 2 -> 0 & 0 -> 2
-    ir20 = skeleton(ir30)
-    ir02 = transpose(ir20)
+    ir20 = ir_skeleton(ir30)
+    ir02 = ir_transpose(ir20)
     allmatch = true
     for j in 1:nrelations(ir02)
         for k in 1:nentities(ir02, j)
@@ -419,8 +419,8 @@ function test()
     @test allmatch
 
     # Test the incidence relations 1 -> 0 & 0 -> 1
-    ir10 = skeleton(ir20)
-    ir01 = transpose(ir10)
+    ir10 = ir_skeleton(ir20)
+    ir01 = ir_transpose(ir10)
     allmatch = true
     for j in 1:nrelations(ir01)
         for k in 1:nentities(ir01, j)
@@ -431,8 +431,8 @@ function test()
     @test allmatch
 
     # Test the incidence relations 3 -> 2 & 2 -> 3
-    ir20 = skeleton(ir30)
-    ir32 = bbyfacets(ir30, ir20)
+    ir20 = ir_skeleton(ir30)
+    ir32 = ir_bbyfacets(ir30, ir20)
     # Check that the tetrahedra connectivity refers to all three vertices of the faces
     allmatch = true
     @test nrelations(ir30) == nrelations(ir32)
@@ -471,7 +471,7 @@ function test()
     end # j
     @test allmatch
     # Check the transpose incidence relation
-    ir23 = transpose(ir32)
+    ir23 = ir_transpose(ir32)
     allmatch = true
     for j in 1:nrelations(ir23)
         for k in 1:nentities(ir23, j)
@@ -599,7 +599,7 @@ module mtest3a2
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nfacets, facetdesc, nshapes
 using MeshCore: Q4ShapeDesc, shapedesc, n1storderv, nridges, nshifts, nvertices
-using MeshCore: IncRel, retrieve, subset, nrelations
+using MeshCore: IncRel, retrieve, ir_subset, nrelations
 using Test
 function test()
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
@@ -607,7 +607,7 @@ function test()
     q4s = ShapeColl(Q4, 6)
     vrts = ShapeColl(P1, 12)
     ir = IncRel(q4s, vrts, cc)
-    sir = subset(ir, [1, 2])
+    sir = ir_subset(ir, [1, 2])
     @test nrelations(sir) == 2
     @test isapprox(retrieve(sir, 1), [1, 2, 6, 5])
     
@@ -668,7 +668,7 @@ module mtest4a5
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nfacets, facetdesc, nshapes
 using MeshCore: Q4ShapeDesc, shapedesc, n1storderv, nridges, nshifts, nvertices
-using MeshCore: IncRel, retrieve, subset, nrelations, identty
+using MeshCore: IncRel, retrieve, ir_subset, nrelations, ir_identity
 using Test
 function test()
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
@@ -676,10 +676,10 @@ function test()
     q4s = ShapeColl(Q4, 6)
     vrts = ShapeColl(P1, 12)
     ir = IncRel(q4s, vrts, cc)
-    sir = subset(ir, [1, 2])
+    sir = ir_subset(ir, [1, 2])
     @test nrelations(sir) == 2
     @test isapprox(retrieve(sir, 1), [1, 2, 6, 5])
-    ir1 = identty(ir, :left)
+    ir1 = ir_identity(ir, :left)
     @test nrelations(ir1) == 6 
     @test nshapes(ir1.left) == 6 
     @test nshapes(ir1.right) == 6 
@@ -833,7 +833,7 @@ module mtesat4a5
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nfacets, facetdesc, nshapes
 using MeshCore: Q4ShapeDesc, shapedesc, n1storderv, nridges, nshifts, nvertices
-using MeshCore: IncRel, retrieve, subset, nrelations, identty, indextype, code
+using MeshCore: IncRel, retrieve, ir_subset, nrelations, ir_identity, indextype, ir_code
 using Test
 function test()
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
@@ -842,11 +842,11 @@ function test()
     vrts = ShapeColl(P1, 12)
     ir = IncRel(q4s, vrts, cc)
     @test indextype(ir) == Int64
-    @test code(ir) == (2, 0)
-    sir = subset(ir, [1, 2])
+    @test ir_code(ir) == (2, 0)
+    sir = ir_subset(ir, [1, 2])
     @test nrelations(sir) == 2
     @test isapprox(retrieve(sir, 1), [1, 2, 6, 5])
-    ir1 = identty(ir, :left)
+    ir1 = ir_identity(ir, :left)
     @test nrelations(ir1) == 6 
     @test nshapes(ir1.left) == 6 
     @test nshapes(ir1.right) == 6 

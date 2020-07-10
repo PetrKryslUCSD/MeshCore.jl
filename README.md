@@ -10,6 +10,7 @@ Small package for operating on the topology of meshes for the Finite Element Met
 
 ## News
 
+- 07/10/2020: Naming of the symbols has been updated to reduce conflicts.
 - 07/06/2020: Exports have been added to facilitate use of the library.
 - 05/14/2020: Changed storage of attribute data.
 - 05/07/2020: Simplified management of attributes.

@@ -7,6 +7,14 @@ left and a list of entities of the shape on the right.
 The incidence relation may be referred to by its code: `(d1, d2)`, where `d1` is
 the manifold dimension of the shape collection on the left, and `d2` is the
 manifold dimension of the shape collection on the right.
+
+Main operations referred to with the abbreviations used in the paper:
+
+- skt = ir_skeleton
+- trp = ir_transpose
+- bbf = ir_bbyfacets
+- bbr = ir_bbyridges
+- idt = ir_identity
 """
 struct IncRel{LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
 	left::ShapeColl{LEFT}
@@ -109,12 +117,12 @@ end
 
 Formulate the code of the incidence relation.
 """
-code(ir::IncRel{LEFT, RIGHT, T}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T} = (manifdim(shapedesc(ir.left)), manifdim(shapedesc(ir.right)))
+ir_code(ir::IncRel{LEFT, RIGHT, T}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T} = (manifdim(shapedesc(ir.left)), manifdim(shapedesc(ir.right)))
 
 """
-    transpose(ir::IncRel, name = "trp")
+    ir_transpose(ir::IncRel, name = "trp")
 
-Compute the incidence relation `(d1, d2)`, where `d2 >= d1`.
+Compute the "transposed" incidence relation `(d1, d2)`, where `d2 >= d1`.
   
 This only makes sense for `d2 >= 0`. For `d2=1` we get for each vertex the list
 of edges connected to the vertex, and analogously faces and cells for `d=2` and
@@ -124,7 +132,7 @@ of edges connected to the vertex, and analogously faces and cells for `d=2` and
 Incidence relation for the transposed incidence relation. The left and right
 shape collection are swapped in the output relative to the input.
 """
-function transpose(ir::IncRel, name = "trp")
+function ir_transpose(ir::IncRel, name = "trp")
     @_check (manifdim(ir.left) >= manifdim(ir.right))
 	inttype = eltype(ir._v[1])
     # Find out how many of the transpose incidence relations there are
@@ -213,15 +221,12 @@ function _countrepeats(A)
 end
 
 """
-    skeleton(ir::IncRel, name = "skt")
+    ir_skeleton(ir::IncRel, name = "skt")
 
-Compute the skeleton of an incidence relation.
+Compute the "skeleton" of an incidence relation.
 
-This computes a new incidence relation from an existing incidence relation.
-
-# Options
-- `boundaryonly`: include in the skeleton only shapes on the boundary
-    of the input collection, `true` or `false` (default).
+Compute a new incidence relation from an existing incidence relation to extract
+the skeleton.
 
 # Returns
 Incidence relation for the skeleton of the input incidence relation. The left
@@ -229,7 +234,7 @@ shape collection consists of facets (shapes of manifold dimension one less than
 the manifold dimension of the shapes themselves). The right shape collection is
 the same as for the input.
 """
-function skeleton(ir::IncRel, name = "skt")
+function ir_skeleton(ir::IncRel, name = "skt")
 	@_check (manifdim(ir.right) == 0)
 	@_check (manifdim(ir.left) > 0)
 	inttype = eltype(ir._v[1])
@@ -259,14 +264,14 @@ function skeleton(ir::IncRel, name = "skt")
 end
 
 """
-    boundary(ir::IncRel, name = "bdr")
+    ir_boundary(ir::IncRel, name = "bdr")
 
 Compute the incidence relation for the boundary of the incidence relation on input.
 
 The `skeleton` function.
 """
-function boundary(ir::IncRel, name = "bdr")
-    sir = skeleton(ir)
+function ir_boundary(ir::IncRel, name = "bdr")
+    sir = ir_skeleton(ir)
     isboundary = sir.left.attributes["isboundary"]
     ind = [i for i in 1:length(isboundary) if isboundary[i]] 
     lft = ShapeColl(shapedesc(sir.left), length(ind), "facets")
@@ -290,9 +295,9 @@ function _selectrepeating(v, nrepeats)
 end
 
 """
-    bbyfacets(ir::IncRel, fir::IncRel, tfir::IncRel, name = "bbf")
+    ir_bbyfacets(ir::IncRel, fir::IncRel, tfir::IncRel, name = "bbf")
 
-Compute the incidence relation `(d, d-1)` for `d`-dimensional shapes.
+Compute the "bounded by facets" incidence relation `(d, d-1)` for `d`-dimensional shapes.
 
 In other words, this is the incidence relation between shapes and the shapes
 that bound these shapes (facets). For tetrahedra as the shapes, the incidence
@@ -316,7 +321,7 @@ manifold dimension of the shapes themselves).
     normal; negative otherwise. The sense is defined by the numbering of the
     1st-order vertices of the facet shape.
 """
-function bbyfacets(ir::IncRel, fir::IncRel, tfir::IncRel, name = "bbf")
+function ir_bbyfacets(ir::IncRel, fir::IncRel, tfir::IncRel, name = "bbf")
 	@_check (manifdim(ir.right) == 0)
     @_check (manifdim(fir.right) == 0)
     @_check (manifdim(tfir.left) == 0)
@@ -357,23 +362,23 @@ function bbyfacets(ir::IncRel, fir::IncRel, tfir::IncRel, name = "bbf")
 end
 
 """
-    bbyfacets(ir::IncRel, fir::IncRel, name = "bbf")
+    ir_bbyfacets(ir::IncRel, fir::IncRel, name = "bbf")
 
-Compute the incidence relation `(d, d-1)` for `d`-dimensional shapes.
+Compute the "bounded by facets" incidence relation `(d, d-1)` for `d`-dimensional shapes.
 
 Convenience function where the transpose of the incidence relation on the right
 is computed on the fly.
 
-# See also: [`bbyfacets(ir::IncRel, fir::IncRel, tfir::IncRel)`](@ref)
+# See also: [`ir_bbyfacets(ir::IncRel, fir::IncRel, tfir::IncRel)`](@ref)
 """
-function bbyfacets(ir::IncRel, fir::IncRel, name = "bbf")
-	return bbyfacets(ir, fir, transpose(fir), name)
+function ir_bbyfacets(ir::IncRel, fir::IncRel, name = "bbf")
+	return ir_bbyfacets(ir, fir, ir_transpose(fir), name)
 end
 
 """
-    bbyridges(ir::IncRel, eir::IncRel, teir::IncRel, name = "bbr")
+    ir_bbyridges(ir::IncRel, eir::IncRel, teir::IncRel, name = "bbr")
 
-Compute the incidence relation `(d, d-2)` for `d`-dimensional shapes.
+Compute the "bounded by ridges" incidence relation `(d, d-2)` for `d`-dimensional shapes.
 
 In other words, this is the incidence between shapes and the shapes that "bound"
 the boundaries of these shapes (i. e. ridges). For tetrahedra as the shapes, the
@@ -393,7 +398,7 @@ the manifold dimension of the shapes themselves).
     normal; negative otherwise. The sense is defined by the numbering of the
     1st-order vertices of the ridge shape.
 """
-function bbyridges(ir::IncRel, eir::IncRel, teir::IncRel, name = "bbr")
+function ir_bbyridges(ir::IncRel, eir::IncRel, teir::IncRel, name = "bbr")
 	@_check (manifdim(ir.right) == 0) && (manifdim(teir.left) == 0)
 	@_check manifdim(ir.left) == manifdim(teir.right)+2
 	@_check manifdim(teir.right) == manifdim(eir.left)
@@ -432,28 +437,28 @@ function bbyridges(ir::IncRel, eir::IncRel, teir::IncRel, name = "bbr")
 end
 
 """
-    bbyridges(ir::IncRel, eir::IncRel, name = "bbr")
+    ir_bbyridges(ir::IncRel, eir::IncRel, name = "bbr")
 
-Compute the incidence relation `(d, d-2)` for `d`-dimensional shapes.
+Compute the "bounded-by-ridges" incidence relation `(d, d-2)`.
 
 Convenience function where the transpose of the incidence relation on the right
 is computed on the fly.
 
-# See also: [`bbyridges(ir::IncRel, eir::IncRel, efir::IncRel)`](@ref)
+# See also: [`ir_bbyridges(ir::IncRel, eir::IncRel, efir::IncRel)`](@ref)
 """
-function bbyridges(ir::IncRel, eir::IncRel, name = "bbr")
-	return bbyridges(ir, eir, transpose(eir), name)
+function ir_bbyridges(ir::IncRel, eir::IncRel, name = "bbr")
+	return ir_bbyridges(ir, eir, ir_transpose(eir), name)
 end
 
 """
-    identty(ir::IncRel, side = :left)
+    ir_identity(ir::IncRel, side = :left)
 
-Compute the identity incidence relation `(d, d)`.
+Compute the "identity" incidence relation `(d, d)`.
 
 Either the left (side = :left) or the right (side = :right) shape is mapped
 to itself.
 """
-function identty(ir::IncRel, side = :left)
+function ir_identity(ir::IncRel, side = :left)
     if side == :left
         return IncRel(ir.left, ir.left, [SVector{1, Int64}([idx]) for idx in 1:nshapes(ir.left)])
     else
@@ -462,21 +467,13 @@ function identty(ir::IncRel, side = :left)
 end
 
 """
-    subset(ir::IncRel, list)
+    ir_subset(ir::IncRel, list)
 
 Compute the incidence relation representing a subset of the shape collection
 on the left.
 """
-function subset(ir::IncRel, list)
+function ir_subset(ir::IncRel, list)
     ssl = ShapeColl(ir.left.shapedesc, length(list))
     return IncRel(ssl, ir.right, ir._v[list], ir.left.name * "subset")
 end
 
-
-# Provide abbreviations:
-
-skt = skeleton
-trp = transpose
-bbf = bbyfacets
-bbr = bbyridges
-idt = identty
