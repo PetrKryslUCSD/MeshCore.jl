@@ -29,7 +29,7 @@ Contents:
 - *Mesh topology*: The mesh topology can be understood as an incidence relation
   between two shape collections.
 - *Incidence relation operations*: The operations defined in the
-  library are the *skeleton*, the *transpose*, the *bounded-by for facets*, and *bounded-by for ridges*.
+  library are the *skeleton*, the *transpose*, the *bounded-by for facets*, and *bounded-by for ridges*, *identity*, *subset*.
 
 ## Example
 
@@ -113,12 +113,12 @@ defined for meshes derived from the initial mesh.
 | 3     | ``(3,0)`` | ``(3,1)`` | ``(3,2)`` | ``(3,3)`` |
 
 In general the relations below the diagonal require the calculation of derived
-meshes. The relations above the diagonal are obtained by the so-called transpose
-operation, and do not require the construction of new meshes. Also, the
-relations below the diagonal are of fixed size. That is the number of entities
-incident on a given entity is a fixed number that can be determined beforehand.
-An example is  the relation ``(3,2)``, where for the ``j``-th cell the
-list consists of the faces bounding the cell.
+meshes. The relations above the diagonal are obtained by the
+so-called "transpose" operation, and do not require the construction of new
+meshes. Also, the relations below the diagonal are of fixed size. That is the
+number of entities incident on a given entity is a fixed number that can be
+determined beforehand. An example is  the relation ``(3,2)``, where for the
+``j``-th cell the list consists of the faces bounding the cell.
 
 On the other hand, the relations above the diagonal are in general of variable
 length. For example the relation ``(2,3)`` represents the cells which
@@ -159,10 +159,10 @@ numbers of edges (manifold dimension 1) by which the triangle face is bounded.
 |   3     | ------ | ------ | ``(3,2)`` | ------ |
 
 The incidence  relation ``(d,d-1)`` may be derived with the function
-`bbyfacets`, which operates on two shape collections: the shapes of dimension ``d``
+`ir_bbyfacets`, which operates on two shape collections: the shapes of dimension ``d``
 and the facet shapes of dimension ``d-1``.
 
-The relationship ``(1 ,0)`` can be derived in two ways: from the incidence relation ``(2,0)`` by the `skeleton` function, or by the `bbyfacets` function applied
+The relationship ``(1 ,0)`` can be derived in two ways: from the incidence relation ``(2,0)`` by the `skeleton` function, or by the `ir_bbyfacets` function applied
 to a shape collection of edges and  a shape collection of the vertices.
 
 ### Incidence relations ``(d,d-2)``
@@ -187,7 +187,7 @@ it provides cover for the edges of the tetrahedron.
 
 The relationship ``(2 ,0)`` can be derived in two ways: from the
 incidence relation ``(3, 0)`` by the `skeleton` function, or by the
-`bbyfacets` function applied to a shape collection of cells and  a shape
+`ir_bbyridges` function applied to a shape collection of cells and  a shape
 collection of the edges.
 
 
@@ -195,7 +195,7 @@ collection of the edges.
 
 The relations above the diagonal of the table below are lists of shapes incident
 on lower-dimension shapes. These are computed from the incidence relations from
-the lower triangle of the table by the function `increl_transpose`.
+the lower triangle of the table by the function `ir_transpose`.
 
 | Manif. dim.      |   0   |   1   |   2   |  3   |
 |:---: | :---: | :---: | :---: | :---: |
@@ -211,7 +211,7 @@ Clearly the number of cells varies from edge to edge.
 
 ### Incidence relations ``(d,d)``, where ``d \gt 1``
 
-These incidence relations are mostly useful for uniformity to record an identity relation: an entity is mapped to itself. The operation is denoted here `id`(``(d,d)``).
+These incidence relations are mostly useful for uniformity to record an identity relation: an entity is mapped to itself. The operation is denoted here `idt`(``(d,d)``).
 
 This defers starkly from the
 definitions of such relations that can be found in the literature.  Those are one-to-many, and don't fit the table above. They need to refer to a connecting
@@ -223,11 +223,13 @@ relationship ``(3,3)`` would be different for the incidences that followed from 
 ### How incidence relations are computed
 
 For definiteness here we assume that the initial mesh (i. e. the incidence
-relation) is ``3,0``. The other 12 relations in the table below can be computed by applying the four procedures: skeleton (`sk`), bounded-by-facet (`bf`), bounded-by-ridges (`be`), and transpose (`tr`). In addition there is the identity-producing operation (`id`).
+relation) is ``3,0``. The other 12 relations in the table below can be computed by applying the four procedures: skeleton (`skt`), bounded-by-facet (`bbf`), bounded-by-ridges (`bbr`), and transpose (`trp`). In addition there is the identity-producing operation (`idt`).
 
 | Manif. dim.      |   0   |   1   |   2   |  3   |
 |:---:  | :---:  | :---:  | :---:  | :---:  |
-|   0     | `sk`(``(1,0)``) |  `tr`(``(1,0)``) | `tr`(``(2,0)``) |  `tr`(``(3,0)``) |
-|   1     | `sk`(``(2,0)``) | `id`(``(1,1)``) | `tr`(``(2,1)``) | `tr`(``(3,1)``) |
-|   2     | `sk`(``(3,0)``) | `bf`(``(2,0)``, ``(1,0)``, ``(0,1)``) | `id`(``(2,2)``) | `tr`(``(3,2)``) |
-|   3     | ``(3,0)`` | `be`(``(3,0)``, ``(1,0)``, ``(0,1)``) | `bf`(``(3,0)``, ``(2,0)``, ``(0,2)``)| `id`(``(3,3)``) |
+|   0     | `skt`(``(1,0)``) |  `trp`(``(1,0)``) | `trp`(``(2,0)``) |  `trp`(``(3,0)``) |
+|   1     | `skt`(``(2,0)``) | `idt`(``(1,1)``) | `trp`(``(2,1)``) | `trp`(``(3,1)``) |
+|   2     | `skt`(``(3,0)``) | `bbf`(``(2,0)``, ``(1,0)``, ``(0,1)``) | `idt`(``(2,2)``) | `trp`(``(3,2)``) |
+|   3     | ``(3,0)`` | `bbr`(``(3,0)``, ``(1,0)``, ``(0,1)``) | `bbf`(``(3,0)``, ``(2,0)``, ``(0,2)``)| `idt`(``(3,3)``) |
+
+In addition, there is the subset and boundary computation (`ir_subset`, `ir_boundary`).

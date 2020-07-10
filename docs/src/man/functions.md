@@ -45,34 +45,34 @@ indextype
 nrelations
 nentities
 retrieve
-code
+ir_code
 ```
 
 ### Relations below the diagonal
 
 ```@docs
-skeleton
-boundary
-bbyfacets
-bbyridges
+ir_skeleton
+ir_bbyfacets
+ir_bbyridges
 ```
 
 ### Relations above the diagonal
 
 ```@docs
-transpose(mesh::IncRel)
+ir_transpose(mesh::IncRel)
 ```
 
 ### Relations on the diagonal
 
 ```@docs
-identty(ir::IncRel, side = :left)
+ir_identity(ir::IncRel, side = :left)
 ```
 
 ### Utilities
 
 ```@docs
-subset
+ir_subset
+ir_boundary
 ```
 
 
