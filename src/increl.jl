@@ -477,3 +477,11 @@ function ir_subset(ir::IncRel, list)
     return IncRel(ssl, ir.right, ir._v[list], ir.left.name * "subset")
 end
 
+"""
+    Base.summary(ir::IncRel)
+
+Form a brief summary of the incidence relation.
+"""
+function Base.summary(ir::IncRel)
+    return "$(ir.name): " * summary(ir.left) * ", " * summary(ir.right) 
+end

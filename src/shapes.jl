@@ -123,3 +123,21 @@ function _sense(fc, oc, nshifts) # is the facet used in the positive or in the n
 	end
 	return -1 # facet used in the positive sense
 end
+
+"""
+    Base.summary(sc::S) where {S<:ShapeColl}
+
+Form a brief summary of the shape collection.
+"""
+function Base.summary(sc::S) where {S<:ShapeColl}
+    s = "$(sc.name) = $(nshapes(sc)) x $(shapedesc(sc).name)"
+    if !isempty(values(sc.attributes))
+        s = s * " {"
+        for k in keys(sc.attributes)
+            s = s * k * ","
+        end
+        s = s * "}"
+    end
+    
+    return s
+end

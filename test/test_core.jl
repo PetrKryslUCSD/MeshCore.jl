@@ -1,3 +1,28 @@
+module mod1ame
+using StaticArrays
+using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nfacets, facetdesc, nshapes
+using MeshCore: Q4ShapeDesc, shapedesc, n1storderv, nridges, nshifts, nvertices
+using MeshCore: IncRel, retrieve
+using Test
+function test()
+    c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
+    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
+    q4s = ShapeColl(Q4, 6)
+    vrts = ShapeColl(P1, 12)
+    ir = IncRel(q4s, vrts, cc)
+    q4s = ShapeColl(Q4, 6, "q4s")
+    vrts = ShapeColl(P1, 12, "vrts")
+    ir = IncRel(q4s, vrts, cc)
+    @test summary(ir.left) == "q4s = 6 x Q4"
+    @test summary(ir.right) == "vrts = 12 x P1"
+    @test summary(ir) == "(q4s, vrts): q4s = 6 x Q4, vrts = 12 x P1" 
+    
+    true
+end
+end
+using .mod1ame
+mod1ame.test()
+
 module mtest1
 using MeshCore: NoSuchShape, P1, L2, L3, SHAPE_DESC
 using MeshCore: NoSuchShape, ShapeColl, manifdim, nfacets
