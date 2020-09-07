@@ -8,6 +8,35 @@
 
 Small package for operating on the topology of meshes for the Finite Element Methods (FEM). All essential topological incidence relations are provided: see the guide. The library provides efficient storage in static arrays for speed of access.
 
+## Usage
+
+The package is registered: doing
+```
+]add MeshCore
+using MeshCore
+```
+is enough. 
+
+The user can either use/import individual functions from `MeshCore` like so:
+```
+using MeshCore: retrieve, nrelations, nentities
+```
+
+or all exported symbols maybe made available in the user's context as
+```
+using MeshCore.Exports
+```
+Using the library by itself is certainly possible. If you wish for a  more comprehensive mesh-handling package, check out [MeshSteward.jl](https://github.com/PetrKryslUCSD/MeshSteward.jl).
+
+## Learning
+
+Please refer to the tutorials in the package [`MeshTutor.jl`](https://github.com/PetrKryslUCSD/MeshTutor.jl).
+
+## Publications
+
+A paper is under review. The package [PaperMeshTopo](https://github.com/PetrKryslUCSD/PaperMeshTopo.jl.git) gives an example of the construction of a complex (full one-level) topological representation of a tetrahedral mesh.
+
+
 ## News
 
 - 07/10/2020: Naming of the symbols has been updated to reduce conflicts.
@@ -22,30 +51,3 @@ Small package for operating on the topology of meshes for the Finite Element Met
 - 03/16/2020: Note: The coverage appears low, but that seems to be a bug in the
   computation of the coverage when applied to one-line functions defined for
   multiple types.
-
-## Usage
-
-The package is registered: doing
-```
-]add MeshCore
-using MeshCore
-```
-is enough. 
-
-The user can either use/import individual functions from `MeshCore` like so:
-```
-using MeshCore: retrieve, nrelations, nentities
-```
-or all exported symbols maybe made available in the user's context as
-```
-using MeshCore.Exports
-```
-Using the library by itself is certainly possible. If you wish for a  more comprehensive mesh-handling package, check out [MeshSteward.jl](https://github.com/PetrKryslUCSD/MeshSteward.jl).
-
-## Learning
-
-Please refer to the tutorials in the package [`MeshTutor.jl`](https://github.com/PetrKryslUCSD/MeshTutor.jl).
-
-## Publications
-
-A paper is under review. The package [PaperMeshTopo](https://github.com/PetrKryslUCSD/PaperMeshTopo.jl.git) gives an example of the construction of a complex (full one-level) topological representation of a tetrahedral mesh.
