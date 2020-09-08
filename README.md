@@ -19,7 +19,7 @@ is enough.
 
 The user can either use/import individual functions from `MeshCore` like so:
 ```
-using MeshCore: retrieve, nrelations, nentities
+using MeshCore: nrelations, nentities
 ```
 
 or all exported symbols maybe made available in the user's context as

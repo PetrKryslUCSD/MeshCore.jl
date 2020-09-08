@@ -10,7 +10,7 @@ include("increl.jl")
 
 # We can either use/import individual functions from MeshCore like so:
 # ```
-# using MeshCore: retrieve, nrelations, nentities
+# using MeshCore: nrelations, nentities
 # ```
 # or we can bring into our context all exported symbols as
 # ```

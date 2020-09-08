@@ -1,9 +1,40 @@
+module miraccess1
+using StaticArrays
+using MeshCore: VecAttrib
+using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nfacets, facetdesc, nshapes
+using MeshCore: Q4ShapeDesc, shapedesc, n1storderv, nridges, nshifts, nvertices
+using MeshCore: IncRel
+using Test
+function test()
+    a = VecAttrib([1, 2, 4]);
+    # @test show(a) != ""
+    c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
+    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
+    q4s = ShapeColl(Q4, 6)
+    vrts = ShapeColl(P1, 12)
+    ir = IncRel(q4s, vrts, cc)
+    @show ir[1]
+    @show ir[1][3]
+    q4s = ShapeColl(Q4, 6, "q4s")
+    vrts = ShapeColl(P1, 12, "vrts")
+    ir = IncRel(q4s, vrts, cc)
+    @test summary(ir.left) == "q4s = 6 x Q4"
+    @test summary(ir.right) == "vrts = 12 x P1"
+    @test summary(ir) == "(q4s, vrts): q4s = 6 x Q4, vrts = 12 x P1" 
+    # @show Q4
+    # @show q4s
+    true
+end
+end
+using .miraccess1
+miraccess1.test()
+
 module mtattr10
 using StaticArrays
 using MeshCore: VecAttrib
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nfacets, facetdesc, nshapes
 using MeshCore: Q4ShapeDesc, shapedesc, n1storderv, nridges, nshifts, nvertices
-using MeshCore: IncRel, retrieve
+using MeshCore: IncRel
 using Test
 function test()
     a = VecAttrib([1, 2, 4]);
@@ -31,7 +62,7 @@ module mod1ame
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nfacets, facetdesc, nshapes
 using MeshCore: Q4ShapeDesc, shapedesc, n1storderv, nridges, nshifts, nvertices
-using MeshCore: IncRel, retrieve
+using MeshCore: IncRel
 using Test
 function test()
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
@@ -161,7 +192,7 @@ module mtest3
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nfacets, facetdesc, nshapes
 using MeshCore: Q4ShapeDesc, shapedesc, n1storderv, nridges, nshifts, nvertices
-using MeshCore: IncRel, retrieve
+using MeshCore: IncRel
 using Test
 function test()
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
@@ -184,9 +215,9 @@ function test()
     @test nridges(shapedesc(q4s)) == 4
     @test n1storderv(shapedesc(q4s)) == 4
     @test nshifts(shapedesc(q4s)) == 4
-    @test retrieve(ir, 3, 3) == 7
-    @test retrieve(ir, 1, 4) == 5
-    @test retrieve(ir, 6, 1) == 7
+    @test ir[3, 3] == 7
+    @test ir[1, 4] == 5
+    @test ir[6, 1] == 7
 
     true
 end
@@ -219,7 +250,7 @@ module mtest6
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nrelations, facetconnectivity
 using MeshCore: VecAttrib, IncRel
-using MeshCore: ir_skeleton, retrieve
+using MeshCore: ir_skeleton
 using Test
 function test()
     xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
@@ -235,10 +266,10 @@ function test()
     @test nrelations(facemesh) == 17
     # @show facemeshx
     for i in 1:nrelations(facemesh)
-        x = locs[retrieve(facemesh, i)]
+        x = locs[facemesh[i]]
     end #
-    @test locs[retrieve(facemesh, 17)] == StaticArrays.SArray{Tuple{2},Float64,1,2}[[1266.6666666666667, 800.0], [1900.0, 800.0], ]
-    @test locs[retrieve(facemesh, 17)[1]] == [1266.6666666666667, 800.0]
+    @test locs[facemesh[17]] == StaticArrays.SArray{Tuple{2},Float64,1,2}[[1266.6666666666667, 800.0], [1900.0, 800.0], ]
+    @test locs[facemesh[17][1]] == [1266.6666666666667, 800.0]
     true
 end
 end
@@ -275,7 +306,7 @@ mtest7.test()
 module mtopoop1
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nshapes
-using MeshCore: IncRel, ir_transpose, nshapes, retrieve, VecAttrib
+using MeshCore: IncRel, ir_transpose, nshapes, VecAttrib
 using Test
 function test()
     xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
@@ -292,7 +323,7 @@ function test()
     allmatch = true
     for j in 1:length(shouldget)
         for k in 1:length(shouldget[j])
-            allmatch = allmatch && (retrieve(tmesh, j, k) == shouldget[j][k])
+            allmatch = allmatch && (tmesh[j, k] == shouldget[j][k])
         end
     end
     @test allmatch
@@ -306,7 +337,7 @@ module mtopoop2
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nshapes
 using MeshCore: ir_bbyfacets, ir_skeleton, ir_transpose
-using MeshCore: IncRel, retrieve, VecAttrib
+using MeshCore: IncRel, VecAttrib
 using Test
 function test()
     xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
@@ -330,7 +361,7 @@ function test()
     allmatch = true
     for j in 1:length(shouldget)
         for k in 1:length(shouldget[j])
-            allmatch = allmatch && (retrieve(tmesh, j, k) == shouldget[j][k])
+            allmatch = allmatch && (tmesh[j, k] == shouldget[j][k])
         end
     end
     @test allmatch
@@ -344,7 +375,7 @@ module mtopoop3
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nshapes
 using MeshCore: ir_bbyfacets, ir_skeleton, ir_transpose
-using MeshCore: IncRel, retrieve, VecAttrib
+using MeshCore: IncRel, VecAttrib
 using Test
 function test()
     xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
@@ -368,7 +399,7 @@ function test()
     allmatch = true
     for j in 1:length(shouldget)
         for k in 1:length(shouldget[j])
-            allmatch = allmatch && (retrieve(bbmesh, j, k) == shouldget[j][k])
+            allmatch = allmatch && (bbmesh[j, k] == shouldget[j][k])
         end
     end
     @test allmatch
@@ -379,7 +410,7 @@ function test()
     allmatch = true
     for j in 1:length(shouldget)
         for k in 1:length(shouldget[j])
-            allmatch = allmatch && (retrieve(tbbmesh, j, k) == shouldget[j][k])
+            allmatch = allmatch && (tbbmesh[j, k] == shouldget[j][k])
         end
     end
     @test allmatch
@@ -393,7 +424,7 @@ module mtopoop4
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nvertices, nfacets, facetdesc, nshapes
 using MeshCore: ir_bbyridges, ir_skeleton, ir_transpose
-using MeshCore: IncRel, retrieve, VecAttrib
+using MeshCore: IncRel, VecAttrib
 using Test
 function test()
     xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
@@ -412,7 +443,7 @@ function test()
     allmatch = true
     for j in 1:length(shouldget)
         for k in 1:length(shouldget[j])
-            allmatch = allmatch && (retrieve(bbmesh, j, k) == shouldget[j][k])
+            allmatch = allmatch && (bbmesh[j, k] == shouldget[j][k])
         end
     end
     @test allmatch
@@ -422,7 +453,7 @@ function test()
     allmatch = true
     for j in 1:length(shouldget)
         for k in 1:length(shouldget[j])
-            allmatch = allmatch && (retrieve(tbbmesh, j, k) == shouldget[j][k])
+            allmatch = allmatch && (tbbmesh[j, k] == shouldget[j][k])
         end
     end
     @test allmatch
@@ -437,7 +468,7 @@ include("samplet4.jl")
 module mt4topo1
 using StaticArrays
 using MeshCore: P1, T4, ShapeColl,  manifdim, nvertices, nridges, nshapes
-using MeshCore: ir_bbyridges, ir_skeleton, ir_bbyfacets, nshifts, _sense, retrieve
+using MeshCore: ir_bbyridges, ir_skeleton, ir_bbyfacets, nshifts, _sense
 using MeshCore: IncRel, ir_transpose, nrelations, nentities, VecAttrib
 using ..samplet4: samplet4mesh
 using Test
@@ -454,8 +485,8 @@ function test()
     allmatch = true
     for j in 1:nrelations(ir03)
         for k in 1:nentities(ir03, j)
-            f = retrieve(ir03, j, k)
-            allmatch = allmatch && (j in retrieve(ir30, f))
+            f = ir03[j, k]
+            allmatch = allmatch && (j in ir30[f])
         end # k
     end # j
     @test allmatch
@@ -466,8 +497,8 @@ function test()
     allmatch = true
     for j in 1:nrelations(ir02)
         for k in 1:nentities(ir02, j)
-            f = retrieve(ir02, j, k)
-            allmatch = allmatch && (j in retrieve(ir20, f))
+            f = ir02[j, k]
+            allmatch = allmatch && (j in ir20[f])
         end # k
     end # j
     @test allmatch
@@ -478,8 +509,8 @@ function test()
     allmatch = true
     for j in 1:nrelations(ir01)
         for k in 1:nentities(ir01, j)
-            f = retrieve(ir01, j, k)
-            allmatch = allmatch && (j in retrieve(ir10, f))
+            f = ir01[j, k]
+            allmatch = allmatch && (j in ir10[f])
         end # k
     end # j
     @test allmatch
@@ -492,9 +523,9 @@ function test()
     @test nrelations(ir30) == nrelations(ir32)
     for j in 1:nrelations(ir32)
         for k in 1:nentities(ir32, j)
-            f = retrieve(ir32, j, k)
+            f = ir32[j, k]
             for m in 1:3
-                allmatch = allmatch && (retrieve(ir20, abs(f), m) in retrieve(ir30, j))
+                allmatch = allmatch && (ir20[abs(f), m] in ir30[j])
             end # m
         end # k
     end # j
@@ -504,13 +535,13 @@ function test()
     @test nrelations(ir30) == nrelations(ir32)
     for j in 1:nrelations(ir32)
         for k in 1:nentities(ir32, j)
-            for f in retrieve(ir32, j)
+            for f in ir32[j]
                 orientation = sign(f)
                 f = abs(f)
-                fc = retrieve(ir20, f)
+                fc = ir20[f]
                 matchone = false
                 for m in 1:4
-                    oc = retrieve(ir30, j)[ir30.left.shapedesc.facets[m, :]]
+                    oc = ir30[j][ir30.left.shapedesc.facets[m, :]]
                     if length(intersect(fc, oc)) == 3
                         s = _sense(fc, oc, nshifts(ir20.left.shapedesc))
                         matchone = (s == orientation)
@@ -529,8 +560,8 @@ function test()
     allmatch = true
     for j in 1:nrelations(ir23)
         for k in 1:nentities(ir23, j)
-            e = retrieve(ir23, j, k)
-            allmatch = allmatch && (j in abs.(retrieve(ir32, e)))
+            e = ir23[j, k]
+            allmatch = allmatch && (j in abs.(ir32[e]))
         end # k
     end # j
     @test allmatch
@@ -612,7 +643,7 @@ module mtest3a1
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nfacets, facetdesc, nshapes
 using MeshCore: Q4ShapeDesc, shapedesc, n1storderv, nridges, nshifts, nvertices
-using MeshCore: IncRel, retrieve
+using MeshCore: IncRel
 using Test
 function test()
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
@@ -635,9 +666,9 @@ function test()
     @test nridges(shapedesc(q4s)) == 4
     @test n1storderv(shapedesc(q4s)) == 4
     @test nshifts(shapedesc(q4s)) == 4
-    @test retrieve(ir, 3, 3) == 7
-    @test retrieve(ir, 1, 4) == 5
-    @test retrieve(ir, 6, 1) == 7
+    @test ir[3, 3] == 7
+    @test ir[1, 4] == 5
+    @test ir[6, 1] == 7
 
     ir = IncRel(q4s, vrts, cc, "vertices")
     @test ir.name == "vertices"
@@ -653,7 +684,7 @@ module mtest3a2
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nfacets, facetdesc, nshapes
 using MeshCore: Q4ShapeDesc, shapedesc, n1storderv, nridges, nshifts, nvertices
-using MeshCore: IncRel, retrieve, ir_subset, nrelations
+using MeshCore: IncRel, ir_subset, nrelations
 using Test
 function test()
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
@@ -663,7 +694,7 @@ function test()
     ir = IncRel(q4s, vrts, cc)
     sir = ir_subset(ir, [1, 2])
     @test nrelations(sir) == 2
-    @test isapprox(retrieve(sir, 1), [1, 2, 6, 5])
+    @test isapprox(sir[1], [1, 2, 6, 5])
     
     true
 end
@@ -722,7 +753,7 @@ module mtest4a5
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nfacets, facetdesc, nshapes
 using MeshCore: Q4ShapeDesc, shapedesc, n1storderv, nridges, nshifts, nvertices
-using MeshCore: IncRel, retrieve, ir_subset, nrelations, ir_identity
+using MeshCore: IncRel, ir_subset, nrelations, ir_identity
 using Test
 function test()
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
@@ -732,7 +763,7 @@ function test()
     ir = IncRel(q4s, vrts, cc)
     sir = ir_subset(ir, [1, 2])
     @test nrelations(sir) == 2
-    @test isapprox(retrieve(sir, 1), [1, 2, 6, 5])
+    @test isapprox(sir[1], [1, 2, 6, 5])
     ir1 = ir_identity(ir, :left)
     @test nrelations(ir1) == 6 
     @test nshapes(ir1.left) == 6 
@@ -887,7 +918,7 @@ module mtesat4a5
 using StaticArrays
 using MeshCore: P1, L2, Q4, ShapeColl, manifdim, nfacets, facetdesc, nshapes
 using MeshCore: Q4ShapeDesc, shapedesc, n1storderv, nridges, nshifts, nvertices
-using MeshCore: IncRel, retrieve, ir_subset, nrelations, ir_identity, indextype, ir_code
+using MeshCore: IncRel, ir_subset, nrelations, ir_identity, indextype, ir_code
 using Test
 function test()
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
@@ -899,7 +930,7 @@ function test()
     @test ir_code(ir) == (2, 0)
     sir = ir_subset(ir, [1, 2])
     @test nrelations(sir) == 2
-    @test isapprox(retrieve(sir, 1), [1, 2, 6, 5])
+    @test isapprox(sir[1], [1, 2, 6, 5])
     ir1 = ir_identity(ir, :left)
     @test nrelations(ir1) == 6 
     @test nshapes(ir1.left) == 6 
@@ -961,9 +992,9 @@ function test()
     @test nridges(shapedesc(q4s)) == 4
     @test n1storderv(shapedesc(q4s)) == 4
     @test nshifts(shapedesc(q4s)) == 4
-    @test retrieve(ir, 3, 3) == 7
-    @test retrieve(ir, 1, 4) == 5
-    @test retrieve(ir, 6, 1) == 7
+    @test ir[3, 3] == 7
+    @test ir[1, 4] == 5
+    @test ir[6, 1] == 7
 
     true
 end

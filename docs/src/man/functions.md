@@ -44,7 +44,6 @@ IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, data::Matrix{MT}, name::S
 indextype
 nrelations
 nentities
-retrieve
 ir_code
 ```
 

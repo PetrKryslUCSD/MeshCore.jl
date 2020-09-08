@@ -34,6 +34,13 @@ struct IncRel{LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
     end
 end
 
+# Provide access to the incidence relation data as if it was a one-dimensional
+# or two dimensional array.
+Base.IndexStyle(::Type{<:IncRel}) = IndexLinear()
+Base.size(ir::IR) where {IR<:IncRel} =  (length(ir._v), )
+Base.getindex(ir::IR, i::Int) where {IR<:IncRel} = ir._v[i]
+Base.getindex(ir::IR, i::Int, k::Int) where {IR<:IncRel} = ir._v[i][k]
+
 """
     IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, data::Matrix{MT}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, MT}
 
@@ -95,24 +102,6 @@ Number of individual entities in the `j`-th relation in the incidence relation.
 nentities(ir::IncRel, j::IT) where {IT} = length(ir._v[j])
 
 """
-    retrieve(ir::IncRel{LEFT, RIGHT, T}, j::IT1, k::IT2) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T, IT1, IT2}
-
-Retrieve the incidence relation for `j`-th relation, k-th entity.
-"""
-function retrieve(ir::IncRel{LEFT, RIGHT, T}, j::IT1, k::IT2) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T, IT1, IT2}
-	return ir._v[j][k]
-end
-
-"""
-    retrieve(ir::IncRel{LEFT, RIGHT, T}, j::IT) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T, IT}
-
-Retrieve the row of the incidence relation for `j`-th relation.
-"""
-function retrieve(ir::IncRel{LEFT, RIGHT, T}, j::IT) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T, IT}
-	return ir._v[j]
-end
-
-"""
     code(ir::IncRel{LEFT, RIGHT, T}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T} 
 
 Formulate the code of the incidence relation.
@@ -139,7 +128,7 @@ function ir_transpose(ir::IncRel, name = "trp")
 	nvmax = 0
 	for j in 1:nrelations(ir)
 		for k in 1:nentities(ir, j)
-			nvmax = max(nvmax, retrieve(ir, j, k))
+			nvmax = max(nvmax, ir[j, k])
 		end
 	end
 	# pre-allocate relations vector
@@ -152,7 +141,7 @@ function ir_transpose(ir::IncRel, name = "trp")
 	# Build the transpose relations
     for j in 1:nrelations(ir)
 		for k in 1:nentities(ir, j)
-			c = abs(retrieve(ir, j, k)) # this could be an oriented entity: remove the sign
+			c = abs(ir[j, k]) # this could be an oriented entity: remove the sign
 			push!(_v[c], j)
 		end
 	end
@@ -162,7 +151,7 @@ end
 function _asmatrix(ir, inttype)
     c = fill(inttype(0), nshapes(ir.left), nvertices(shapedesc(ir.left)))
     for i in 1:nshapes(ir.left)
-        c[i, :] = retrieve(ir, i)
+        c[i, :] = ir[i]
     end
     return c
 end
@@ -333,12 +322,12 @@ function ir_bbyfacets(ir::IncRel, fir::IncRel, tfir::IncRel, name = "bbf")
 	# Sweep through the relations of (d, 0,) and use the (0, d-1) tfir
 	_c = fill(inttype(0), nrelations(ir), nfacets(ir.left))
     for i in 1:nrelations(ir) # Sweep through the relations of (d, 0)
-		sv = retrieve(ir, i)
+		sv = ir[i]
 		c = inttype[] # this will be the list of facets at the vertices of this entity
 		for j in 1:nentities(ir, i) # for all vertices
-			fv = retrieve(ir, i, j)
+			fv = ir[i, j]
 			for k in 1:nentities(tfir, fv)
-				push!(c, retrieve(tfir, fv, k))
+				push!(c, tfir[fv, k])
 			end # k
 		end
 		c = _selectrepeating(c, nvertices(tfir.right)) # keep the repeats
@@ -348,7 +337,7 @@ function ir_bbyfacets(ir::IncRel, fir::IncRel, tfir::IncRel, name = "bbf")
 			fc = sv[facetconnectivity(ir.left, k)]
 			sfc = sort(fc)
 			for j in 1:length(c)
-				oc = retrieve(fir, c[j])
+				oc = fir[c[j]]
 				if sfc == sort(oc)
 					sgn = _sense(fc[1:n1st], oc, nshif)
 					_c[i, k] = sgn * c[j]
@@ -408,12 +397,12 @@ function ir_bbyridges(ir::IncRel, eir::IncRel, teir::IncRel, name = "bbr")
 	# Sweep through the relations of (d, 0), and use the (0, d-2) teir
 	_c = fill(inttype(0), nrelations(ir), nridges(ir.left))
 	for i in 1:nrelations(ir) # Sweep through the relations of (d, 0)
-		sv = retrieve(ir, i)
+		sv = ir[i]
 		c = inttype[] # this will be the list of facets at the vertices of this entity
 		for j in 1:nentities(ir, i) # for all vertices
-			fv = retrieve(ir, i, j)
+			fv = ir[i, j]
 			for k in 1:nentities(teir, fv)
-				push!(c, retrieve(teir, fv, k))
+				push!(c, teir[fv, k])
 			end # k
 		end
 		c = _selectrepeating(c, nvertices(teir.right)) # keep the repeats
@@ -423,7 +412,7 @@ function ir_bbyridges(ir::IncRel, eir::IncRel, teir::IncRel, name = "bbr")
 			fc = sv[ridgeconnectivity(ir.left, k)]
 			sfc = sort(fc)
 			for j in 1:length(c)
-				oc = retrieve(eir, c[j])
+				oc = eir[c[j]]
 				if sfc == sort(oc)
 					sgn = _sense(fc[1:n1st], oc, nshif)
 					_c[i, k] = sgn * c[j]
