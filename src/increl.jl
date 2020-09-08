@@ -15,6 +15,21 @@ Main operations referred to with the abbreviations used in the paper:
 - bbf = ir_bbyfacets
 - bbr = ir_bbyridges
 - idt = ir_identity
+
+Access to the incidence relation data is through indexing:
+For instance
+```
+ir[55]
+```
+provides access to the entire incidence relation `ir` of the entity 55.
+The first component of this incidence relation for the entity 55 is
+```
+ir[55][1]
+```
+or equivalently
+```
+ir[55, 1]
+```
 """
 struct IncRel{LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
 	left::ShapeColl{LEFT}
