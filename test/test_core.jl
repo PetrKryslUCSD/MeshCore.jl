@@ -13,8 +13,8 @@ function test()
     q4s = ShapeColl(Q4, 6)
     vrts = ShapeColl(P1, 12)
     ir = IncRel(q4s, vrts, cc)
-    @show ir[1]
-    @show ir[1][3]
+    # @show ir[1]
+    # @show ir[1][3]
     q4s = ShapeColl(Q4, 6, "q4s")
     vrts = ShapeColl(P1, 12, "vrts")
     ir = IncRel(q4s, vrts, cc)
