@@ -17,31 +17,31 @@ Base.setindex!(a::A, v, I::Vararg{Int, N}) where {A<:AbsAttrib, N} = a.v[I...]
     VecAttrib{T}<:AbsAttrib{T}
 
 Attribute stores a quantity of type `T`, one value per shape.
-The value is linked to the serial number of the object.
+The value is indexed to the serial number of the object.
 
 # Example
 Attribute to allow access to the locations of the vertices.
 ```
 using Test
 using StaticArrays
-using MeshCore: AttribDataWrapper, Attrib, ShapeColl, P1, attribute
+using MeshCore: VecAttrib, ShapeColl, P1, attribute
 xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0]
 N, T = size(xyz, 2), eltype(xyz)
-locs =  AttribDataWrapper([SVector{N, T}(xyz[i, :]) for i in 1:size(xyz, 1)])
-a = Attrib(locs)
-vertices = ShapeColl(P1, size(xyz, 1), Dict("geom"=>a))
+locs =  VecAttrib([SVector{N, T}(xyz[i, :]) for i in 1:size(xyz, 1)])
+vertices = ShapeColl(P1, size(xyz, 1))
+vertices.attributes["geom"] = locs
 a = attribute(vertices, "geom")
-@test a.co(2) == [633.3333333333334, 0.0]
+@test a[2] == [633.3333333333334, 0.0]
 ```
 Attribute to label the vertices.
 ```
 using Test
 using StaticArrays
-using MeshCore: AttribDataWrapper, Attrib, ShapeColl, P1, attribute
-a = Attrib(i -> 1)
-vertices = ShapeColl(P1, size(xyz, 1), Dict("label"=>a))
-a = attribute(vertices, "label")
-@test a.co(10) == 1
+using MeshCore: VecAttrib, ShapeColl, P1, attribute
+a = VecAttrib([1 for i in 1:size(xyz, 1)] )
+vertices = ShapeColl(P1, size(xyz, 1))
+vertices.attributes["label"] = a
+@test a[3] == 1
 ```
 """
 struct VecAttrib{T}<:AbsAttrib{T}
