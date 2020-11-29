@@ -2,6 +2,7 @@
 [![Build Status](https://img.shields.io/travis/PetrKryslUCSD/MeshCore.jl/master.svg?label=Linux+MacOSX+Windows)](https://travis-ci.org/PetrKryslUCSD/MeshCore.jl)
 [![Coverage Status](https://coveralls.io/repos/github/PetrKryslUCSD/MeshCore.jl/badge.svg?branch=master)](https://coveralls.io/github/PetrKryslUCSD/MeshCore.jl?branch=master)
 ![CI](https://github.com/PetrKryslUCSD/MeshCore.jl/workflows/CI/badge.svg)
+[![Build status](https://github.com/PetrKryslUCSD/MeshCore.jl/workflows/CI/badge.svg)](https://github.com/PetrKryslUCSD/MeshCore.jl/actions)
 [![Latest documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://petrkryslucsd.github.io/MeshCore.jl/dev)
 [![DOI](https://zenodo.org/badge/246866556.svg)](https://zenodo.org/badge/latestdoi/246866556)
 
