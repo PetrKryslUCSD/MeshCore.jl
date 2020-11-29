@@ -64,7 +64,7 @@ right.
 ## Topology of meshes
 
 Meshes are understood here simply as incidence relations. For instance, at the
-simplest level meshes are defined by the *connectivity*. The connectivity is
+simplest level, meshes are defined by the *connectivity*. The connectivity is
 the incidence relation linking the shape (``d``-dimensional manifold, where ``d
 \ge 0``) to the set of vertices.  The number of vertices connected by the
 shapes is a fixed number, for instance 4 for linear tetrahedra.
