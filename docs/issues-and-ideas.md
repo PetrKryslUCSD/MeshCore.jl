@@ -3,6 +3,7 @@
 - Test skeleton and boundary.
 
 - Documenter used to generate documentation:
+using Pkg
 pkg"add DocumenterTools"  
 using DocumenterTools
 DocumenterTools.genkeys(user="PetrKryslUCSD", repo="git@github.com:PetrKryslUCSD/MeshCore.jl.git")
