@@ -1,5 +1,8 @@
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
+[![Build Status](https://img.shields.io/travis/PetrKryslUCSD/MeshCore.jl/master.svg?label=Linux+MacOSX+Windows)](https://travis-ci.org/PetrKryslUCSD/MeshCore.jl)
+[![Coverage Status](https://coveralls.io/repos/github/PetrKryslUCSD/MeshCore.jl/badge.svg?branch=master)](https://coveralls.io/github/PetrKryslUCSD/MeshCore.jl?branch=master)
 ![CI](https://github.com/PetrKryslUCSD/MeshCore.jl/workflows/CI/badge.svg)
+[![Latest documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://petrkryslucsd.github.io/MeshCore.jl/dev)
 [![DOI](https://zenodo.org/badge/246866556.svg)](https://zenodo.org/badge/latestdoi/246866556)
 
 # MeshCore.jl
