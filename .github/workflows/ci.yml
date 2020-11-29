@@ -61,6 +61,7 @@ jobs:
             Pkg.instantiate()'
       - run: |
           julia --project=docs -e '
+            import Pkg; Pkg.add("Documenter")
             using Documenter: doctest
             using MeshCore
             doctest(MeshCore)' 
