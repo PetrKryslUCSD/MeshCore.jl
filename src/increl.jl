@@ -57,7 +57,7 @@ Base.getindex(ir::IR, i::Int) where {IR<:IncRel} = ir._v[i]
 Base.getindex(ir::IR, i::Int, k::Int) where {IR<:IncRel} = ir._v[i][k]
 
 """
-    IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, data::Matrix{MT}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, MT}
+    IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, v::Vector{T}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
 
 Convenience constructor with a vector of vectors and a default name.
 """
