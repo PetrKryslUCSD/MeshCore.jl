@@ -1,14 +1,4 @@
-[Table of contents](https://petrkryslucsd.github.io/MeshCore.jl/latest/index.html)
-
-# Concepts
-
-Contents:
-- [Glossary](@ref)
-- [Example](@ref)
-- [Basic objects](@ref)
-- [Derived Incidence Relations](@ref)
-
-## Glossary
+# Glossary
 
 - *Incidence relation*: Map from one shape collection to another shape
   collection. For instance, three-dimensional finite elements (cells) are typically linked to the vertices by
@@ -31,22 +21,22 @@ Contents:
 - *Incidence relation operations*: The operations defined in the
   library are the *skeleton*, the *transpose*, the *bounded-by for facets*, and *bounded-by for ridges*, *identity*, *subset*.
 
-## Example
+# Example
 
 Please refer to the [`MeshTutor.jl`](https://github.com/PetrKryslUCSD/MeshTutor.jl.git) package for a tutorial on the use of the library.
 
-## Basic objects
+# Basic objects
 
 
 The objects with which the library works are the incidence relations
 (`IncRel`), the shape descriptors (subtypes of `AbstractShapeDesc`), and the
 shape collections (`ShapeColl`).
 
-### Geometry
+## Geometry
 
 The locations are points in space. They are defined as attributes for the vertices.
 
-### Shape descriptors and shape collections
+## Shape descriptors and shape collections
 
 The shape collections are homogeneous collections of  shapes such as the usual
 vertices (0-dimensional manifolds), line segments (1-dimensional manifolds),
@@ -54,14 +44,14 @@ triangles and quadrilaterals (2-dimensional manifolds), tetrahedra and
 hexahedra (3-dimensional manifolds). The shape descriptors describe the
 topology of one entity of the shape.
 
-### Incidence relations
+## Incidence relations
 
 The incidence relations are really
 definitions of meshes where one shape collection, the one on the left of the
 incidence relation, is mapped to ``N`` entities in the shape collection on the
 right.
 
-## Topology of meshes
+# Topology of meshes
 
 Meshes are understood here simply as incidence relations. For instance, at the
 simplest level, meshes are defined by the *connectivity*. The connectivity is
@@ -97,7 +87,7 @@ The relation ``(0,0)`` is trivial: Vertex is incident upon itself.
 Hence it may not be worthwhile  to actually create a shape collection for this
 relation. It is included for completeness only, really.
 
-## Derived Incidence Relations
+# Derived Incidence Relations
 
 The incidence relations computable with the library are summarized in the
 table below. They include the initial incidence relation  in the first column of
@@ -124,7 +114,7 @@ On the other hand, the relations above the diagonal are in general of variable
 length. For example the relation ``(2,3)`` represents the cells which
 are bounded by a face: so either 2 or 1 cells.
 
-### Incidence relations ``(d,0)``
+## Incidence relations ``(d,0)``
 
 The table below summarizes the incidence relations that represent  the initial meshes.
 
@@ -144,7 +134,7 @@ Note that the `skeleton` function constructs a derived mesh: the incidence
 relations in the column of the above table are therefore defined for related,
 but separate, meshes.
 
-### Incidence relations ``(d,d-1)``
+## Incidence relations ``(d,d-1)``
 
 This incidence relation provides for each shape the list of shapes by which the
 shape is bounded of manifold dimension lower by one. For example, for each
@@ -165,7 +155,7 @@ and the facet shapes of dimension ``d-1``.
 The relationship ``(1 ,0)`` can be derived in two ways: from the incidence relation ``(2,0)`` by the `skeleton` function, or by the `ir_bbyfacets` function applied
 to a shape collection of edges and  a shape collection of the vertices.
 
-### Incidence relations ``(d,d-2)``
+## Incidence relations ``(d,d-2)``
 
 This incidence relation provides for each shape the list of shapes by which the
 shape is "bounded" of manifold dimension lower by two. For example, for each
@@ -191,7 +181,7 @@ incidence relation ``(3, 0)`` by the `skeleton` function, or by the
 collection of the edges.
 
 
-### Incidence relations ``(d_1,d_2)``, where ``d_1 \lt d_2``
+## Incidence relations ``(d_1,d_2)``, where ``d_1 \lt d_2``
 
 The relations above the diagonal of the table below are lists of shapes incident
 on lower-dimension shapes. These are computed from the incidence relations from
@@ -209,7 +199,7 @@ of the table are all of variable arity: for instance the incidence relation
 ``(1,3)`` is the list of three-dimensional cells that share a given edge.
 Clearly the number of cells varies from edge to edge.
 
-### Incidence relations ``(d,d)``, where ``d \gt 1``
+## Incidence relations ``(d,d)``, where ``d \gt 1``
 
 These incidence relations are mostly useful for uniformity to record an identity relation: an entity is mapped to itself. The operation is denoted here `idt`(``(d,d)``).
 
@@ -220,7 +210,7 @@ state through which shape the incidence occured: was it through the common
 vertex? Was it through a common edge? Similarly, for cells the incidence
 relationship ``(3,3)`` would be different for the incidences that followed from a common vertex, a common edge, or a common face.
 
-### How incidence relations are computed
+## How incidence relations are computed
 
 For definiteness here we assume that the initial mesh (i. e. the incidence
 relation) is ``3,0``. The other 12 relations in the table below can be computed by applying the four procedures: skeleton (`skt`), bounded-by-facet (`bbf`), bounded-by-ridges (`bbr`), and transpose (`trp`). In addition there is the identity-producing operation (`idt`).
