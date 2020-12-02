@@ -1,8 +1,9 @@
-# Functions
 
 ```@meta
 CurrentModule = MeshCore
 ```
+
+# Functions
 
 ## Shapes descriptors
 
@@ -82,10 +83,6 @@ ir_boundary
 
 
 # Types
-
-```@meta
-CurrentModule = MeshCore
-```
 
 ## Shape descriptors
 
