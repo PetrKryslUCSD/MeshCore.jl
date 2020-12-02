@@ -1,6 +1,4 @@
-# How to ...
-
-## ... create a shape collection
+# How to create a shape collection
 
 A shape collection of 6 quadrilaterals may be created as:
 ```
@@ -11,7 +9,7 @@ q4s = ShapeColl(Q4, 6)
 Here `Q4` is the shape descriptor of 4-node quadrilaterals.
 
 
-## ... create an incidence relation
+# How to create an incidence relation
 
 A incidence relation of 6 quadrilaterals that connect vertices (nodes) given in the vector of tuples `c` may be created as: First we create the shape collections for the quadrilaterals and the vertices. 
 ```
@@ -28,7 +26,7 @@ using MeshCore: IncRel
 ir = IncRel(q4s, vrts, c)
 ```
 
-## ... inspect an incidence relation
+# How to inspect an incidence relation
 
 Given an incidence relation `ir`, a summary of it may be printed as 
 ```
@@ -45,7 +43,7 @@ using MeshCore: nshapes
 nshapes(ir.left), nshapes(ir.right)  
 ```
 
-## ... inspect a shape descriptor
+# How to inspect a shape descriptor
 
 In the incidence relation from above (quadrilaterals versus vertices), the quadrilaterals are the shape collection on the left of the incidence relation, and the vertices are there shape collection on the right. The manifold dimension of the vertices is 0.
 ```
