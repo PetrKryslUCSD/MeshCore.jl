@@ -18,8 +18,7 @@ The description of the types and of the functions.
 
 ```@contents
 Pages = [
-    "man/types.md",
-    "man/functions.md",
+    "man/reference.md",
 ]
 Depth = 1
 ```
