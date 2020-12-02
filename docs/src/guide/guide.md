@@ -76,3 +76,38 @@ using MeshCore: ridgedesc, nridges, P1
 ridgedesc(quads) == P1
 nridges(quads) == 4
 ```
+
+## How to attach the geometry attribute
+
+Here is a small tetrahedral mesh defined by the connectivity `conn`. 
+```
+c = [ [1, 10, 7, 8], 
+ [5, 4, 2, 11], 
+ [11, 2, 8, 10],
+ [4, 11, 10, 2],
+ [2, 1, 8, 10], 
+ [4, 10, 1, 2], 
+ [2, 11, 8, 9], 
+ [6, 5, 3, 12], 
+ [12, 3, 9, 11],
+ [5, 12, 11, 3],
+ [3, 2, 9, 11], 
+ [5, 11, 2, 3] ]   
+using MeshCore: T4, P1, ShapeColl
+tets = ShapeColl(T4, size(c, 1))
+vrts = ShapeColl(P1, 12)
+using MeshCore: IncRel
+conn = IncRel(tets, vrts, c)
+```
+The locations of the vertices are at this point undefined. To remedy this deficiency, we attach the geometry attribute:
+```
+xyz = [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [2.0, 0.0, 0.0], [0.0, 1.0, 0.0], [1.0, 1.0, 0.0], [2.0, 1.0, 0.0], [0.0, 0.0, 3.0], [1.0, 0.0, 3.0], [2.0, 0.0, 3.0], [0.0, 1.0, 3.0], [1.0, 1.0, 3.0], [2.0, 1.0, 3.0]]
+using MeshCore:  VecAttrib
+locs = VecAttrib(xyz)
+vrts.attributes["geom"] = locs
+```
+
+## How to generate a skeleton
+
+## How to generate a transposed incidence relation
+
