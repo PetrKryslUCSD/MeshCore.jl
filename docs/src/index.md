@@ -21,7 +21,7 @@ Pages = [
     "man/types.md",
     "man/functions.md",
 ]
-Depth = 3
+Depth = 1
 ```
 
 ## Concepts
