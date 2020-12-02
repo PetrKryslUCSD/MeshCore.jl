@@ -14,7 +14,7 @@ Depth = 1
 
 ## Reference manual
 
-The description of the types and of the functions.
+The reference description of the types and of the functions.
 
 ```@contents
 Pages = [
