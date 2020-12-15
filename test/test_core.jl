@@ -1040,3 +1040,134 @@ end
 end
 using .mtest1y2
 mtest1y2.test()
+
+
+
+module mtestattrbc1
+using StaticArrays
+using MeshCore: VecAttrib, P1, ShapeColl, attribute, FunAttrib, datavaluetype
+using Test
+# using BenchmarkTools
+
+function test()
+    xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
+    N, T = size(xyz, 2), eltype(xyz)
+    locs =  VecAttrib([SVector{N, T}(xyz[i, :]) for i in 1:size(xyz, 1)])
+
+    @test locs[10] == [633.3333333333334, 800.0]
+
+    # @show typeof(Dict(a.name=>a))
+    # @show typeof(Dict("geom"=>locs))
+    vertices = ShapeColl(P1, size(xyz, 1))
+    vertices.attributes["geom"] = locs
+    locs = vertices.attributes["geom"]
+    @test locs[10] == [633.3333333333334, 800.0]
+    @test length(locs) == 12
+
+    locs = attribute(vertices, "geom")
+    @test locs[10] == [633.3333333333334, 800.0]
+    @test locs[[3, 5]] == StaticArrays.SArray{Tuple{2},Float64,1,2}[[1266.6666666666667, 0.0], [0.0, 400.0]]         
+
+    @test datavaluetype(locs) == typeof(SVector{N, T}([0.0 0.0]))
+    @test size(locs) == (size(xyz, 1),)
+
+    flocs = FunAttrib(SVector{N, T}([0.0 0.0]), size(xyz, 1), i -> SVector{N, T}(xyz[i, :]))
+    vertices.attributes["geom"] = flocs
+    flocs = vertices.attributes["geom"]
+    @test flocs[10] == [633.3333333333334, 800.0]
+
+    @test datavaluetype(flocs) == typeof(SVector{N, T}([0.0 0.0]))
+    @test size(flocs) == (size(xyz, 1),)
+    @test flocs[[3, 5]] == StaticArrays.SArray{Tuple{2},Float64,1,2}[[1266.6666666666667, 0.0], [0.0, 400.0]]    
+
+    true
+end
+end
+using .mtestattrbc1
+mtestattrbc1.test()
+
+module mtestattrbc2
+using StaticArrays
+using MeshCore: VecAttrib, P1, ShapeColl, attribute, FunAttrib, datavaluetype
+using Test
+# using BenchmarkTools
+
+function test()
+    list = [3, 7, 1, 2, 5, 4, 6]
+    N, T = size(list, 2), eltype(list)
+    la =  VecAttrib(list)
+
+    @test la[4] == 2
+
+    la = FunAttrib(0, size(list, 1), i -> list[i])
+    @test la[4] == 2
+
+    list = collect(1:7)
+    N, T = size(list, 2), eltype(list)
+    la =  VecAttrib(list)
+
+    @test la[4] == 4
+
+    la = FunAttrib(0, size(list, 1), i -> i)
+    @test la[4] == 4
+
+    true
+end
+end
+using .mtestattrbc2
+mtestattrbc2.test()
+
+module mtestattrbc3
+using StaticArrays
+using MeshCore: VecAttrib, P1, ShapeColl, attribute, FunAttrib, datavaluetype
+using Test
+# using BenchmarkTools
+
+function test()
+    list = [3, 7, 1, 2, 5, 4, 6]
+    N, T = size(list, 2), eltype(list)
+    la =  VecAttrib(list)
+
+    @test la[4] == 2
+
+    la = FunAttrib(0, size(list, 1), i -> list[i])
+    @test la[4] == 2
+    @test_throws ErrorException la[4] = -4
+    @test la[4] == 2
+
+
+    list = collect(1:7)
+    N, T = size(list, 2), eltype(list)
+    la =  VecAttrib(list)
+
+    @test la[4] == 4
+
+    la = FunAttrib(0, size(list, 1), i -> i)
+    @test la[4] == 4
+    @test_throws ErrorException la[4] = -4
+    @test la[4] == 4
+
+    true
+end
+end
+using .mtestattrbc3
+mtestattrbc3.test()
+
+module mtestattrbc4
+using StaticArrays
+using MeshCore: VecAttrib, P1, ShapeColl, attribute, FunAttrib, datavaluetype
+using Test
+# using BenchmarkTools
+
+function test()
+    xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0]
+    a = FunAttrib(0, size(xyz, 1), i -> 1)
+    vertices = ShapeColl(P1, size(xyz, 1))
+    vertices.attributes["label"] = a
+    @test a[3] == 1
+
+    true
+end
+end
+using .mtestattrbc4
+mtestattrbc4.test()

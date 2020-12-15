@@ -1,10 +1,10 @@
 module Exports
 
 ###############################################################################
-using ..MeshCore: AbsAttrib, VecAttrib
+using ..MeshCore: AbsAttrib, VecAttrib, FunAttrib
 using ..MeshCore: datavaluetype
 
-export AbsAttrib, VecAttrib
+export AbsAttrib, VecAttrib, FunAttrib
 export datavaluetype
 
 ###############################################################################
