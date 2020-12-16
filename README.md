@@ -2,7 +2,7 @@
 [![Codecov](https://codecov.io/gh/PetrKryslUCSD/MeshCore.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/PetrKryslUCSD/MeshCore.jl)
 [![Build status](https://github.com/PetrKryslUCSD/MeshCore.jl/workflows/CI/badge.svg)](https://github.com/PetrKryslUCSD/MeshCore.jl/actions)
 [![Latest documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://petrkryslucsd.github.io/MeshCore.jl/dev)
-[![DOI](https://zenodo.org/badge/246866556.svg)](https://zenodo.org/badge/latestdoi/246866556)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4027970.svg)](https://doi.org/10.5281/zenodo.4027970)
 
 # MeshCore.jl
 
