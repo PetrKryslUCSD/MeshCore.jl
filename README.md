@@ -39,6 +39,7 @@ A paper is under review. The package [PaperMeshTopo](https://github.com/PetrKrys
 
 ## News
 
+- 12/15/2020: Tested with Julia 1.6.
 - 12/15/2020: Added "function" attributes.
 - 07/10/2020: Naming of the symbols has been updated to reduce conflicts.
 - 07/06/2020: Exports have been added to facilitate use of the library.
