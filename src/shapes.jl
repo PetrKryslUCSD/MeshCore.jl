@@ -1,33 +1,33 @@
 """
-    ShapeColl{S <: AbsShapeDesc}
+    ShapeColl{S<:AbsShapeDesc}
 
 This is the type of a homogeneous collection of finite element shapes.
 
 - `S` = shape descriptor: subtype of AbsShapeDesc.
 """
-struct ShapeColl{S <: AbsShapeDesc}
+struct ShapeColl{S<:AbsShapeDesc}
     shapedesc::S # Shape descriptor
-	nshapes::Int64 # Number of shapes in the collection
-	attributes::Dict{String, AbsAttrib} # dictionary of attributes
+    nshapes::Int64 # Number of shapes in the collection
+    attributes::Dict{String,AbsAttrib} # dictionary of attributes
     name::String # name of the shape collection
 end
 
 """
-    ShapeColl(shapedesc::S, nshapes::Int64) where {S <: AbsShapeDesc}
+    ShapeColl(shapedesc::S, nshapes::Int64) where {S<:AbsShapeDesc}
 
 Set up new shape collection with an empty dictionary of attributes and a default name.
 """
-function ShapeColl(shapedesc::S, nshapes::Int64) where {S <: AbsShapeDesc}
-	ShapeColl(shapedesc::S, nshapes, Dict{String, AbsAttrib}(), "shapes")
+function ShapeColl(shapedesc::S, nshapes::Int64) where {S<:AbsShapeDesc}
+    ShapeColl(shapedesc::S, nshapes, Dict{String,AbsAttrib}(), "shapes")
 end
 
 """
-    ShapeColl(shapedesc::S, nshapes::Int64, s::String) where {S <: AbsShapeDesc}
+    ShapeColl(shapedesc::S, nshapes::Int64, s::String) where {S<:AbsShapeDesc}
 
 Set up new shape collection with an empty dictionary of attributes.
 """
-function ShapeColl(shapedesc::S, nshapes::Int64, s::String) where {S <: AbsShapeDesc}
-    ShapeColl(shapedesc::S, nshapes, Dict{String, AbsAttrib}(), s)
+function ShapeColl(shapedesc::S, nshapes::Int64, s::String) where {S<:AbsShapeDesc}
+    ShapeColl(shapedesc::S, nshapes, Dict{String,AbsAttrib}(), s)
 end
 
 """
@@ -112,16 +112,16 @@ Retrieve a named attribute.
 attribute(shapes::ShapeColl, s::String) = shapes.attributes[s]
 
 function _sense(fc, oc, nshifts) # is the facet used in the positive or in the negative sense?
-	if fc == oc
-		return +1 # facet used in the positive sense
-	end
-	for i in 1:nshifts-1
-		fc = circshift(fc, 1) # try a circular shift
-		if fc == oc
-			return +1 # facet used in the positive sense
-		end
-	end
-	return -1 # facet used in the positive sense
+    if fc == oc
+        return +1 # facet used in the positive sense
+    end
+    for i in 1:(nshifts - 1)
+        fc = circshift(fc, 1) # try a circular shift
+        if fc == oc
+            return +1 # facet used in the positive sense
+        end
+    end
+    return -1 # facet used in the positive sense
 end
 
 """
@@ -138,6 +138,6 @@ function Base.summary(sc::S) where {S<:ShapeColl}
         end
         s = s * "}"
     end
-    
+
     return s
 end

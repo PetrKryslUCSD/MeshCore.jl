@@ -1,5 +1,5 @@
 """
-    IncRel{LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
+    IncRel{LEFT<:AbsShapeDesc,RIGHT<:AbsShapeDesc,T}
 
 Incidence relation expressing connectivity between an entity of the shape on the
 left and a list of entities of the shape on the right.
@@ -31,12 +31,18 @@ or equivalently
 ir[55, 1]
 ```
 """
-struct IncRel{LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
-	left::ShapeColl{LEFT}
-	right::ShapeColl{RIGHT}
-	_v::Vector{T} # vector of vectors of shape numbers
+struct IncRel{LEFT<:AbsShapeDesc,RIGHT<:AbsShapeDesc,T}
+    left::ShapeColl{LEFT}
+    right::ShapeColl{RIGHT}
+    _v::Vector{T} # vector of vectors of shape numbers
     name::String # name of the incidence relation
-    function IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, v::Vector{T}, name::String, internal) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
+    function IncRel(
+        left::ShapeColl{LEFT},
+        right::ShapeColl{RIGHT},
+        v::Vector{T},
+        name::String,
+        internal
+    ) where {LEFT<:AbsShapeDesc,RIGHT<:AbsShapeDesc,T}
         @_check (nshapes(left) == length(v))
         minn = typemax(eltype(v[1]))
         maxn = typemin(eltype(v[1]))
@@ -45,51 +51,69 @@ struct IncRel{LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
             maxn = max(maxn, maximum(abs.(v[i])))
         end
         @_check (nshapes(right) >= maxn)
-        return new{LEFT, RIGHT, T}(left, right, v, name)
+        return new{LEFT,RIGHT,T}(left, right, v, name)
     end
 end
 
 # Provide access to the incidence relation data as if it was a one-dimensional
 # or two dimensional array.
 Base.IndexStyle(::Type{<:IncRel}) = IndexLinear()
-Base.size(ir::IR) where {IR<:IncRel} =  (length(ir._v), )
+Base.size(ir::IR) where {IR<:IncRel} = (length(ir._v),)
 Base.getindex(ir::IR, i::Int) where {IR<:IncRel} = ir._v[i]
 Base.getindex(ir::IR, i::Int, k::Int) where {IR<:IncRel} = ir._v[i][k]
 
 """
-    IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, v::Vector{T}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
+    IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, v::Vector{T}) where {LEFT<:AbsShapeDesc,RIGHT<:AbsShapeDesc,T}
 
 Convenience constructor with a vector of vectors and a default name.
 """
-function IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, v::Vector{T}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
+function IncRel(
+    left::ShapeColl{LEFT},
+    right::ShapeColl{RIGHT},
+    v::Vector{T}
+) where {LEFT<:AbsShapeDesc,RIGHT<:AbsShapeDesc,T}
     IncRel(left, right, deepcopy(v), "(" * left.name * ", " * right.name * ")", true)
 end
 
 """
-    IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, v::Vector{T}, name::String) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
+    IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, v::Vector{T}, name::String) where {LEFT<:AbsShapeDesc,RIGHT<:AbsShapeDesc,T}
 
 Convenience constructor with a vector of vectors and a name.
 """
-function IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, v::Vector{T}, name::String) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
+function IncRel(
+    left::ShapeColl{LEFT},
+    right::ShapeColl{RIGHT},
+    v::Vector{T},
+    name::String
+) where {LEFT<:AbsShapeDesc,RIGHT<:AbsShapeDesc,T}
     IncRel(left, right, deepcopy(v), name, true)
 end
 
 """
-    IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, data::Matrix{MT}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, MT}
+    IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, data::Matrix{MT}) where {LEFT<:AbsShapeDesc,RIGHT<:AbsShapeDesc,MT}
 
 Convenience constructor supplying a matrix instead of a vector of vectors and a default name.
 """
-function IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, data::Matrix{MT}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, MT}
+function IncRel(
+    left::ShapeColl{LEFT},
+    right::ShapeColl{RIGHT},
+    data::Matrix{MT}
+) where {LEFT<:AbsShapeDesc,RIGHT<:AbsShapeDesc,MT}
     _v = [SVector{nvertices(left.shapedesc)}(data[idx, :]) for idx in 1:size(data, 1)]
-	IncRel(left, right, _v, "(" * left.name * ", " * right.name * ")", true)
+    IncRel(left, right, _v, "(" * left.name * ", " * right.name * ")", true)
 end
 
 """
-    IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, data::Matrix{MT}, name::String) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, MT}
+    IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, data::Matrix{MT}, name::String) where {LEFT<:AbsShapeDesc,RIGHT<:AbsShapeDesc,MT}
 
 Convenience constructor supplying a matrix instead of a vector of vectors and a name.
 """
-function IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, data::Matrix{MT}, name::String) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, MT}
+function IncRel(
+    left::ShapeColl{LEFT},
+    right::ShapeColl{RIGHT},
+    data::Matrix{MT},
+    name::String
+) where {LEFT<:AbsShapeDesc,RIGHT<:AbsShapeDesc,MT}
     _v = [SVector{nvertices(left.shapedesc)}(data[idx, :]) for idx in 1:size(data, 1)]
     IncRel(left, right, _v, name, true)
 end
@@ -100,14 +124,14 @@ end
 Provide type of the incidence index (entity number).
 Presumably some type of integer.
 """
-indextype(ir::IncRel) = eltype(eltype(ir._v))  
+indextype(ir::IncRel) = eltype(eltype(ir._v))
 
 """
     nrelations(ir::IncRel)
 
 Number of individual relations in the incidence relation.
 """
-nrelations(ir::IncRel)  = length(ir._v)
+nrelations(ir::IncRel) = length(ir._v)
 
 """
     nentities(ir::IncRel, j::IT) where {IT}
@@ -117,17 +141,18 @@ Number of individual entities in the `j`-th relation in the incidence relation.
 nentities(ir::IncRel, j::IT) where {IT} = length(ir._v[j])
 
 """
-    code(ir::IncRel{LEFT, RIGHT, T}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T} 
+    code(ir::IncRel{LEFT,RIGHT,T}) where {LEFT<:AbsShapeDesc,RIGHT<:AbsShapeDesc,T}
 
 Formulate the code of the incidence relation.
 """
-ir_code(ir::IncRel{LEFT, RIGHT, T}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T} = (manifdim(shapedesc(ir.left)), manifdim(shapedesc(ir.right)))
+ir_code(ir::IncRel{LEFT,RIGHT,T}) where {LEFT<:AbsShapeDesc,RIGHT<:AbsShapeDesc,T} =
+    (manifdim(shapedesc(ir.left)), manifdim(shapedesc(ir.right)))
 
 """
     ir_transpose(ir::IncRel, name = "trp")
 
 Compute the "transposed" incidence relation `(d1, d2)`, where `d2 >= d1`.
-  
+
 This only makes sense for `d2 >= 0`. For `d2=1` we get for each vertex the list
 of edges connected to the vertex, and analogously faces and cells for `d=2` and
 `d=3`.
@@ -138,28 +163,28 @@ shape collection are swapped in the output relative to the input.
 """
 function ir_transpose(ir::IncRel, name = "trp")
     @_check (manifdim(ir.left) >= manifdim(ir.right))
-	inttype = eltype(ir._v[1])
+    inttype = eltype(ir._v[1])
     # Find out how many of the transpose incidence relations there are
-	nvmax = 0
-	for j in 1:nrelations(ir)
-		for k in 1:nentities(ir, j)
-			nvmax = max(nvmax, ir[j, k])
-		end
-	end
-	# pre-allocate relations vector
-	_v = Vector{inttype}[];
-	sizehint!(_v, nvmax)
-	# Initialize the relations to empty
+    nvmax = 0
+    for j in 1:nrelations(ir)
+        for k in 1:nentities(ir, j)
+            nvmax = max(nvmax, ir[j, k])
+        end
+    end
+    # pre-allocate relations vector
+    _v = Vector{inttype}[]
+    sizehint!(_v, nvmax)
+    # Initialize the relations to empty
     for i in 1:nvmax
         push!(_v, inttype[])  # initially empty arrays
     end
-	# Build the transpose relations
+    # Build the transpose relations
     for j in 1:nrelations(ir)
-		for k in 1:nentities(ir, j)
-			c = abs(ir[j, k]) # this could be an oriented entity: remove the sign
-			push!(_v[c], j)
-		end
-	end
+        for k in 1:nentities(ir, j)
+            c = abs(ir[j, k]) # this could be an oriented entity: remove the sign
+            push!(_v[c], j)
+        end
+    end
     return IncRel(ir.right, ir.left, _v, name)
 end
 
@@ -173,15 +198,15 @@ end
 
 function _mysortdim2!(A)
     # Sort each row  of A in ascending order.
-    m, n = size(A);
+    m, n = size(A)
     r = zeros(eltype(A), n)
     for k in 1:m
         for i in 1:n
-            r[i] = A[k,i]
+            r[i] = A[k, i]
         end
-        sort!(r);
+        sort!(r)
         for i in 1:n
-            A[k,i] = r[i]
+            A[k, i] = r[i]
         end
     end
     return A
@@ -189,17 +214,18 @@ end
 
 function _mysortrowsperm(A)
     # Sort the rows of A by sorting each column from back to front.
-    m,n = size(A);
-    indx = collect(1:m); sindx = zeros(eltype(A), m)
-    nindx = zeros(eltype(A), m);
+    m, n = size(A)
+    indx = collect(1:m)
+    sindx = zeros(eltype(A), m)
+    nindx = zeros(eltype(A), m)
     col = zeros(eltype(A), m)
-    for c = n:-1:1
+    for c in n:-1:1
         for i in 1:m
-            col[i] = A[indx[i],c]
+            col[i] = A[indx[i], c]
         end
-        #Sorting a column vector is much faster than sorting a column matrix
-        # sindx = sortperm(col, alg=QuickSort);
-        sortperm!(sindx, col, alg=QuickSort); # available for 0.4, slightly faster
+        # Sorting a column vector is much faster than sorting a column matrix
+        #sindx = sortperm(col, alg=QuickSort);
+        sortperm!(sindx, col, alg = QuickSort) # available for 0.4, slightly faster
         for i in 1:m
             nindx[i] = indx[sindx[i]]
         end
@@ -211,12 +237,12 @@ function _mysortrowsperm(A)
 end
 
 function _countrepeats(A)
-    m, n = size(A);
-    occurrences = zeros(eltype(A), m);
+    m, n = size(A)
+    occurrences = zeros(eltype(A), m)
     occurrences[1] = 1
     for i in 2:m
-        if A[i, :] == A[i-1, :]
-            occurrences[i] = occurrences[i-1] + 1
+        if A[i, :] == A[i - 1, :]
+            occurrences[i] = occurrences[i - 1] + 1
         else
             occurrences[i] = 1
         end
@@ -239,9 +265,9 @@ the manifold dimension of the shapes themselves). The right shape collection is
 the same as for the input.
 """
 function ir_skeleton(ir::IncRel, name = "skt")
-	@_check (manifdim(ir.right) == 0)
-	@_check (manifdim(ir.left) > 0)
-	inttype = eltype(ir._v[1])
+    @_check (manifdim(ir.right) == 0)
+    @_check (manifdim(ir.left) > 0)
+    inttype = eltype(ir._v[1])
     c = _asmatrix(ir, inttype) # incidence as a 2D array
     # construct a 2D array of the hyperface incidences
     hfc = c[:, facetconnectivity(ir.left, 1)]
@@ -257,8 +283,8 @@ function ir_skeleton(ir::IncRel, name = "skt")
     s2hfc = s2hfc[idx, :]
     rep = _countrepeats(s2hfc) # find the repeats of the rows
     # identify boundary facets: the hyperface is boundary if it has no repeats
-    isunq = [(rep[i] == 1) && (rep[i+1] == 1) for i in 1:length(rep)-1] 
-    push!(isunq,  (rep[end] == 1)) # and the last one
+    isunq = [(rep[i] == 1) && (rep[i + 1] == 1) for i in 1:(length(rep) - 1)]
+    push!(isunq, (rep[end] == 1)) # and the last one
     # unique rows are obtained by ignoring the repeats
     unq = findall(a -> a == 1, rep)
     unqhfc = shfc[unq, :] # unique hyper faces
@@ -277,24 +303,24 @@ The `skeleton` function.
 function ir_boundary(ir::IncRel, name = "bdr")
     sir = ir_skeleton(ir)
     isboundary = sir.left.attributes["isboundary"]
-    ind = [i for i in 1:length(isboundary) if isboundary[i]] 
+    ind = [i for i in 1:length(isboundary) if isboundary[i]]
     lft = ShapeColl(shapedesc(sir.left), length(ind), "facets")
     return IncRel(lft, sir.right, sir._v[ind], name)
 end
 
 function _selectrepeating(v, nrepeats)
-	m = length(v);
-    occurrences = zeros(eltype(v), m);
-	sort!(v)
-	occurrences[1] = 1
+    m = length(v)
+    occurrences = zeros(eltype(v), m)
+    sort!(v)
+    occurrences[1] = 1
     for i in 2:m
-        if v[i] == v[i-1]
-            occurrences[i] = occurrences[i-1] + 1
+        if v[i] == v[i - 1]
+            occurrences[i] = occurrences[i - 1] + 1
         else
             occurrences[i] = 1
         end
     end
-	repeats = [o == nrepeats for o in occurrences]
+    repeats = [o == nrepeats for o in occurrences]
     return v[repeats]
 end
 
@@ -326,43 +352,43 @@ manifold dimension of the shapes themselves).
     1st-order vertices of the facet shape.
 """
 function ir_bbyfacets(ir::IncRel, fir::IncRel, tfir::IncRel, name = "bbf")
-	@_check (manifdim(ir.right) == 0)
+    @_check (manifdim(ir.right) == 0)
     @_check (manifdim(fir.right) == 0)
     @_check (manifdim(tfir.left) == 0)
-	@_check manifdim(ir.left) == manifdim(tfir.right)+1
-	@_check manifdim(tfir.right) == manifdim(fir.left)
-	inttype = eltype(ir._v[1])
-	n1st = n1storderv(fir.left.shapedesc)
-	nshif = nshifts(fir.left.shapedesc)
-	# Sweep through the relations of (d, 0,) and use the (0, d-1) tfir
-	_c = fill(inttype(0), nrelations(ir), nfacets(ir.left))
+    @_check manifdim(ir.left) == manifdim(tfir.right) + 1
+    @_check manifdim(tfir.right) == manifdim(fir.left)
+    inttype = eltype(ir._v[1])
+    n1st = n1storderv(fir.left.shapedesc)
+    nshif = nshifts(fir.left.shapedesc)
+    # Sweep through the relations of (d, 0,) and use the (0, d-1) tfir
+    _c = fill(inttype(0), nrelations(ir), nfacets(ir.left))
     for i in 1:nrelations(ir) # Sweep through the relations of (d, 0)
-		sv = ir[i]
-		c = inttype[] # this will be the list of facets at the vertices of this entity
-		for j in 1:nentities(ir, i) # for all vertices
-			fv = ir[i, j]
-			for k in 1:nentities(tfir, fv)
-				push!(c, tfir[fv, k])
-			end # k
-		end
-		c = _selectrepeating(c, nvertices(tfir.right)) # keep the repeats
-		@_check length(c) == nfacets(ir.left)
-		# Now figure out the orientations
-		for k in 1:nfacets(ir.left)
-			fc = sv[facetconnectivity(ir.left, k)]
-			sfc = sort(fc)
-			for j in 1:length(c)
-				oc = fir[c[j]]
-				if sfc == sort(oc)
-					sgn = _sense(fc[1:n1st], oc, nshif)
-					_c[i, k] = sgn * c[j]
-					break;
-				end
-			end # j
-		end
-	end
-	bfacets = ShapeColl(fir.left.shapedesc, nshapes(tfir.right))
-	return IncRel(ir.left, bfacets, _c, name)
+        sv = ir[i]
+        c = inttype[] # this will be the list of facets at the vertices of this entity
+        for j in 1:nentities(ir, i) # for all vertices
+            fv = ir[i, j]
+            for k in 1:nentities(tfir, fv)
+                push!(c, tfir[fv, k])
+            end # k
+        end
+        c = _selectrepeating(c, nvertices(tfir.right)) # keep the repeats
+        @_check length(c) == nfacets(ir.left)
+        # Now figure out the orientations
+        for k in 1:nfacets(ir.left)
+            fc = sv[facetconnectivity(ir.left, k)]
+            sfc = sort(fc)
+            for j in 1:length(c)
+                oc = fir[c[j]]
+                if sfc == sort(oc)
+                    sgn = _sense(fc[1:n1st], oc, nshif)
+                    _c[i, k] = sgn * c[j]
+                    break
+                end
+            end # j
+        end
+    end
+    bfacets = ShapeColl(fir.left.shapedesc, nshapes(tfir.right))
+    return IncRel(ir.left, bfacets, _c, name)
 end
 
 """
@@ -376,7 +402,7 @@ is computed on the fly.
 # See also: [`ir_bbyfacets(ir::IncRel, fir::IncRel, tfir::IncRel)`](@ref)
 """
 function ir_bbyfacets(ir::IncRel, fir::IncRel, name = "bbf")
-	return ir_bbyfacets(ir, fir, ir_transpose(fir), name)
+    return ir_bbyfacets(ir, fir, ir_transpose(fir), name)
 end
 
 """
@@ -403,41 +429,41 @@ the manifold dimension of the shapes themselves).
     1st-order vertices of the ridge shape.
 """
 function ir_bbyridges(ir::IncRel, eir::IncRel, teir::IncRel, name = "bbr")
-	@_check (manifdim(ir.right) == 0) && (manifdim(teir.left) == 0)
-	@_check manifdim(ir.left) == manifdim(teir.right)+2
-	@_check manifdim(teir.right) == manifdim(eir.left)
-	inttype = eltype(ir._v[1])
-	n1st = n1storderv(eir.left.shapedesc)
-	nshif = nshifts(eir.left.shapedesc)
-	# Sweep through the relations of (d, 0), and use the (0, d-2) teir
-	_c = fill(inttype(0), nrelations(ir), nridges(ir.left))
-	for i in 1:nrelations(ir) # Sweep through the relations of (d, 0)
-		sv = ir[i]
-		c = inttype[] # this will be the list of facets at the vertices of this entity
-		for j in 1:nentities(ir, i) # for all vertices
-			fv = ir[i, j]
-			for k in 1:nentities(teir, fv)
-				push!(c, teir[fv, k])
-			end # k
-		end
-		c = _selectrepeating(c, nvertices(teir.right)) # keep the repeats
-		@_check length(c) == nridges(ir.left)
-		# Now figure out the orientations
-		for k in 1:nridges(ir.left)
-			fc = sv[ridgeconnectivity(ir.left, k)]
-			sfc = sort(fc)
-			for j in 1:length(c)
-				oc = eir[c[j]]
-				if sfc == sort(oc)
-					sgn = _sense(fc[1:n1st], oc, nshif)
-					_c[i, k] = sgn * c[j]
-					break;
-				end
-			end # j
-		end
-	end
-	bridges = ShapeColl(eir.left.shapedesc, nshapes(teir.right))
-	return IncRel(ir.left, bridges, _c, name)
+    @_check (manifdim(ir.right) == 0) && (manifdim(teir.left) == 0)
+    @_check manifdim(ir.left) == manifdim(teir.right) + 2
+    @_check manifdim(teir.right) == manifdim(eir.left)
+    inttype = eltype(ir._v[1])
+    n1st = n1storderv(eir.left.shapedesc)
+    nshif = nshifts(eir.left.shapedesc)
+    # Sweep through the relations of (d, 0), and use the (0, d-2) teir
+    _c = fill(inttype(0), nrelations(ir), nridges(ir.left))
+    for i in 1:nrelations(ir) # Sweep through the relations of (d, 0)
+        sv = ir[i]
+        c = inttype[] # this will be the list of facets at the vertices of this entity
+        for j in 1:nentities(ir, i) # for all vertices
+            fv = ir[i, j]
+            for k in 1:nentities(teir, fv)
+                push!(c, teir[fv, k])
+            end # k
+        end
+        c = _selectrepeating(c, nvertices(teir.right)) # keep the repeats
+        @_check length(c) == nridges(ir.left)
+        # Now figure out the orientations
+        for k in 1:nridges(ir.left)
+            fc = sv[ridgeconnectivity(ir.left, k)]
+            sfc = sort(fc)
+            for j in 1:length(c)
+                oc = eir[c[j]]
+                if sfc == sort(oc)
+                    sgn = _sense(fc[1:n1st], oc, nshif)
+                    _c[i, k] = sgn * c[j]
+                    break
+                end
+            end # j
+        end
+    end
+    bridges = ShapeColl(eir.left.shapedesc, nshapes(teir.right))
+    return IncRel(ir.left, bridges, _c, name)
 end
 
 """
@@ -451,7 +477,7 @@ is computed on the fly.
 # See also: [`ir_bbyridges(ir::IncRel, eir::IncRel, efir::IncRel)`](@ref)
 """
 function ir_bbyridges(ir::IncRel, eir::IncRel, name = "bbr")
-	return ir_bbyridges(ir, eir, ir_transpose(eir), name)
+    return ir_bbyridges(ir, eir, ir_transpose(eir), name)
 end
 
 """
@@ -464,9 +490,17 @@ to itself.
 """
 function ir_identity(ir::IncRel, side = :left)
     if side == :left
-        return IncRel(ir.left, ir.left, [SVector{1, Int64}([idx]) for idx in 1:nshapes(ir.left)])
+        return IncRel(
+            ir.left,
+            ir.left,
+            [SVector{1,Int64}([idx]) for idx in 1:nshapes(ir.left)],
+        )
     else
-        return IncRel(ir.right, ir.right, [SVector{1, Int64}([idx]) for idx in 1:nshapes(ir.right)])
+        return IncRel(
+            ir.right,
+            ir.right,
+            [SVector{1,Int64}([idx]) for idx in 1:nshapes(ir.right)],
+        )
     end
 end
 
@@ -487,5 +521,5 @@ end
 Form a brief summary of the incidence relation.
 """
 function Base.summary(ir::IncRel)
-    return "$(ir.name): " * summary(ir.left) * ", " * summary(ir.right) 
+    return "$(ir.name): " * summary(ir.left) * ", " * summary(ir.right)
 end
