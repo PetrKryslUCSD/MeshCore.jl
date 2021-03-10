@@ -1,9 +1,10 @@
 name = "MeshCore"
 uuid = "43a99bba-f459-4d0e-8139-f3df11d847d4"
 authors = ["Petr Krysl <pkrysl@ucsd.edu>"]
-version = "1.1.0"
+version = "1.1.1"
 
 [deps]
+Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
