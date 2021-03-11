@@ -50,6 +50,7 @@ representation of a tetrahedral mesh.
 
 ## News
 
+- 03/11/2021: Released for  Julia 1.6.
 - 12/15/2020: Tested with Julia 1.6.
 - 12/15/2020: Added "function" attributes.
 - 07/10/2020: Naming of the symbols has been updated to reduce conflicts.
