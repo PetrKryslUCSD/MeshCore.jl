@@ -13,7 +13,7 @@ access.
 
 ## Usage
 
-This release is for Julia 1.5.
+This release is for Julia 1.6.
 
 The package is registered: doing
 ```
