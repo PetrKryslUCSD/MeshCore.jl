@@ -42,7 +42,7 @@ Please refer to the tutorials in the package
 
 ## Publications
 
-A paper was accepted to the Journal Advances in Engineering Software in April 2021. The paper is available in final draft form in the `documents` folder.
+A paper was accepted to the Journal Advances in Engineering Software in April 2021. The paper is available in final draft form in the `docs/concepts` folder.
 
 The package
 [PaperMeshTopo](https://github.com/PetrKryslUCSD/PaperMeshTopo.jl.git) gives an
@@ -51,6 +51,7 @@ representation of a tetrahedral mesh.
 
 ## News
 
+- 04/23/2021: Added the final draft of the accepted paper.
 - 03/11/2021: Released for Julia 1.6.
 - 12/15/2020: Tested with Julia 1.6.
 - 12/15/2020: Added "function" attributes.
