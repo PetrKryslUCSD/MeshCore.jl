@@ -1,4 +1,4 @@
-The paper describing the library was accepted for publication in advances in engineering software in April 2021. The final draft is available as [PDF](../../mesh-topo-v6.pdf) in the `documents` folder of the repository.
+The paper describing the library was accepted for publication in advances in engineering software in April 2021. The final draft is available as [PDF](../documents/mesh-topo-v6.pdf) in the `documents` folder of the repository.
 
 # Glossary
 
