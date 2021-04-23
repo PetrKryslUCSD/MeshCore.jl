@@ -42,7 +42,9 @@ Please refer to the tutorials in the package
 
 ## Publications
 
-A paper is under review. The package
+A paper was accepted to the Journal Advances in Engineering Software in April 2021. The paper is available in final draft form in the `documents` folder.
+
+The package
 [PaperMeshTopo](https://github.com/PetrKryslUCSD/PaperMeshTopo.jl.git) gives an
 example of the construction of a complex (full one-level) topological
 representation of a tetrahedral mesh.
