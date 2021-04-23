@@ -46,9 +46,9 @@ end
 
 Base.size(a::A) where {A<:VecAttrib} = (length(a.v),)
 Base.getindex(a::A, i::Int) where {A<:VecAttrib} = a.v[i]
-Base.getindex(a::A, I::Vararg{Int,N}) where {A<:VecAttrib,N} = a.v[I...]
+Base.getindex(a::A, I::Vararg{Int,N}) where {A<:VecAttrib,N} = a.v[[I...]]
 Base.setindex!(a::A, v, i::Int) where {A<:VecAttrib} = (a.v[i] = v)
-Base.setindex!(a::A, v, I::Vararg{Int,N}) where {A<:VecAttrib,N} = (a.v[I...] .= v)
+Base.setindex!(a::A, v, I::Vararg{Int,N}) where {A<:VecAttrib,N} = (a.v[[I...]] .= v)
 
 """
     FunAttrib{T,M,F} <: AbsAttrib{T}
@@ -90,7 +90,7 @@ end
 
 Base.size(a::A) where {A<:FunAttrib} = (a.m,)
 Base.getindex(a::A, i::Int) where {A<:FunAttrib} = a.f(i)
-Base.getindex(a::A, I::Vararg{Int,N}) where {A<:FunAttrib,N} = a.f.(I...)
+Base.getindex(a::A, I::Vararg{Int,N}) where {A<:FunAttrib,N} = a.f.([I...])
 # The `show` method may need some more work. It doesn't seem to play nice with @show .
 Base.show(io::IOContext{Base.TTY}, unused::MIME{Symbol("text/plain")}, a::X) where {X<:FunAttrib} = let 
     print(io, "$(a.m)-element FunAttrib")

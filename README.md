@@ -8,8 +8,8 @@
 
 Small package for operating on the topology of meshes for the Finite Element
 Methods (FEM). All essential topological incidence relations are provided: see
-the guide. The library provides efficient storage in static arrays for speed of
-access.
+the guide in [documentation](https://petrkryslucsd.github.io/MeshCore.jl/dev).
+The library provides efficient storage in static arrays for speed of access.
 
 ## Usage
 
@@ -31,8 +31,8 @@ or all exported symbols maybe made available in the user's context as
 ```
 using MeshCore.Exports
 ```
-Using the library by itself is certainly possible. If you wish for a  more
-comprehensive mesh-handling package, check out
+Using the library by itself is certainly possible.
+If you wish for a more comprehensive mesh-handling package, check out
 [MeshSteward.jl](https://github.com/PetrKryslUCSD/MeshSteward.jl).
 
 ## Learning
@@ -49,10 +49,9 @@ The package
 example of the construction of a complex (full one-level) topological
 representation of a tetrahedral mesh.
 
-
 ## News
 
-- 03/11/2021: Released for  Julia 1.6.
+- 03/11/2021: Released for Julia 1.6.
 - 12/15/2020: Tested with Julia 1.6.
 - 12/15/2020: Added "function" attributes.
 - 07/10/2020: Naming of the symbols has been updated to reduce conflicts.
