@@ -42,7 +42,7 @@ Please refer to the tutorials in the package
 
 ## Publications
 
-A paper was accepted to the Journal Advances in Engineering Software in April 2021. The paper is available in final draft form in the `docs/concepts` folder.
+A paper was accepted to the Journal Advances in Engineering Software in April 2021. The paper is available in final draft form in the `docs/src/concepts` folder.
 
 The package
 [PaperMeshTopo](https://github.com/PetrKryslUCSD/PaperMeshTopo.jl.git) gives an
