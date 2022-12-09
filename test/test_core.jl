@@ -1132,7 +1132,7 @@ function test()
 
     la = FunAttrib(0, size(list, 1), i -> list[i])
     @test la[4] == 2
-    @test_throws ErrorException la[4] = -4
+    @test_throws CanonicalIndexError la[4] = -4
     @test la[4] == 2
 
 
@@ -1144,7 +1144,7 @@ function test()
 
     la = FunAttrib(0, size(list, 1), i -> i)
     @test la[4] == 4
-    @test_throws ErrorException la[4] = -4
+    @test_throws CanonicalIndexError la[4] = -4
     @test la[4] == 4
 
     true
