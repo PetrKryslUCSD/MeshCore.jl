@@ -165,12 +165,7 @@ function ir_transpose(ir::IncRel, name = "trp")
     @_check (manifdim(ir.left) >= manifdim(ir.right))
     inttype = eltype(ir._v[1])
     # Find out how many of the transpose incidence relations there are
-    nvmax = 0
-    for j in 1:nrelations(ir)
-        for k in 1:nentities(ir, j)
-            nvmax = max(nvmax, ir[j, k])
-        end
-    end
+    nvmax = nshapes(ir.right)
     # pre-allocate relations vector
     _v = Vector{inttype}[]
     sizehint!(_v, nvmax)
