@@ -47,8 +47,10 @@ struct IncRel{LEFT<:AbsShapeDesc,RIGHT<:AbsShapeDesc,T}
         minn = typemax(eltype(v[1]))
         maxn = typemin(eltype(v[1]))
         for i in 1:length(v)
-            minn = min(minn, minimum(abs.(v[i])))
-            maxn = max(maxn, maximum(abs.(v[i])))
+            if !isempty(v[i])
+                minn = min(minn, minimum(abs.(v[i])))
+                maxn = max(maxn, maximum(abs.(v[i])))
+            end
         end
         @_check (nshapes(right) >= maxn)
         return new{LEFT,RIGHT,T}(left, right, v, name)
