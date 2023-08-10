@@ -1,6 +1,7 @@
 module MeshCore
 
 using StaticArrays
+using TupleTools: sort
 
 include("utilities.jl")
 include("attributes.jl")

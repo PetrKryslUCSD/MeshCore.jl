@@ -188,7 +188,7 @@ end
 function _asmatrix(ir, inttype)
     c = fill(inttype(0), nshapes(ir.left), nvertices(shapedesc(ir.left)))
     for i in 1:nshapes(ir.left)
-        c[i, :] = ir[i]
+        c[i, :] .= ir[i]
     end
     return c
 end
@@ -376,8 +376,8 @@ function ir_bbyfacets(ir::IncRel, fir::IncRel, tfir::IncRel, name = "bbf")
             sfc = sort(fc)
             for j in 1:length(c)
                 oc = fir[c[j]]
-                if sfc == sort(oc)
-                    sgn = _sense(fc[1:n1st], oc, nshif)
+                if sfc == sort(oc.data)
+                    sgn = _sense(fc[1:n1st], oc.data, nshif)
                     _c[i, k] = sgn * c[j]
                     break
                 end
