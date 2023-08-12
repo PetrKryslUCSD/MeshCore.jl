@@ -1234,3 +1234,44 @@ end
 end
 using .mfunattraccess1
 mfunattraccess1.test()
+
+module mconstructortuple001
+using Test
+using MeshCore
+function test()
+    q4s = MeshCore.ShapeColl(MeshCore.Q4, 6)
+    vrts = MeshCore.ShapeColl(MeshCore.P1, 12)
+
+    c = [(1, 2, 6, 5), (5, 6, 10, 9), (6, 2, 3, 7), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
+    d2_d0 = MeshCore.IncRel(q4s, vrts, c)
+
+    d1_d0 = MeshCore.ir_skeleton(d2_d0)
+    @test MeshCore.nshapes(d1_d0.left) == 17
+    @test MeshCore.nshapes(d1_d0.right) == 12
+    true
+end
+test()
+nothing
+end
+
+module mpathaex001
+using Test
+using MeshCore
+function test()
+
+
+    q4s = MeshCore.ShapeColl(MeshCore.Q4, 6)
+    vrts = MeshCore.ShapeColl(MeshCore.P1, 12)
+
+    c = [(1, 2, 6, 5), (5, 6, 10, 9), (6, 2, 3, 7), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
+
+    d2_d0 = MeshCore.IncRel(q4s, vrts, c)
+    d1_d0 = MeshCore.ir_skeleton(d2_d0)
+    d0_d1 = MeshCore.ir_transpose(d1_d0)
+    d2_d1 = MeshCore.ir_bbyfacets(d2_d0, d1_d0, d0_d1)  # after the .= correction the next error takes place here
+    true
+end
+test()
+nothing
+end
+
