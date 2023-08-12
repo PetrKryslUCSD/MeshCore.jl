@@ -1,5 +1,5 @@
 """
-    IncRel{LEFT<:AbsShapeDesc,RIGHT<:AbsShapeDesc,T}
+    IncRel{LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
 
 Incidence relation expressing connectivity between an entity of the shape on the
 left and a list of entities of the shape on the right.
@@ -31,7 +31,7 @@ or equivalently
 ir[55, 1]
 ```
 """
-struct IncRel{LEFT<:AbsShapeDesc,RIGHT<:AbsShapeDesc,T}
+struct IncRel{LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
     left::ShapeColl{LEFT}
     right::ShapeColl{RIGHT}
     _v::Vector{T} # vector of vectors of shape numbers
@@ -42,7 +42,7 @@ struct IncRel{LEFT<:AbsShapeDesc,RIGHT<:AbsShapeDesc,T}
         v::Vector{T},
         name::String,
         internal
-    ) where {LEFT<:AbsShapeDesc,RIGHT<:AbsShapeDesc,T}
+    ) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
         @_check (nshapes(left) == length(v))
         minn = typemax(eltype(v[1]))
         maxn = typemin(eltype(v[1]))
@@ -65,60 +65,152 @@ Base.getindex(ir::IR, i::Int) where {IR<:IncRel} = ir._v[i]
 Base.getindex(ir::IR, i::Int, k::Int) where {IR<:IncRel} = ir._v[i][k]
 
 """
-    IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, v::Vector{T}) where {LEFT<:AbsShapeDesc,RIGHT<:AbsShapeDesc,T}
+    IncRel(
+        left::ShapeColl{LEFT},
+        right::ShapeColl{RIGHT},
+        v::Vector{Vector{IT}},
+        name::String
+    ) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, IT}
 
-Convenience constructor with a vector of vectors and a default name.
+Convenience constructor with a vector of vectors (of integers) and a name.
 """
 function IncRel(
     left::ShapeColl{LEFT},
     right::ShapeColl{RIGHT},
-    v::Vector{T}
-) where {LEFT<:AbsShapeDesc,RIGHT<:AbsShapeDesc,T}
-    IncRel(left, right, deepcopy(v), "(" * left.name * ", " * right.name * ")", true)
-end
-
-"""
-    IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, v::Vector{T}, name::String) where {LEFT<:AbsShapeDesc,RIGHT<:AbsShapeDesc,T}
-
-Convenience constructor with a vector of vectors and a name.
-"""
-function IncRel(
-    left::ShapeColl{LEFT},
-    right::ShapeColl{RIGHT},
-    v::Vector{T},
+    v::Vector{Vector{IT}},
     name::String
-) where {LEFT<:AbsShapeDesc,RIGHT<:AbsShapeDesc,T}
+) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, IT}
     IncRel(left, right, deepcopy(v), name, true)
 end
 
 """
-    IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, data::Matrix{MT}) where {LEFT<:AbsShapeDesc,RIGHT<:AbsShapeDesc,MT}
+    IncRel(
+            left::ShapeColl{LEFT},
+            right::ShapeColl{RIGHT},
+            v::Vector{Vector{IT}}
+        ) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, IT}
 
-Convenience constructor supplying a matrix instead of a vector of vectors and a default name.
+Convenience constructor with a vector of vectors (of integers) and a default name.
 """
 function IncRel(
     left::ShapeColl{LEFT},
     right::ShapeColl{RIGHT},
-    data::Matrix{MT}
-) where {LEFT<:AbsShapeDesc,RIGHT<:AbsShapeDesc,MT}
-    _v = [SVector{nvertices(left.shapedesc)}(data[idx, :]) for idx in 1:size(data, 1)]
-    IncRel(left, right, _v, "(" * left.name * ", " * right.name * ")", true)
+    v::Vector{Vector{IT}},
+) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, IT}
+    IncRel(left, right, v, "(" * left.name * ", " * right.name * ")", true)
 end
 
 """
-    IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, data::Matrix{MT}, name::String) where {LEFT<:AbsShapeDesc,RIGHT<:AbsShapeDesc,MT}
+    IncRel(
+        left::ShapeColl{LEFT},
+        right::ShapeColl{RIGHT},
+        v::Vector{SVector{N, IT}},
+        name::String
+    ) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, N, IT}
 
-Convenience constructor supplying a matrix instead of a vector of vectors and a name.
+Convenience constructor with a vector of static vectors (of integers) and a name.
+"""
+function IncRel(
+    left::ShapeColl{LEFT},
+    right::ShapeColl{RIGHT},
+    v::Vector{SVector{N, IT}},
+    name::String
+) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, N, IT}
+    IncRel(left, right, deepcopy(v), name, true)
+end
+
+"""
+    IncRel(
+        left::ShapeColl{LEFT},
+        right::ShapeColl{RIGHT},
+        v::Vector{SVector{N, IT}}
+    ) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, N, IT}
+
+Convenience constructor with a vector of static vectors (of integers) and a default name.
+"""
+function IncRel(
+    left::ShapeColl{LEFT},
+    right::ShapeColl{RIGHT},
+    v::Vector{SVector{N, IT}}
+) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, N, IT}
+    IncRel(left, right, v, "(" * left.name * ", " * right.name * ")", true)
+end
+
+"""
+    IncRel(
+        left::ShapeColl{LEFT},
+        right::ShapeColl{RIGHT},
+        data::Matrix{MT},
+        name::String
+    ) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, MT}
+
+Convenience constructor supplying a matrix and a name.
 """
 function IncRel(
     left::ShapeColl{LEFT},
     right::ShapeColl{RIGHT},
     data::Matrix{MT},
     name::String
-) where {LEFT<:AbsShapeDesc,RIGHT<:AbsShapeDesc,MT}
+) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, MT}
     _v = [SVector{nvertices(left.shapedesc)}(data[idx, :]) for idx in 1:size(data, 1)]
     IncRel(left, right, _v, name, true)
 end
+
+"""
+    IncRel(
+        left::ShapeColl{LEFT},
+        right::ShapeColl{RIGHT},
+        data::Matrix{MT}
+    ) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, MT}
+
+Convenience constructor supplying a matrix and a default name.
+"""
+function IncRel(
+    left::ShapeColl{LEFT},
+    right::ShapeColl{RIGHT},
+    data::Matrix{MT}
+) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, MT}
+    _v = [SVector{nvertices(left.shapedesc)}(data[idx, :]) for idx in 1:size(data, 1)]
+    IncRel(left, right, data, "(" * left.name * ", " * right.name * ")")
+end
+
+"""
+    IncRel(
+        left::ShapeColl{LEFT},
+        right::ShapeColl{RIGHT},
+        data::Vector{NTuple{N, IT}},
+        name::String
+    ) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, N, IT}
+
+Convenience constructor supplying a vector of tuples instead of a vector of vectors and a name.
+"""
+function IncRel(
+    left::ShapeColl{LEFT},
+    right::ShapeColl{RIGHT},
+    data::Vector{NTuple{N, IT}},
+    name::String
+) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, N, IT}
+    _v = [SVector{nvertices(left.shapedesc)}(data[idx]) for idx in 1:size(data, 1)]
+    IncRel(left, right, _v, name, true)
+end
+
+"""
+    IncRel(
+        left::ShapeColl{LEFT},
+        right::ShapeColl{RIGHT},
+        data::Vector{NTuple{N, IT}}
+    ) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, N, IT}
+
+Convenience constructor supplying a vector of tuples instead of a vector of vectors and a name.
+"""
+function IncRel(
+    left::ShapeColl{LEFT},
+    right::ShapeColl{RIGHT},
+    data::Vector{NTuple{N, IT}}
+) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, N, IT}
+    IncRel(left, right, data, "(" * left.name * ", " * right.name * ")")
+end
+
 
 """
     indextype(ir::IncRel)
@@ -143,11 +235,11 @@ Number of individual entities in the `j`-th relation in the incidence relation.
 nentities(ir::IncRel, j::IT) where {IT} = length(ir._v[j])
 
 """
-    code(ir::IncRel{LEFT,RIGHT,T}) where {LEFT<:AbsShapeDesc,RIGHT<:AbsShapeDesc,T}
+    code(ir::IncRel{LEFT,RIGHT,T}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
 
 Formulate the code of the incidence relation.
 """
-ir_code(ir::IncRel{LEFT,RIGHT,T}) where {LEFT<:AbsShapeDesc,RIGHT<:AbsShapeDesc,T} =
+ir_code(ir::IncRel{LEFT,RIGHT,T}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T} =
     (manifdim(shapedesc(ir.left)), manifdim(shapedesc(ir.right)))
 
 """
@@ -393,7 +485,7 @@ end
 
 Compute the "bounded by facets" incidence relation `(d, d-1)` for `d`-dimensional shapes.
 
-Convenience function where the transpose of the incidence relation on the right
+Convenience function where the transpose of the incidence relation `fir`
 is computed on the fly.
 
 # See also: [`ir_bbyfacets(ir::IncRel, fir::IncRel, tfir::IncRel)`](@ref)
