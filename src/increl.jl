@@ -97,7 +97,7 @@ function IncRel(
     right::ShapeColl{RIGHT},
     v::Vector{Vector{IT}},
 ) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, IT}
-    IncRel(left, right, v, "(" * left.name * ", " * right.name * ")", true)
+    IncRel(left, right, v, "(" * left.name * ", " * right.name * ")")
 end
 
 """
@@ -133,7 +133,7 @@ function IncRel(
     right::ShapeColl{RIGHT},
     v::Vector{SVector{N, IT}}
 ) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, N, IT}
-    IncRel(left, right, v, "(" * left.name * ", " * right.name * ")", true)
+    IncRel(left, right, v, "(" * left.name * ", " * right.name * ")")
 end
 
 """
@@ -170,7 +170,6 @@ function IncRel(
     right::ShapeColl{RIGHT},
     data::Matrix{MT}
 ) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, MT}
-    _v = [SVector{nvertices(left.shapedesc)}(data[idx, :]) for idx in 1:size(data, 1)]
     IncRel(left, right, data, "(" * left.name * ", " * right.name * ")")
 end
 
