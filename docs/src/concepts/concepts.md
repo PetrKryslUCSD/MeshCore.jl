@@ -110,7 +110,8 @@ so-called "transpose" operation, and do not require the construction of new
 meshes. Also, the relations below the diagonal are of fixed size. That is the
 number of entities incident on a given entity is a fixed number that can be
 determined beforehand. An example is  the relation ``(3,2)``, where for the
-``j``-th cell the list consists of the faces bounding the cell.
+``j``-th cell the list consists of the faces bounding the cell. The number of 
+faces bounding a given cell is fixed (unchanging with the mesh).
 
 On the other hand, the relations above the diagonal are in general of variable
 length. For example the relation ``(2,3)`` represents the cells which
@@ -129,7 +130,7 @@ The table below summarizes the incidence relations that represent  the initial m
 
 For instance, for a surface mesh the relation ``(2,0)`` is defined initially.
 The relations *above* that can be calculated with the `skeleton` function.
-So,  the skeleton of the surface mesh would consist of all the edges
+So,  the skeleton of the surface mesh ^would consist of all the edges
 in the mesh, expressible as the incidence relation  ``(1,0)``.
 
 Note that the `skeleton` function constructs a derived mesh: the incidence
@@ -155,7 +156,7 @@ The incidence  relation ``(d,d-1)`` may be derived with the function
 and the facet shapes of dimension ``d-1``.
 
 The relationship ``(1 ,0)`` can be derived in two ways: from the incidence relation ``(2,0)`` by the `skeleton` function, or by the `ir_bbyfacets` function applied
-to a shape collection of edges and  a shape collection of the vertices.
+to a shape collection of edges and  a shape collection of the vertices ``(2,1)``.
 
 ## Incidence relations ``(d,d-2)``
 
