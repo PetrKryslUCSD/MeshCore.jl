@@ -29,11 +29,16 @@ export shapedesc, nshapes, manifdim, nvertices, facetdesc, nfacets, facetconnect
 using ..MeshCore: IncRel
 using ..MeshCore: indextype, nrelations, nentities, ir_code
 using ..MeshCore: ir_boundary, ir_subset
-using ..MeshCore: ir_skeleton, ir_transpose, ir_bbyfacets, ir_bbyfacets, ir_identity
+using ..MeshCore: ir_skeleton, ir_transpose, ir_bbyfacets, ir_bbyridges, ir_identity
+using ..MeshCore: getv
 
 export IncRel
 export indextype, nrelations, nentities, ir_code
 export ir_boundary, ir_subset
-export ir_skeleton, ir_transpose, ir_bbyfacets, ir_bbyfacets, ir_identity
+export ir_skeleton, ir_transpose, ir_bbyfacets, ir_bbyridges, ir_identity
+export getv
+
+# Enable LSP look-up in test modules.
+if false include("../test/runtests.jl") end
 
 end # module
