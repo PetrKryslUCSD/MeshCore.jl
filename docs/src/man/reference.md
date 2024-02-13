@@ -33,7 +33,7 @@ ridgedesc
 nridges(shapes::ShapeColl)
 ridgeconnectivity
 attribute
-summary
+Base.summary(sc::S) where {S<:ShapeColl}
 ```
 
 ## Incidence relations
@@ -88,7 +88,7 @@ nrelations
 nentities
 ir_code
 getv
-summary
+Base.summary(ir::IncRel)
 ```
 
 ### Relations below the diagonal
