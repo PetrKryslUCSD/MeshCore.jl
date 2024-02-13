@@ -33,6 +33,7 @@ ridgedesc
 nridges(shapes::ShapeColl)
 ridgeconnectivity
 attribute
+summary
 ```
 
 ## Incidence relations
@@ -87,6 +88,7 @@ nrelations
 nentities
 ir_code
 getv
+summary
 ```
 
 ### Relations below the diagonal
@@ -107,6 +109,12 @@ ir_transpose(mesh::IncRel)
 
 ```@docs
 ir_identity(ir::IncRel, side = :left)
+```
+
+### Attributes
+
+```@docs
+datavaluetype
 ```
 
 ### Utilities
@@ -153,6 +161,7 @@ ShapeColl{S <: AbsShapeDesc}
 ```@docs
 AbsAttrib{T}
 VecAttrib{T}
+FunAttrib{T,M,F}
 ```
 
 
