@@ -18,4 +18,7 @@ include("increl.jl")
 # ```
 include("Exports.jl")
 
+# Enable LSP look-up in test modules.
+if false include("../test/runtests.jl") end
+
 end # module
