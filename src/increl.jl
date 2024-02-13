@@ -152,7 +152,7 @@ function IncRel(
     data::Matrix{MT},
     name::String
 ) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, MT}
-    _v = [SVector{nvertices(left.shapedesc)}(data[idx, :]) for idx in 1:size(data, 1)]
+    _v = [SVector{size(data, 2)}(data[idx, :]) for idx in 1:size(data, 1)]
     IncRel(left, right, _v, name, true)
 end
 
@@ -163,7 +163,7 @@ end
         data::Matrix{MT}
     ) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, MT}
 
-Convenience constructor supplying a matrix and a default name.
+Convenience constructor supplying a matrix and generating a default name.
 """
 function IncRel(
     left::ShapeColl{LEFT},
@@ -465,7 +465,7 @@ function ir_bbyfacets(ir::IncRel, fir::IncRel, tfir::IncRel, name = "bbf")
         for k in 1:nfacets(ir.left)
             fc = sv[facetconnectivity(ir.left, k)]
             sfc = sort(fc)
-            for j in 1:length(c)
+            for j in eachindex(c)
                 oc = fir[c[j]]
                 if sfc == sort(oc)
                     sgn = _sense(fc[1:n1st], oc, nshif)
@@ -540,7 +540,7 @@ function ir_bbyridges(ir::IncRel, eir::IncRel, teir::IncRel, name = "bbr")
         for k in 1:nridges(ir.left)
             fc = sv[ridgeconnectivity(ir.left, k)]
             sfc = sort(fc)
-            for j in 1:length(c)
+            for j in eachindex(c)
                 oc = eir[c[j]]
                 if sfc == sort(oc)
                     sgn = _sense(fc[1:n1st], oc, nshif)
@@ -610,4 +610,13 @@ Form a brief summary of the incidence relation.
 """
 function Base.summary(ir::IncRel)
     return "$(ir.name): " * summary(ir.left) * ", " * summary(ir.right)
+end
+
+"""
+    getv(ir::IncRel)
+
+Access the stored data.
+"""
+function getv(ir::IncRel)
+    ir._v
 end
