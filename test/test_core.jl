@@ -9,7 +9,7 @@ function test()
     a = VecAttrib([1, 2, 4]);
     # @test show(a) != ""
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
-    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
+    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in eachindex(c)]
     q4s = ShapeColl(Q4, 6)
     vrts = ShapeColl(P1, 12)
     ir = IncRel(q4s, vrts, cc)
@@ -40,7 +40,7 @@ function test()
     a = VecAttrib([1, 2, 4]);
     # @test show(a) != ""
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
-    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
+    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in eachindex(c)]
     q4s = ShapeColl(Q4, 6)
     vrts = ShapeColl(P1, 12)
     ir = IncRel(q4s, vrts, cc)
@@ -66,7 +66,7 @@ using MeshCore: IncRel
 using Test
 function test()
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
-    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
+    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in eachindex(c)]
     q4s = ShapeColl(Q4, 6)
     vrts = ShapeColl(P1, 12)
     ir = IncRel(q4s, vrts, cc)
@@ -174,7 +174,7 @@ using Test
 function test()
     xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
     N, T = size(xyz, 2), eltype(xyz)
-    a =  VecAttrib([SVector{N, T}(xyz[i, :]) for i in 1:size(xyz, 1)])
+    a =  VecAttrib([SVector{N, T}(xyz[i, :]) for i in axes(xyz, 1)])
 
     @test length(a) == 12
     x = a[SVector{2}([2, 4])]
@@ -196,7 +196,7 @@ using MeshCore: IncRel
 using Test
 function test()
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
-    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
+    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in eachindex(c)]
     q4s = ShapeColl(Q4, 6)
     vrts = ShapeColl(P1, 12)
     ir = IncRel(q4s, vrts, cc)
@@ -233,7 +233,7 @@ using MeshCore: ir_skeleton
 using Test
 function test()
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
-    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
+    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in eachindex(c)]
     q4s = ShapeColl(Q4, 6)
     vrts = ShapeColl(P1, 12)
     mesh = IncRel(q4s, vrts, cc)
@@ -255,9 +255,9 @@ using Test
 function test()
     xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
     N, T = size(xyz, 2), eltype(xyz)
-    locs =  VecAttrib([SVector{N, T}(xyz[i, :]) for i in 1:size(xyz, 1)])
+    locs =  VecAttrib([SVector{N, T}(xyz[i, :]) for i in axes(xyz, 1)])
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
-    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
+    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in eachindex(c)]
     q4s = ShapeColl(Q4, 6)
     vrts = ShapeColl(P1, 12)
     mesh = IncRel(q4s, vrts, cc)
@@ -285,9 +285,9 @@ using Test
 function test()
     xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
     N, T = size(xyz, 2), eltype(xyz)
-    locs =  VecAttrib([SVector{N, T}(xyz[i, :]) for i in 1:size(xyz, 1)])
+    locs =  VecAttrib([SVector{N, T}(xyz[i, :]) for i in axes(xyz, 1)])
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
-    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
+    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in eachindex(c)]
     q4s = ShapeColl(Q4, 6)
     vrts = ShapeColl(P1, 12)
     mesh = IncRel(q4s, vrts, cc)
@@ -311,9 +311,9 @@ using Test
 function test()
     xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
     N, T = size(xyz, 2), eltype(xyz)
-    locs =  VecAttrib([SVector{N, T}(xyz[i, :]) for i in 1:size(xyz, 1)])
+    locs =  VecAttrib([SVector{N, T}(xyz[i, :]) for i in axes(xyz, 1)])
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
-    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
+    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in eachindex(c)]
     q4s = ShapeColl(Q4, 6)
     vrts = ShapeColl(P1, 12)
     mesh = IncRel(q4s, vrts, cc)
@@ -321,8 +321,8 @@ function test()
     tmesh = ir_transpose(mesh)
     shouldget = Array{Int64,1}[[1], [1, 3], [3, 5], [5], [1, 2], [1, 2, 3, 4], [3, 4, 5, 6], [5, 6], [2], [2, 4], [4, 6], [6]]
     allmatch = true
-    for j in 1:length(shouldget)
-        for k in 1:length(shouldget[j])
+    for j in eachindex(shouldget)
+        for k in eachindex(shouldget[j])
             allmatch = allmatch && (tmesh[j, k] == shouldget[j][k])
         end
     end
@@ -342,9 +342,9 @@ using Test
 function test()
     xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
     N, T = size(xyz, 2), eltype(xyz)
-    locs =  VecAttrib([SVector{N, T}(xyz[i, :]) for i in 1:size(xyz, 1)])
+    locs =  VecAttrib([SVector{N, T}(xyz[i, :]) for i in axes(xyz, 1)])
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
-    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
+    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in eachindex(c)]
     q4s = ShapeColl(Q4, 6)
     vrts = ShapeColl(P1, 12)
     mesh = IncRel(q4s, vrts, cc)
@@ -359,8 +359,8 @@ function test()
     [6, 7, 5, 12],                                                          
     [13, 14, 12, 17]   ]
     allmatch = true
-    for j in 1:length(shouldget)
-        for k in 1:length(shouldget[j])
+    for j in eachindex(shouldget)
+        for k in eachindex(shouldget[j])
             allmatch = allmatch && (tmesh[j, k] == shouldget[j][k])
         end
     end
@@ -380,9 +380,9 @@ using Test
 function test()
     xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
     N, T = size(xyz, 2), eltype(xyz)
-        locs =  VecAttrib([SVector{N, T}(xyz[i, :]) for i in 1:size(xyz, 1)])
+        locs =  VecAttrib([SVector{N, T}(xyz[i, :]) for i in axes(xyz, 1)])
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
-    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
+    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in eachindex(c)]
     q4s = ShapeColl(Q4, 6)
     vrts = ShapeColl(P1, 12)
     mesh = IncRel(q4s, vrts, cc)
@@ -397,8 +397,8 @@ function test()
     [6, 7, 5, 12],                                                          
     [13, 14, 12, 17]    ]
     allmatch = true
-    for j in 1:length(shouldget)
-        for k in 1:length(shouldget[j])
+    for j in eachindex(shouldget)
+        for k in eachindex(shouldget[j])
             allmatch = allmatch && (bbmesh[j, k] == shouldget[j][k])
         end
     end
@@ -408,8 +408,8 @@ function test()
     shouldget = Array{Int64,1}[[1], [1], [3], [1, 3], [5], [3, 5], [5], [1, 2], [2], [3, 4], [2, 4], [5, 6],
     [4, 6], [6], [2], [4], [6]]
     allmatch = true
-    for j in 1:length(shouldget)
-        for k in 1:length(shouldget[j])
+    for j in eachindex(shouldget)
+        for k in eachindex(shouldget[j])
             allmatch = allmatch && (tbbmesh[j, k] == shouldget[j][k])
         end
     end
@@ -429,9 +429,9 @@ using Test
 function test()
     xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
     N, T = size(xyz, 2), eltype(xyz)
-        locs =  VecAttrib([SVector{N, T}(xyz[i, :]) for i in 1:size(xyz, 1)])
+        locs =  VecAttrib([SVector{N, T}(xyz[i, :]) for i in axes(xyz, 1)])
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
-    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
+    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in eachindex(c)]
     q4s = ShapeColl(Q4, 6)
     vrts = ShapeColl(P1, 12)
     mesh = IncRel(q4s, vrts, cc)
@@ -441,8 +441,8 @@ function test()
     bbmesh = ir_bbyridges(mesh, vmesh)
     shouldget = Array{Int64,1}[[1, 2, 6, 5], [5, 6, 10, 9], [2, 3, 7, 6], [6, 7, 11, 10], [3, 4, 8, 7], [7, 8, 12, 11]]
     allmatch = true
-    for j in 1:length(shouldget)
-        for k in 1:length(shouldget[j])
+    for j in eachindex(shouldget)
+        for k in eachindex(shouldget[j])
             allmatch = allmatch && (bbmesh[j, k] == shouldget[j][k])
         end
     end
@@ -451,8 +451,8 @@ function test()
     tbbmesh = ir_transpose(bbmesh)
     shouldget = Array{Int64,1}[[1], [1, 3], [3, 5], [5], [1, 2], [1, 2, 3, 4], [3, 4, 5, 6], [5, 6], [2], [2, 4], [4, 6], [6]]
     allmatch = true
-    for j in 1:length(shouldget)
-        for k in 1:length(shouldget[j])
+    for j in eachindex(shouldget)
+        for k in eachindex(shouldget[j])
             allmatch = allmatch && (tbbmesh[j, k] == shouldget[j][k])
         end
     end
@@ -476,7 +476,7 @@ function test()
     xyz, cc = samplet4mesh()
     # Construct the initial incidence relation
     N, T = size(xyz, 2), eltype(xyz)
-    locs =  VecAttrib([SVector{N, T}(xyz[i, :]) for i in 1:size(xyz, 1)])
+    locs =  VecAttrib([SVector{N, T}(xyz[i, :]) for i in axes(xyz, 1)])
     vrts = ShapeColl(P1, length(locs))
     tets = ShapeColl(T4, size(cc, 1))
     ir30 = IncRel(tets, vrts, cc)
@@ -580,7 +580,7 @@ using Test
 function test()
     xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
     N, T = size(xyz, 2), eltype(xyz)
-    locs =  VecAttrib([SVector{N, T}(xyz[i, :]) for i in 1:size(xyz, 1)])
+    locs =  VecAttrib([SVector{N, T}(xyz[i, :]) for i in axes(xyz, 1)])
 
     @test locs[10] == [633.3333333333334, 800.0]
 
@@ -608,13 +608,13 @@ using MeshCore: VecAttrib, ShapeColl, P1, attribute
 function test()
 	xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0]
 	N, T = size(xyz, 2), eltype(xyz)
-	locs =  VecAttrib([SVector{N, T}(xyz[i, :]) for i in 1:size(xyz, 1)])
+	locs =  VecAttrib([SVector{N, T}(xyz[i, :]) for i in axes(xyz, 1)])
 	vertices = ShapeColl(P1, size(xyz, 1))
     vertices.attributes["geom"] = locs
 	a = attribute(vertices, "geom")
 	@test a[2] == [633.3333333333334, 0.0]
 
-    dofn =  VecAttrib([i for i in 1:size(xyz, 1)])
+    dofn =  VecAttrib([i for i in axes(xyz, 1)])
     vertices.attributes["dofn"] = dofn
     # @show keys(vertices.attributes)
     @test "geom" in keys(vertices.attributes)
@@ -647,7 +647,7 @@ using MeshCore: IncRel
 using Test
 function test()
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
-    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
+    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in eachindex(c)]
     q4s = ShapeColl(Q4, 6)
     vrts = ShapeColl(P1, 12)
     ir = IncRel(q4s, vrts, cc)
@@ -688,7 +688,7 @@ using MeshCore: IncRel, ir_subset, nrelations
 using Test
 function test()
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
-    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
+    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in eachindex(c)]
     q4s = ShapeColl(Q4, 6)
     vrts = ShapeColl(P1, 12)
     ir = IncRel(q4s, vrts, cc)
@@ -757,7 +757,7 @@ using MeshCore: IncRel, ir_subset, nrelations, ir_identity
 using Test
 function test()
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
-    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
+    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in eachindex(c)]
     q4s = ShapeColl(Q4, 6)
     vrts = ShapeColl(P1, 12)
     ir = IncRel(q4s, vrts, cc)
@@ -898,7 +898,7 @@ using Test
 function test()
     xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
     N, T = size(xyz, 2), eltype(xyz)
-    locs =  VecAttrib([SVector{N, T}(xyz[i, :]) for i in 1:size(xyz, 1)])
+    locs =  VecAttrib([SVector{N, T}(xyz[i, :]) for i in axes(xyz, 1)])
 
     @test locs[10] == [633.3333333333334, 800.0]
     locs[10] = -locs[10]
@@ -922,7 +922,7 @@ using MeshCore: IncRel, ir_subset, nrelations, ir_identity, indextype, ir_code
 using Test
 function test()
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
-    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
+    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in eachindex(c)]
     q4s = ShapeColl(Q4, 6)
     vrts = ShapeColl(P1, 12)
     ir = IncRel(q4s, vrts, cc)
@@ -973,7 +973,7 @@ using MeshCore.Exports
 using Test
 function test()
     c = [(1, 2, 6, 5), (5, 6, 10, 9), (2, 3, 7, 6), (6, 7, 11, 10), (3, 4, 8, 7), (7, 8, 12, 11)]
-    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in 1:length(c)]
+    cc = [SVector{nvertices(Q4)}(c[idx]) for idx in eachindex(c)]
     q4s = ShapeColl(Q4, 6)
     vrts = ShapeColl(P1, 12)
     ir = IncRel(q4s, vrts, cc)
@@ -1052,7 +1052,7 @@ using Test
 function test()
     xyz = [0.0 0.0; 633.3333333333334 0.0; 1266.6666666666667 0.0; 1900.0 0.0; 0.0 400.0; 633.3333333333334 400.0; 1266.6666666666667 400.0; 1900.0 400.0; 0.0 800.0; 633.3333333333334 800.0; 1266.6666666666667 800.0; 1900.0 800.0]
     N, T = size(xyz, 2), eltype(xyz)
-    locs =  VecAttrib([SVector{N, T}(xyz[i, :]) for i in 1:size(xyz, 1)])
+    locs =  VecAttrib([SVector{N, T}(xyz[i, :]) for i in axes(xyz, 1)])
 
     @test locs[10] == [633.3333333333334, 800.0]
 
@@ -1224,7 +1224,7 @@ function test()
     @test size(vertices.attributes["geom"]) == size(vertices2.attributes["geom"])
     
     n = 0.0
-    for i in 1:size(vertices2.attributes["geom"], 1)
+    for i in axes(vertices2.attributes["geom"], 1)
         n += sum((vertices.attributes["geom"][i] - vertices2.attributes["geom"][i]).^2)
     end
     @test n ≈ 0
@@ -1275,3 +1275,59 @@ test()
 nothing
 end
 
+
+module mtetx001
+using Test
+using MeshCore.Exports 
+    using StaticArrays
+function test()
+    xyz = [
+        0.0 0.0 0.0
+        0.0 1.0 0.0
+        0.0 0.0 1.0
+        0.0 1.0 1.0
+        1.0 0.0 0.0
+    ]
+    connectivity = [
+        1 2 3 5
+        2 4 3 5
+    ]
+    
+    geo_dim, coordinate_type = size(xyz, 2), eltype(xyz)
+    geom =  VecAttrib([SVector{geo_dim, coordinate_type}(xyz[i, :]) for i in axes(xyz, 1)])
+    
+    nv = length(geom)
+    vertices = ShapeColl(P1, nv, "vertices")
+    vertices.attributes["geom"] = geom
+    
+    n_tets = size(connectivity, 1)
+    tets = ShapeColl(T4, n_tets)
+    ir30 = IncRel(tets, vertices, connectivity)  # which is also the (2, 0) incidence relation here
+    # @show summary(ir30)
+    
+    ir20 = ir_skeleton(ir30)
+    # @show summary(ir20)
+    
+    ir32 = ir_bbyfacets(ir30, ir20)
+    # @show summary(ir32)
+    
+    ir10 = ir_skeleton(ir20)
+    # @show summary(ir10)
+    ir21 = ir_bbyfacets(ir20, ir10)
+    # @show summary(ir21)
+    
+    ir31 = ir_bbyridges(ir30, ir10)
+    # @show summary(ir31)
+    
+    @test getv(ir30) == SVector{4, Int64}[[1, 2, 3, 5], [2, 4, 3, 5]]
+    @test getv(ir20) == SVector{3, Int64}[[3, 2, 1], [5, 1, 2], [1, 5, 3], [3, 4, 2], [2, 3, 5], [5, 2, 4], [4, 3, 5]]
+    @test getv(ir10) == SVector{2, Int64}[[2, 1], [1, 3], [5, 1], [2, 3], [4, 2], [2, 5], [3, 4], [5, 3], [4, 5]]
+    @test getv(ir21) == SVector{3, Int64}[[1, 2, -4], [-1, 6, 3], [8, -2, -3], [5, 4, 7], [-8, -6, 4], [-5, 9, -6], [-8, -9, -7]]
+    @test getv(ir31) == SVector{6, Int64}[[-3, 4, -1, -8, -6, 2], [6, -7, -5, -8, -9, 4]]
+    @test getv(ir32) == SVector{4, Int64}[[5, 3, 2, 1], [7, -5, 6, 4]]
+    
+    true
+end
+test()
+nothing
+end
