@@ -13,7 +13,7 @@ The library provides efficient storage in static arrays for speed of access.
 
 ## Usage
 
-This release is for Julia 1.8.
+This release is for Julia 1.8. Also tested with Julia 1.10.
 
 The package is registered: doing
 ```
@@ -51,6 +51,7 @@ representation of a tetrahedral mesh.
 
 ## News
 
+- 02/13/2024: Updated for Julia 1.10. 
 - 12/09/2022: Version 1.3 released for Julia 1.8.
 - 04/23/2021: Added the final draft of the accepted paper.
 - 03/11/2021: Released for Julia 1.6.
