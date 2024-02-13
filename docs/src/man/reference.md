@@ -38,14 +38,55 @@ attribute
 ## Incidence relations
 
 ```@docs
-IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, v::Vector{T}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
-IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, v::Vector{T}, name::String) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, T}
-IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, data::Matrix{MT}) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, MT}
-IncRel(left::ShapeColl{LEFT}, right::ShapeColl{RIGHT}, data::Matrix{MT}, name::String) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, MT}
+IncRel(
+    left::ShapeColl{LEFT},
+    right::ShapeColl{RIGHT},
+    v::Vector{Vector{IT}},
+    name::String
+) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, IT}
+IncRel(
+    left::ShapeColl{LEFT},
+    right::ShapeColl{RIGHT},
+    v::Vector{Vector{IT}},
+) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, IT}
+IncRel(
+    left::ShapeColl{LEFT},
+    right::ShapeColl{RIGHT},
+    v::Vector{SVector{N, IT}},
+    name::String
+) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, N, IT}
+IncRel(
+    left::ShapeColl{LEFT},
+    right::ShapeColl{RIGHT},
+    v::Vector{SVector{N, IT}}
+) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, N, IT}
+IncRel(
+    left::ShapeColl{LEFT},
+    right::ShapeColl{RIGHT},
+    data::Matrix{MT},
+    name::String
+) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, MT}
+IncRel(
+    left::ShapeColl{LEFT},
+    right::ShapeColl{RIGHT},
+    data::Matrix{MT}
+) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, MT}
+IncRel(
+    left::ShapeColl{LEFT},
+    right::ShapeColl{RIGHT},
+    data::Vector{NTuple{N, IT}},
+    name::String
+) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, N, IT}
+IncRel(
+    left::ShapeColl{LEFT},
+    right::ShapeColl{RIGHT},
+    data::Vector{NTuple{N, IT}}
+) where {LEFT<:AbsShapeDesc, RIGHT<:AbsShapeDesc, N, IT}
 indextype
 nrelations
 nentities
 ir_code
+getv
 ```
 
 ### Relations below the diagonal
